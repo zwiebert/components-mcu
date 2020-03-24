@@ -8,6 +8,7 @@
 #ifndef SRC_MAIN_IPNET_H_
 #define SRC_MAIN_IPNET_H_
 
+#include "stdbool.h"
 // interface implemented by mcu specific code
 void ipnet_addr_as_string(char *buf, unsigned buf_len);
 
