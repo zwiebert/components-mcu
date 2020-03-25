@@ -21,4 +21,12 @@ uint32_t get_ip4addr_local();
 uint32_t get_ip4addr_gateway();
 uint32_t get_ip4netmask();
 
+typedef void (*ipnet_cb)(void);
+void ipnet_cbRegister_gotIpAddr(ipnet_cb cb);
+void ipnet_cbRegister_lostIpAddr(ipnet_cb cb);
+
+
+
+extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
+
 #endif /* SRC_MAIN_IPNET_H_ */

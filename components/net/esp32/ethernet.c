@@ -92,8 +92,8 @@ static void eth_event_handler(void* arg, esp_event_base_t event_base,
         break;
     case ETHERNET_EVENT_DISCONNECTED:
         ESP_LOGI(TAG, "Ethernet Link Down");
-        ethernet_connected = false;
-        ethernet_disconnected = true;
+        if (ipnet_lostIpAddr_cb)
+          ipnet_lostIpAddr_cb();
         break;
     case ETHERNET_EVENT_START:
         ESP_LOGI(TAG, "Ethernet Started");
@@ -124,8 +124,8 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
     ip4_gateway_address = ip_info->gw;
     ip4_netmask = ip_info->netmask;
 
-    ethernet_disconnected = false;
-    ethernet_connected = true;
+    if (ipnet_gotIpAddr_cb)
+      ipnet_gotIpAddr_cb();
 }
 
 void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
@@ -197,15 +197,6 @@ void ethernet_setup(enum lanPhy lan_phy, int lan_pwr_gpio) {
     }
 }
 
-void ethernet_loop(void) {
-  if (ethernet_connected) {
-      ipnet_connected();
-      ethernet_connected = false;
-  } else if (ethernet_disconnected) {
-      ipnet_disconnected();
-      ethernet_disconnected = false;
-  }
-}
 #endif
 
 

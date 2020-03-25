@@ -1,5 +1,6 @@
 #include "app_config/proj_app_cfg.h"
 #ifdef USE_WLAN
+#include "net/wifistation.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "esp_wifi.h"
@@ -30,15 +31,12 @@
 
 // WIFI Station ////////////////////////////////////////
 
-/* FreeRTOS event group to signal when we are connected*/
-static EventGroupHandle_t s_wifi_event_group;
-
 /* The event group allows multiple bits for each event, but we only care about one event
  * - are we connected to the AP with an IP? */
 const int WIFI_CONNECTED_BIT = BIT0;
 
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
-
+extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
 
 void
 user_set_station_config(void) {
@@ -58,9 +56,6 @@ const char *TAG = "wifistation";
 //#define RETRY_RECONNECT (s_retry_num < 255)
 #define RETRY_RECONNECT (1)
 
-volatile static bool wifistation_connected;
-volatile static bool wifistation_disconnected;
-
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
         i32 event_id, void* event_data) {
 
@@ -73,13 +68,11 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 
     case WIFI_EVENT_STA_DISCONNECTED:
         ESP_LOGI(TAG, "wifi sta disconnected");
-        wifistation_connected = false;
-        wifistation_disconnected = true;
+
         {
             if (RETRY_RECONNECT) {
                 ip4_address.addr = 0;
                 esp_wifi_connect();
-                xEventGroupClearBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
                 s_retry_num++;
                 // ESP_LOGI(TAG, "retry to connect to the AP");
             }
@@ -91,7 +84,12 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
     }
 }
 
-/** Event handler for IP_EVENT_STA_GOT_IP */
+static void lost_ip_event_handler(void *arg, esp_event_base_t event_base, i32 event_id, void *event_data) {
+  ESP_LOGI(TAG, "STA Lost IP Address");
+  if (ipnet_lostIpAddr_cb)
+    ipnet_lostIpAddr_cb();
+}
+
 static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
         i32 event_id, void* event_data) {
 
@@ -109,14 +107,12 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
     ip4_gateway_address = ip_info->gw;
     ip4_netmask = ip_info->netmask;
 
-    wifistation_disconnected = false;
-    wifistation_connected = true;
+    if (ipnet_gotIpAddr_cb)
+      ipnet_gotIpAddr_cb();
 }
 
 void
 wifistation_setup(void) {
-  s_wifi_event_group = xEventGroupCreate();
-
   esp_netif_create_default_wifi_sta();
 
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
@@ -124,20 +120,13 @@ wifistation_setup(void) {
 
   ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT, ESP_EVENT_ANY_ID, &wifi_event_handler, NULL, NULL));
   ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_GOT_IP, &got_ip_event_handler, NULL, NULL));
+  ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_STA_LOST_IP, &lost_ip_event_handler, NULL, NULL));
 
   ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
   ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_STA) );
   user_set_station_config();
 }
 
-void wifistation_loop() {
-  if (wifistation_connected) {
-      ipnet_connected();
-      wifistation_connected = false;
-  } else if (wifistation_disconnected) {
-      ipnet_disconnected();
-      wifistation_disconnected = false;
-  }
-}
+
 
 #endif //USE_WLAN

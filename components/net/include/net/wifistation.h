@@ -9,6 +9,9 @@
 #define USER_ESP32_MAIN_WIFISTATION_H_
 
 void wifistation_setup(void);
-void wifistation_loop(void);
+
+typedef void (*wifistation_cb)(void);
+void wifistation_cbRegister_gotIpAddr(wifistation_cb cb);
+void wifistation_cbRegister_lostIpAddr(wifistation_cb cb);
 
 #endif /* USER_ESP32_MAIN_WIFISTATION_H_ */

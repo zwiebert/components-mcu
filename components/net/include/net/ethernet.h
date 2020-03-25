@@ -16,7 +16,6 @@ enum lanPhy {
 
 void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio);
 void ethernet_setup(enum lanPhy lan_phy, int lan_pwr_gpio);
-void ethernet_loop(void);
 
 
 #endif /* COMPONENTS_NET_INCLUDE_NET_ETHERNET_H_ */
