@@ -10,6 +10,8 @@
 
 #include "stdbool.h"
 
+// periodic timers return true if time elapsed
+// *state should contain zero at first call
 bool periodic_ts(unsigned interval_ts, unsigned *state);
 bool periodic(unsigned interval, unsigned *state);
 

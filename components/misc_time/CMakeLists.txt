@@ -1,4 +1,4 @@
-set(srcs periodic.c)
+set(srcs esp32/periodic.c)
 
 if(DEFINED ENV{DISTRO})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDISTRIBUTION")
