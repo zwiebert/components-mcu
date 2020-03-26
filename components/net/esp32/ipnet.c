@@ -12,7 +12,7 @@ ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
 void
 ipnet_addr_as_string(char *buf, unsigned buf_len) {
   char *ip4addr_ntoa_r(const u32 *addr, char *buf, int buflen);
-  ip4addr_ntoa_r(&ip4_address, buf, buf_len);
+  ip4addr_ntoa_r(&ip4_address.addr, buf, buf_len);
 }
 
 u32 get_ip4addr_local() { return ip4_address.addr; }

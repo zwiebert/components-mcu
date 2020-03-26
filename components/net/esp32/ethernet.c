@@ -28,10 +28,6 @@ static i8 ethernet_phy_power_pin = -1;
 static i32 ethernet_phy_address;
 
 
-volatile static bool ethernet_connected;
-volatile static bool ethernet_disconnected;
-
-
 static esp_eth_handle_t s_eth_handle = NULL;
 
 static const char *TAG = "ethernet";

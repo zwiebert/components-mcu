@@ -23,6 +23,8 @@
 #define printf ets_printf
 #define D(x)
 
+extern ip_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
+
 static void set_server_by_config() {
   int server_number = 0;
   ip_addr_t addr[SNTP_MAX_SERVERS];
@@ -56,11 +58,14 @@ static void set_server_by_config() {
     const char *server = C.ntp_server;
 #endif
     bool use_dhcp = strcmp(server, "dhcp") == 0;
+    bool use_gateway = strcmp(server, "gateway") == 0;
     bool use_ipaddr = isdigit((int )server[0]);
 
     sntp_servermode_dhcp(use_dhcp);
 
-    if (use_ipaddr) {
+    if (use_gateway) {
+      sntp_setserver(server_number, &ip4_gateway_address);
+    } else if (use_ipaddr) {
       ipaddr_aton(server, &addr[server_number]);
       sntp_setserver(server_number, &addr[server_number]);
     } else if (use_dhcp) {
