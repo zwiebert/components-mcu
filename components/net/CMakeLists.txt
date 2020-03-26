@@ -16,6 +16,6 @@ idf_component_register(
     INCLUDE_DIRS . "./include" 
     PRIV_INCLUDE_DIRS "./include/net" 
     REQUIRES ""
-    PRIV_REQUIRES app app_config config misc net_http_server
+    PRIV_REQUIRES app_config config misc net_http_server
                   esp_netif esp_wifi esp_eth
  )

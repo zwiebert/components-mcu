@@ -10,6 +10,6 @@ idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS . "./include" 
     PRIV_INCLUDE_DIRS "./include/storage" 
-    PRIV_REQUIRES app_config config
+    PRIV_REQUIRES app_config config debug
                   spiffs
  )

@@ -2,7 +2,6 @@
 #include <esp_event.h>
 #include <esp_log.h>
 #include <esp_system.h>
-#include <nvs_flash.h>
 #include <sys/param.h>
 #include <mbedtls/base64.h>
 
@@ -12,8 +11,7 @@
 #include "http_server.h"
 #include "userio/status_json.h"
 #include "config/config.h"
-#include "cli_app/cli_imp.h"
-#include "http_server_content/esp32/http_uri_handlers.h"
+#include "net/http/server/esp32/register_uris.h"
 
 static const char *TAG="APP";
 

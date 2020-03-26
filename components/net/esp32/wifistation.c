@@ -8,7 +8,6 @@
 #include "esp_event.h"
 #include "esp_event.h"
 #include "esp_log.h"
-#include "nvs_flash.h"
 #include "driver/gpio.h"
 #include "string.h"
 
@@ -19,7 +18,6 @@
 
 #include "net/ipnet.h"
 #include "txtio/inout.h"
-#include "app/common.h"
 #include "config/config.h"
 
 #define printf io_printf_fun

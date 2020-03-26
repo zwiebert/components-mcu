@@ -51,7 +51,7 @@ void abort_postcond(const char *msg, int line);
 
 #define if_verbose_do(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
 
-#if defined db_printf && ! defined DISTRIBUTION
+#if defined USE_DEBUG_CONFIG && defined db_printf && ! defined DISTRIBUTION
 #include "config/config.h"
 #define dbg_vpf(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
 #else

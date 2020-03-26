@@ -3,10 +3,8 @@
 #include "esp_system.h"
 #include "esp_event.h"
 #include "esp_event.h"
-#include "nvs_flash.h"
 
 #include "time.h"
-#include "app/rtc.h"
 #include <string.h>
 
 #include "freertos/FreeRTOS.h"
@@ -16,8 +14,6 @@
 
 #include "esp_wifi.h"
 #include "esp_event.h"
-
-#include "nvs_flash.h"
 
 #include "lwip/sockets.h"
 #include "lwip/netdb.h"

@@ -11,6 +11,6 @@ idf_component_register(
     INCLUDE_DIRS . "./include" 
     PRIV_INCLUDE_DIRS "./include/net/mqtt" 
     REQUIRES app_config
-    PRIV_REQUIRES cli config userio_app userio
+    PRIV_REQUIRES cli config userio
                   mqtt lwip
  )
