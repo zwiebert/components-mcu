@@ -131,6 +131,7 @@ bool sj_add_object(const char *key) {
 
 void sj_close_object() {
   D(db_printf("%s()\n", __func__));
+  precond(BUF);
   precond(json_idx > 0);
   if (BUF[json_idx - 1] == ',') { // remove trailing comma...
     --json_idx;
@@ -141,6 +142,7 @@ void sj_close_object() {
 
 void sj_close_root_object() {
   D(db_printf("%s()\n", __func__));
+  precond(BUF);
   precond(json_idx > 0);
   if (BUF[json_idx - 1] == ',') { // remove trailing comma...
     --json_idx;
