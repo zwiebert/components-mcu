@@ -10,7 +10,7 @@
 
 #include "stdbool.h"
 
-#ifdef USE_MUTEX
+#ifdef USE_CLI_MUTEX
 bool mutex_cliTake();
 bool mutex_cliTakeTry();
 void mutex_cliGive();

@@ -11,6 +11,6 @@ idf_component_register(
     INCLUDE_DIRS . "./include" 
     PRIV_INCLUDE_DIRS "./include/net/http/server" 
     REQUIRES  app_config
-    PRIV_REQUIRES cli_app cli config debug http_server_content userio
-                   esp_http_server
+    PRIV_REQUIRES  cli config debug userio
+                   esp_http_server mbedtls
  )

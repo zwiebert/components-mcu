@@ -343,7 +343,7 @@ static void
 tcps_recv_cb(void *arg, char *pdata, unsigned short len) {
   tcpc_last_received = arg;
 
-  timeout_disconnect_all = run_time(0) + TCP_HARD_TIMEOUT;
+  timeout_disconnect_all = run_time_s() + TCP_HARD_TIMEOUT;
 
   while (len-- > 0) {
     rxb_push(*pdata++);
@@ -357,7 +357,7 @@ tcps_connect_cb(void *arg) {
   DV(printf("%s(%p)\n", __func__, arg));
   struct espconn *pesp_conn = (struct espconn *) arg;
 
-  timeout_disconnect_all = run_time(0) + TCP_HARD_TIMEOUT;
+  timeout_disconnect_all = run_time_s() + TCP_HARD_TIMEOUT;
 
   if (pesp_conn == NULL) {
     return;
@@ -414,7 +414,7 @@ tcps_loop(void) {
 #endif
 
   // cleanup
-  if (nmbConnected > 0 && timeout_disconnect_all < run_time(NULL)) {
+  if (nmbConnected > 0 && timeout_disconnect_all < run_time_s()) {
     for (i = 0; i < NMB_CLIENTS; ++i) {
       if (tcpclient_espconn[i] != NULL) {
         DV(printf("tcps: disconnect client (idx=%d) because of time out\n", i));

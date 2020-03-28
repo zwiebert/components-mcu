@@ -27,12 +27,13 @@
 #define NAME2     "config"
 #define CMD_OBJ2  "\"cu\": \"801234\",\"baud\": 115200,\"longitude\": 13.5,\"latitude\": 52.6,\"timezone\": 1.0,\"tz\": \"\""
 
-static char json[] = "{\"to\":\"tfmcu\",\"" NAME "\":{" CMD_OBJ "},\"" NAME2 "\":{" CMD_OBJ2 "}" "}";
+#define JSON "{\"to\":\"tfmcu\",\"" NAME "\":{" CMD_OBJ "},\"" NAME2 "\":{" CMD_OBJ2 "}" "}";
 
 static void test_json() {
   char *name, *cmd_obj, *next_name;
   int i;
 
+  char json[] = JSON;
 
   cmd_obj = json_get_command_object(json, &name, &next_name);
   TEST_ASSERT_EQUAL_STRING(NAME, name);
@@ -82,4 +83,5 @@ static void test_json() {
 TEST_CASE("json", "[cli]")
 {
      test_json();
+
 }

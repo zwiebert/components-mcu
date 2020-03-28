@@ -1,9 +1,11 @@
+#include "app_config/proj_app_cfg.h"
 #include "misc/time/periodic.h"
 #include "misc/int_types.h"
-#include "esp_timer.h"
+#include "misc/time/run_time.h"
+
 
 bool periodic_ts(unsigned interval_ts, unsigned *state) {
-  unsigned now = esp_timer_get_time() / 100000;
+  unsigned now = run_time_ts();
   if (*state == 0) {
     *state = now + interval_ts;
     return false;
@@ -17,7 +19,7 @@ bool periodic_ts(unsigned interval_ts, unsigned *state) {
 }
 
 bool periodic(unsigned interval, unsigned *state) {
-  unsigned now = esp_timer_get_time() / 1000000;
+  unsigned now = run_time_s();
   if (*state == 0) {
     *state = now + interval;
     return false;

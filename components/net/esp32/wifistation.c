@@ -8,7 +8,6 @@
 #include "esp_event.h"
 #include "esp_event.h"
 #include "esp_log.h"
-#include "nvs_flash.h"
 #include "driver/gpio.h"
 #include "string.h"
 
@@ -19,7 +18,6 @@
 
 #include "net/ipnet.h"
 #include "txtio/inout.h"
-#include "app/common.h"
 #include "config/config.h"
 
 #define printf io_printf_fun
@@ -28,12 +26,6 @@
 #else
 #define D(x)
 #endif
-
-// WIFI Station ////////////////////////////////////////
-
-/* The event group allows multiple bits for each event, but we only care about one event
- * - are we connected to the AP with an IP? */
-const int WIFI_CONNECTED_BIT = BIT0;
 
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;

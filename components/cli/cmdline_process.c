@@ -17,10 +17,6 @@
 
 #include <string.h>
 
-int process_parmHelp(clpar p[], int len);
-
-
-
 int cli_processParameters(clpar p[], int len) {
   int i;
   int result = -1;
