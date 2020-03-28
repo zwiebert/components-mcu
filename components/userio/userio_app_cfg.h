@@ -8,7 +8,7 @@
 #ifndef COMPONENTS_CLI_CLI_APP_CONFIG_H_
 #define COMPONENTS_CLI_CLI_APP_CONFIG_H_
 
-#define USE_MUTEX
+#define USE_CLI_MUTEX
 
 #include "app_config/proj_app_cfg.h"
 

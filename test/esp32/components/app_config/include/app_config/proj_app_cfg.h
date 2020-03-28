@@ -22,7 +22,7 @@
 //#define USE_TCPS
 #define USE_EG
 
-#define USE_MUTEX
+#define USE_CLI_MUTEX
 #define USE_NETWORK
 
 
