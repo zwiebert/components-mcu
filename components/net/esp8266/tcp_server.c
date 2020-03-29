@@ -7,7 +7,6 @@
 #include <espconn.h>
 #include <mem.h>
 
-#include "driver/uart.h"
 #include "config/config.h"
 #include "time.h"
 

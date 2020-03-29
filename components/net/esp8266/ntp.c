@@ -11,7 +11,6 @@
 #include <ets_sys.h>
 #include <osapi.h>
 #include <gpio.h>
-#include "driver/uart.h"
 #include <mem.h>
 
 #include "config/config.h"
