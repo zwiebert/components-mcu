@@ -277,10 +277,8 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
 }
 
 //////////////////////// set/get functions //////////////////////////
-
-bool kvs_set_i8(kvshT h, const char *key, int8_t val) {
-  struct line_info li = { COOKIE };
-
+static int find_key_int(kvshT h, struct line_info *lip, const char *key) {
+#define li (*lip)
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_ANY);
 
   if (pos >= 0) {
@@ -291,30 +289,42 @@ bool kvs_set_i8(kvshT h, const char *key, int8_t val) {
       pos = -1;
     }
   }
-
-  if (pos < 0) {
-    li.kvs_type = KVS_TYPE_I8;
-    strncpy(li.key, key, MAX_KEY_LEN);
-  }
-  li.nval.val_i8 = val;
-
-  int res = kvs_write(h, &li, pos);
-  return res > 0;
+#undef li
+  return pos;
 }
 
-int8_t kvs_get_i8(kvshT h, const char *key, int8_t default_val, bool *res_success) {
-  struct line_info li = { COOKIE };
 
-  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_I8);
 
-  if (res_success)
-    *res_success = pos >= 0;
-
-  if (pos < 0)
-    return default_val;
-
-  return li.nval.val_i8;
+#define SET_DT_FUN(VAL_T) bool kvs_set_##VAL_T(kvshT h, const char *key, VAL_T val) { \
+  struct line_info li = { COOKIE }; \
+  int pos = find_key_int(h, &li, key); \
+  if (pos < 0) { \
+    li.kvs_type = KVS_TYPE_##VAL_T; \
+    strncpy(li.key, key, MAX_KEY_LEN); \
+  } \
+  li.nval.val_##VAL_T = val; \
+  int res = kvs_write(h, &li, pos); \
+  return res > 0; \
 }
+
+#define GET_DT_FUN(VAL_T) VAL_T kvs_get_##VAL_T(kvshT h, const char *key, VAL_T default_val, bool *res_success){ \
+  struct line_info li = { COOKIE }; \
+  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_##VAL_T); \
+  if (res_success) \
+    *res_success = pos >= 0; \
+  if (pos < 0) \
+    return default_val; \
+  return li.nval.val_##VAL_T; \
+}
+
+#define SET_GET_DT_FUN(dt) SET_DT_FUN(dt) GET_DT_FUN(dt);
+
+SET_GET_DT_FUN(i8);
+SET_GET_DT_FUN(u8);
+SET_GET_DT_FUN(i16);
+SET_GET_DT_FUN(u16);
+SET_GET_DT_FUN(i32);
+SET_GET_DT_FUN(u32);
 
 static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, unsigned length, bool do_write, kvs_type_t kvs_type) {
   struct line_info li = { COOKIE };
