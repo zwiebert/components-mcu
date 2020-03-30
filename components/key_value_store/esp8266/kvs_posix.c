@@ -239,7 +239,8 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
 
   if ((h = kvs_open(name_space, kvs_READ))) {
     struct line_info li = { COOKIE };
-    while ((pos = kvs_find_next(h, &li, pos, key_match, type)) >= 0) {
+    while ((pos = kvs_find_next(h, &li, pos, 0, type)) >= 0) {
+      kvs_type_t type_found = li.kvs_type;
 
       if (!kvs_checkMagicCookie(&li)) {
         return ERR_CORRUPT_FILE;
@@ -362,7 +363,7 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, u
       strncpy(li.key, key, MAX_KEY_LEN);
     }
 
-    li.kvs_type = KVS_TYPE_STR;
+    li.kvs_type = kvs_type;
     li.nval.blob_len = src_len;
     if (li.nval.blob_size == 0)
       li.nval.blob_size = src_len;
