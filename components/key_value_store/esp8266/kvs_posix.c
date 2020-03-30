@@ -4,11 +4,16 @@
  *  Created on: 30.03.2020
  *      Author: bertw
  */
+
+#ifndef HOST_TESTING
+#include "app_config/proj_app_cfg.h"
+#include "storage/spiffs_posix.h"
+#endif
 #include "kvs_wrapper.h"
+#include "misc/int_types.h"
+#include "misc/int_macros.h"
 
-#define TEST_MODULE
-
-#ifndef MCU_ESP8266
+#ifdef HOST_TESTING
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -18,47 +23,9 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
-
-typedef uint8_t u8;
-typedef int8_t i8;
-typedef uint16_t u16;
-typedef int16_t i16;
-typedef uint32_t u32;
-typedef int32_t i32;
-typedef uint64_t u64;
-typedef int64_t i64;
-
-#define GET_BIT(var,pos) ((var) & (1<<(pos)))
-#define SET_BIT(var,pos) ((var) |= (1 << (pos)))
-#define CLR_BIT(var,pos) ((var) &= ~((1) << (pos)))
-#define PUT_BIT(var,pos, val) ((val) ? SET_BIT(var,pos) : CLR_BIT(var,pos))
-
-
-#else
-
-
-#include "app_config/proj_app_cfg.h"
-#include "misc/int_types.h"
-#include "misc/int_macros.h"
-#include "storage/storage.h"
-#include "storage/spiffs_fs.h"
-
-
-#define lseek(fd, pos, whence) SPIFFS_lseek(&fs, fd, pos, whence)
-#define read(fd, buf, size) SPIFFS_read(&fs, fd, buf, size)
-#define write(fd, buf, size) SPIFFS_write(&fs, fd, buf, size)
-#define close(fd) SPIFFS_close(&fs, fd);
-#define open(name, flags, mode) SPIFFS_open(&fs, name, flags, mode)
-
-#define SEEK_SET SPIFFS_SEEK_SET
-#define SEEK_CUR SPIFFS_SEEK_CUR
-#define SEEK_END SPIFFS_SEEK_END
-#define O_RDONLY SPIFFS_RDONLY
-#define O_RDWR SPIFFS_RDWR
-#define O_CREAT SPIFFS_CREAT
 #endif
 
-#define D(x) x
+#define D(x)
 #define DT(x) x
 
 struct kvs_handle {
@@ -388,50 +355,6 @@ void kvs_setup(void) {
 
 }
 
-#ifdef TEST_MODULE
-
-
-kvs_cbrT forEach_cb(const char *key, kvs_type_t type) {
-  printf("foreach: %s, %d\n", key, type);
-}
-
-int main() {
-
-  kvshT h = kvs_open("TEST", kvs_WRITE);
-  printf("kvs_open: %p\n", h);
-  if (!h)
-    return -1;
-  bool succ = kvs_set_i8(h, "test_i8", 42);
-  printf("set_i8: %d\n", succ);
-  if (!succ)
-    return -1;
-  i8 val = kvs_get_i8(h, "test_i8", 33, 0);
-  printf("get_i8: %d\n", (int) val);
-
-  {
-    char *s = "my_string_value";
-    int s_len = strlen(s);
-    int res = kvs_rw_str(h, "test_strX", s, s_len, true);
-    printf("w_str: %d\n", (int) res);
-  }
-  {
-    char *s = "my_string_value";
-    int s_len = strlen(s);
-    int res = kvs_rw_str(h, "test_str", s, s_len, true);
-    printf("w_str: %d\n", (int) res);
-  }
-
-  char buf[32];
-  int res = kvs_rw_str(h, "test_str", buf, 32, false);
-  printf("w_str: %d, %s\n", (int) res, buf);
-
-  kvs_close(h);
-  res = kvs_foreach("TEST", KVS_TYPE_STR, 0, forEach_cb);
-
-}
-
-
-#endif
 
 /*
  Local Variables:
