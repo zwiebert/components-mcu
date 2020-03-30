@@ -48,7 +48,11 @@ void print_array_8_inv(const uint8_t *src, int len);
 
 
 extern int ets_uart_printf(const char *fmt, ...);
+#ifdef MCU_ESP32 // XXX
 #define io_printf ets_uart_printf
+#else
+#define io_printf (*io_printf_fun)
+#endif
 
 bool mcu_get_buttonUpPin(void);
 bool mcu_get_buttonDownPin(void);

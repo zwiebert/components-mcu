@@ -8,7 +8,7 @@
 #ifndef USER_MAIN_SPIFFS_FS_H_
 #define USER_MAIN_SPIFFS_FS_H_
 
-#if ENABLE_SPIFFS
+#ifndef NO_SPIFFS
 
 #include "spiffs_config.h"
 #include "spiffs.h"

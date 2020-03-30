@@ -8,10 +8,12 @@
 #ifndef USER_ESP8266_SPIFFS_CONFIG_H_
 #define USER_ESP8266_SPIFFS_CONFIG_H_
 
-//
 #include "user_interface.h"
+#include "txtio/inout.h"
 #include <os_type.h>
 #include <ets_sys.h>
+#include <osapi.h>
+#include <mem.h>
 #include <stdint.h>
 
 typedef int8_t s8_t;
@@ -25,10 +27,16 @@ typedef u32 u32_t;
 #define memcpy ets_memcpy
 #define memset ets_memset
 #define strncpy ets_strncpy
-#define spiffs_printf ets_uart_printf
+#define spiffs_printf io_printf
 #define strlen ets_strlen
 #define strcpy ets_strcpy
 #define offsetof(TYPE, MEMBER) __builtin_offsetof (TYPE, MEMBER)
+#define printf io_printf
+
+#define malloc os_malloc
+#define free os_free
+#define realloc os_realloc
+#define sprintf os_sprintf
 
 #define SPIFFS_USE_MAGIC 0
 #define SPIFFS_ALIGNED_OBJECT_INDEX_TABLES 1

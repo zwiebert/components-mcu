@@ -6,7 +6,7 @@
  */
 
 #include "app_config/proj_app_cfg.h"
-#if ENABLE_SPIFFS
+#ifndef NO_SPIFFS
 
 
 
@@ -15,6 +15,7 @@
 #include "storage/storage.h"
 #include "storage/spiffs_fs.h"
 #include "debug/debug.h"
+#include "txtio/inout.h"
 
 #define TEST_THIS_MODULE 0
 
@@ -27,11 +28,13 @@
 #endif
 
 
-
+void spiffs_print_errno() {
+  ets_printf("errno: IMPLEMENT_ME");
+}
 ///////////// implement read/ write from storage.h ////////////////////////
 
 bool 
-write_to_file(const char *path, const void *src, size_t len) {
+stor_fileWrite(const char *path, const void *src, size_t len) {
   spiffs_file file;
    s32_t nmb_written;
 
@@ -44,7 +47,7 @@ write_to_file(const char *path, const void *src, size_t len) {
        return false; // error
    }
 
-   nmb_written = SPIFFS_write(fs_A, file, src, len);
+   nmb_written = SPIFFS_write(fs_A, file, (void*)src, len);
    SPIFFS_close(fs_A, file);
    if (nmb_written < 0) {
      DB((io_puts("spiffs:errno: "), io_putl(SPIFFS_errno(fs_A), 10),  io_puts("\n")));
@@ -60,7 +63,7 @@ write_to_file(const char *path, const void *src, size_t len) {
 }
 
 bool 
-read_from_file(const char *path, void *dst, size_t len) {
+stor_fileRead(const char *path, void *dst, size_t len) {
   spiffs_file file;
     s32_t nmb_read = 0;
 
@@ -85,9 +88,17 @@ read_from_file(const char *path, void *dst, size_t len) {
 }
 
 bool 
-delete_file(const char *path) {
+stor_fileDelete(const char *path) {
   return (SPIFFS_remove(fs_A, path) >= 0);
 }
+
+
+void stor_setup(void) {
+#ifndef NO_SPIFFS
+  setup_spiffs();
+#endif
+}
+
 
 
 
