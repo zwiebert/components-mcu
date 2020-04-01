@@ -5,14 +5,6 @@
  *      Author: bertw
  */
 
-
-/*
- * test_timer_data.c
- *
- *  Created on: 27.02.2020
- *      Author: bertw
- */
-
 #include "unity.h"
 #include "key_value_store/kvs_wrapper.h"
 
@@ -39,6 +31,8 @@ static void test_for_foreach_bug() {
   succ = kvs_commit(handle);
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
+
+  return;
 
   res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0);
   TEST_ASSERT_EQUAL(1, res);
@@ -133,7 +127,6 @@ static void g(uint8_t g, uint8_t m) {
   succ = kvs_commit(handle);
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
-
 }
 
 static void f() {
@@ -141,6 +134,7 @@ static void f() {
 }
 
 TEST_CASE("kvs", "[kvs]") {
+  test_set_get_default();
   f();
   test_for_foreach_bug();
   test_set_get_default();
