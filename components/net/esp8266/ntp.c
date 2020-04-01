@@ -20,20 +20,34 @@
 #include "txtio/inout.h"
 #include "misc/int_types.h"
 
-extern int ets_uart_printf(const char *fmt, ...);
-#define printf ets_uart_printf
-
 static time_t last_ntp_time;
 
-void  ntp_setup(void) {
+
+void ntp_setup(void) {
   static int once;
   if (once == 0) {
     once = 1;
-    ip_addr_t *addr = (ip_addr_t *) os_zalloc(sizeof(ip_addr_t));
-    sntp_setservername(0, "us.pool.ntp.org"); // set server 0 by domain name
-    sntp_setservername(1, "ntp.sjtu.edu.cn"); // set server 1 by domain name
-    ipaddr_aton("210.72.145.44", addr);
-    sntp_setserver(2, addr); // set server 2 by IP address
+    ip_addr_t *addr = (ip_addr_t*) os_zalloc(sizeof(ip_addr_t));
+    if (strcmp(C.ntp_server, "gateway") == 0) {
+      extern struct ip_addr  ip4_gateway_address;
+      sntp_setserver(0, &ip4_gateway_address);
+      io_printf("gateway ntp: " IPSTR "\n", IP2STR(&ip4_gateway_address));
+    } else if (ipaddr_aton(C.ntp_server, addr) > 0) {
+      io_printf("ntp server address: " IPSTR "\n", IP2STR(addr));
+      sntp_setserver(0, addr);
+    } else {
+      io_printf("ntp-server-name: %s\n", C.ntp_server);
+      sntp_setservername(0, C.ntp_server);
+    }
+#if 0
+    else {
+      // example code
+      sntp_setservername(0, "us.pool.ntp.org"); // set server 0 by domain name
+      sntp_setservername(1, "ntp.sjtu.edu.cn"); // set server 1 by domain name
+      ipaddr_aton("210.72.145.44", addr);
+      sntp_setserver(2, addr); // set server 2 by IP address
+    }
+#endif
     sntp_set_timezone((int) 0);
     sntp_init();
     os_free(addr);
@@ -77,7 +91,7 @@ bool  ntp_set_system_time(void) {
 #endif
     }
     if (C.app_verboseOutput >= vrb1) {
-      printf("ntp stamp: %lu, %s (adjust=%ld, interval=%d, diff=%d)\n", sntp_get_current_timestamp(), sntp_get_real_time(sntp_get_current_timestamp()),
+      io_printf("ntp stamp: %lu, %s (adjust=%ld, interval=%d, diff=%d)\n", sntp_get_current_timestamp(), sntp_get_real_time(sntp_get_current_timestamp()),
           (long) C.app_rtcAdjust, (int) difftime(ntp_time, last_ntp_time), (int) (rtc_time - ntp_time));
     }
     last_ntp_time = ntp_time;
