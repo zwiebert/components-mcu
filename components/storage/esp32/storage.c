@@ -15,9 +15,11 @@
 #include <string.h>
 #include <sys/unistd.h>
 #include <sys/stat.h>
+#ifndef TEST_HOST
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_spiffs.h"
+#endif
 
 
 #include "app_config/proj_app_cfg.h"
@@ -29,18 +31,18 @@
 #include "storage/storage.h"
 #include "debug/debug.h"
 
-#define TEST_THIS_MODULE 0
-
-#if TEST_THIS_MODULE
+#ifdef TEST_HOST
 #define DB(x) x
 #define DB2(x)
+#define BASE_PATH "."
 #else
 #define DB(x) ((C.app_verboseOutput >= vrbDebug) && (x),1)
 #define DB2(x) DB(x)
+#define BASE_PATH "/spiffs"
 #endif
 
+
 #define TAG "storage"
-#define BASE_PATH "/spiffs"
 
 
 ///////////// implement read/ write from storage.h ////////////////////////
@@ -95,6 +97,7 @@ stor_fileDelete(const char *path) {
   return true;
 }
 
+#ifndef TEST_HOST
 void stor_setup(void) {
   ESP_LOGI(TAG, "Initializing SPIFFS");
 
@@ -127,7 +130,6 @@ void stor_setup(void) {
    } else {
        ESP_LOGI(TAG, "Partition size: total: %d, used: %d", total, used);
    }
-
-
 }
 
+#endif

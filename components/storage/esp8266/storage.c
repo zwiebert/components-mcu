@@ -11,46 +11,45 @@
 
 
 #include "config/config.h"
-#include "spiffs.h"
 #include "storage/storage.h"
-#include "storage/spiffs_fs.h"
 #include "debug/debug.h"
 #include "txtio/inout.h"
 
-#define TEST_THIS_MODULE 0
-
-#if TEST_THIS_MODULE
-#define DB(x) x
+#ifdef TEST_HOST
+#define DB(x)
 #define DB2(x)
 #else
 #define DB(x) ((C.app_verboseOutput >= vrbDebug) && (x),1)
 #define DB2(x) DB(x)
+#include "spiffs.h"
+#include "storage/spiffs_fs.h"
 #endif
 
+#include "storage/spiffs_posix.h"
 
 void spiffs_print_errno() {
-  ets_printf("errno: IMPLEMENT_ME");
+  io_printf("errno: IMPLEMENT_ME");
 }
 ///////////// implement read/ write from storage.h ////////////////////////
 
 bool 
 stor_fileWrite(const char *path, const void *src, size_t len) {
-  spiffs_file file;
-   s32_t nmb_written;
+  int file;
+   i32 nmb_written;
 
 
    if (!path)
      return false;
 
-   if ((file = SPIFFS_open(fs_A, path, SPIFFS_O_TRUNC | SPIFFS_O_CREAT | SPIFFS_O_WRONLY, 0)) < 0) {
+   if ((file = open(path, O_TRUNC | O_CREAT | O_WRONLY, 0666)) < 0) {
        spiffs_print_errno();
        return false; // error
    }
 
-   nmb_written = SPIFFS_write(fs_A, file, (void*)src, len);
-   SPIFFS_close(fs_A, file);
+   nmb_written = write(file, (void*)src, len);
+   close(file);
    if (nmb_written < 0) {
-     DB((io_puts("spiffs:errno: "), io_putl(SPIFFS_errno(fs_A), 10),  io_puts("\n")));
+     DB((io_puts("spiffs:errno: "), io_putl(errno(fs_A), 10),  io_puts("\n")));
    }
 
    DB((io_putd(nmb_written), io_puts("<-written-\n")));
@@ -64,21 +63,21 @@ stor_fileWrite(const char *path, const void *src, size_t len) {
 
 bool 
 stor_fileRead(const char *path, void *dst, size_t len) {
-  spiffs_file file;
-    s32_t nmb_read = 0;
+  int file;
+    i32 nmb_read = 0;
 
     if (!path)
       return false;
 
-    if ((file = SPIFFS_open(fs_A, path, SPIFFS_O_RDONLY, 0)) < 0) {
+    if ((file = open(path, O_RDONLY, 0)) < 0) {
         return false;
     }
 
-    nmb_read = SPIFFS_read(fs_A, file, dst, len);
-    SPIFFS_close(fs_A, file);
+    nmb_read = read(file, dst, len);
+    close(file);
 
     if (nmb_read < 0) {
-      DB((io_puts("spiffs:errno: "), io_putl(SPIFFS_errno(fs_A), 10),  io_puts("\n")));
+      DB((io_puts("spiffs:errno: "), io_putl(errno(fs_A), 10),  io_puts("\n")));
       return false;
     }
 
@@ -89,12 +88,11 @@ stor_fileRead(const char *path, void *dst, size_t len) {
 
 bool 
 stor_fileDelete(const char *path) {
-  return (SPIFFS_remove(fs_A, path) >= 0);
+  return (unlink(path) >= 0);
 }
 
-
 void stor_setup(void) {
-#ifndef NO_SPIFFS
+#if !(defined NO_SPIFFS || defined TEST_HOST)
   setup_spiffs();
 #endif
 }

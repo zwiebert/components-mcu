@@ -15,7 +15,7 @@
 #include "app/rtc.h"
 
 
-#define printf io_printf_fun
+#define printf io_printf
 #ifndef DISTRIBUTION
 #define D(x) x
 #else
@@ -23,7 +23,6 @@
 #endif
 
 extern struct ip_addr ip4_address, ip4_gateway_address, ip4_netmask;
-
 
 // WIFI Station ////////////////////////////////////////
 
@@ -63,7 +62,6 @@ void wifi_handle_event_cb(System_Event_t *evt) {
     ip4_address = evt->event_info.got_ip.ip;
     ip4_gateway_address = evt->event_info.got_ip.gw;
     ip4_netmask = evt->event_info.got_ip.mask;
-
     ipnet_connected();
     break;
   case EVENT_SOFTAPMODE_STACONNECTED:

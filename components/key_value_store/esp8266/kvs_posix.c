@@ -5,9 +5,8 @@
  *      Author: bertw
  */
 
-#ifndef HOST_TESTING
+#ifndef TEST_HOST
 #include "app_config/proj_app_cfg.h"
-#include "storage/spiffs_posix.h"
 #endif
 #include "kvs_wrapper.h"
 #include "misc/int_types.h"
@@ -24,6 +23,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #endif
+
+#include "storage/spiffs_posix.h"
 
 #define D(x)
 #define DT(x) x
@@ -53,19 +54,26 @@ struct line_info {
     u16 blob_len, blob_size;
   } nval;
 #define li_size(li) (sizeof(*li) + ((li->kvs_type & 0x60) ? li->nval.blob_size : 0))
+#define li_typeInt(li) (0 == ((li)->kvs_type & 0x60) && ((li)->kvs_type & 0x07))
+#define li_isUsed(li) (0 == ((li)->kvs_type & 0x80) && ((li)->kvs_type != 0))
 };
 
 #define HANDLE_COUNT 4
 static struct kvs_handle handles[HANDLE_COUNT];
 
 bool kvs_checkMagicCookie(struct line_info *li) {
+
   if (li->magic == COOKIE)
     return true;
 
   D(printf("error: corrupt file (bad magic cookie)\n")); // TODO: delete corrupt file
-  return false;
 
+#ifdef HOST_TESTING
+  abort();
+#endif
 }
+
+
 
 kvshT kvs_callocHandle() {
   kvshT h = 0;
@@ -116,6 +124,14 @@ kvshT kvs_open(const char *name, unsigned flags) {
   return 0;
 }
 
+static bool kvs_read(kvshT h, struct line_info *li, int pos) {
+  if (pos >= 0)
+    if (lseek(h->fd, pos, SEEK_SET) != pos)
+      return false;
+
+  return read(h->fd, li, sizeof *li) == sizeof *li && kvs_checkMagicCookie(li);
+}
+
 int kvs_find_next(kvshT h, struct line_info *li, int pos, const char *key, kvs_type_t kvs_type) {
   DT(printf("%s:(%p, %p, %d, %s, %d)\n", __func__, h, li, pos, key, kvs_type));
   DT(printf("line_info: kvs_type=0x%02x, key=%s 0x%x\n", li->kvs_type, li->key, li->nval.val_u32));
@@ -131,13 +147,9 @@ int kvs_find_next(kvshT h, struct line_info *li, int pos, const char *key, kvs_t
       goto err;
   }
 
-  for (i = 0; read(h->fd, li, sizeof *li) == sizeof *li; ++i) {
+  for (i = 0; kvs_read(h, li, -1); ++i) {
     bool found_key = (key && strncmp(li->key, key, MAX_KEY_LEN) == 0);
     bool found_kvs_type = (li->kvs_type == kvs_type);
-
-    if (!kvs_checkMagicCookie(li)) {
-      return ERR_CORRUPT_FILE;
-    }
 
     if ((key && !found_key) || (kvs_type != KVS_TYPE_ANY && !found_kvs_type)) {
       if (li->kvs_type & 0x60) {
@@ -174,6 +186,12 @@ int kvs_write(kvshT h, struct line_info *li, int pos) {
   return pos;
 
   err: return -1;
+}
+
+static void kvs_deleteNode(kvshT h, struct line_info *lip, int pos) {
+  SET_BIT(lip->kvs_type, 7);
+  lip->key[0] = '\0';
+  int res = kvs_write(h, lip, pos);
 }
 
 bool kvs_commit(kvshT handle) {
@@ -245,15 +263,14 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
 }
 
 //////////////////////// set/get functions //////////////////////////
-static int find_key_int(kvshT h, struct line_info *lip, const char *key) {
+
+static int find_key_int_r(kvshT h, struct line_info *lip, const char *key) {
 #define li (*lip)
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_ANY);
 
   if (pos >= 0) {
     if (li.kvs_type & 0x60) {
-      SET_BIT(li.kvs_type, 7);
-      li.key[0] = '\0';
-      int res = kvs_write(h, &li, pos);
+      kvs_deleteNode(h, lip, pos);
       pos = -1;
     }
   }
@@ -263,13 +280,89 @@ static int find_key_int(kvshT h, struct line_info *lip, const char *key) {
 
 
 
+static int find_key_int_w(kvshT h, struct line_info *lip, const char *key) {
+#define li (*lip)
+  int pos = 0;
+  bool ignore_key = false;
+  int best_match_pos = -1;
+
+  for (pos = 0; (pos = kvs_find_next(h, &li, pos, 0, KVS_TYPE_ANY)) >= 0;) {
+    bool found_key = (key && strncmp(lip->key, key, MAX_KEY_LEN) == 0);
+    bool found_kvs_type = (lip->kvs_type & 0x60);
+    bool wrong_type = !li_typeInt(lip);
+    bool unused_node = !li_isUsed(lip);
+
+    if (found_key) {
+      if (wrong_type) {
+        kvs_deleteNode(h, lip, pos);
+        ignore_key = true;
+        continue;
+      }
+      return pos;
+    }
+
+    if (best_match_pos >= 0)
+      continue;
+
+    if (!unused_node)
+      continue;
+    if (wrong_type)
+      continue;
+
+    if (ignore_key)
+      return pos;
+
+    best_match_pos = pos;
+  }
+#undef li
+  return best_match_pos;
+}
+
+static int find_key_blob_w(kvshT h, struct line_info *lip, const char *key, unsigned req_size) {
+#define li (*lip)
+  int pos = 0;
+  bool ignore_key = false;
+  int best_match_pos = -1;
+  int best_match_wasted = 1000;
+
+  for (pos = 0; (pos = kvs_find_next(h, &li, pos, 0, KVS_TYPE_ANY)) >= 0;) {
+    bool found_key = (key && strncmp(lip->key, key, MAX_KEY_LEN) == 0);
+    bool found_kvs_type = (lip->kvs_type & 0x60);
+    bool wrong_type = li_typeInt(lip);
+    bool unused_node = !li_isUsed(lip);
+    int wasted = ((int) li.nval.blob_size - (int) req_size);
+
+    if (found_key) {
+      if (!wrong_type && wasted == 0)
+        return pos;
+      kvs_deleteNode(h, lip, pos);
+      ignore_key = true;
+      unused_node = true;
+    }
+    if (wrong_type)
+      continue;
+    if (!unused_node)
+      continue;
+    if (wasted < 0)
+      continue;
+
+    if (wasted == 0 && ignore_key)
+      return pos;
+    if (best_match_wasted < wasted)
+      continue;
+
+    best_match_wasted = wasted;
+    best_match_pos = pos;
+  }
+#undef li
+  return best_match_pos;
+}
+
 #define SET_DT_FUN(VAL_T) bool kvs_set_##VAL_T(kvshT h, const char *key, VAL_T val) { \
   struct line_info li = { COOKIE }; \
-  int pos = find_key_int(h, &li, key); \
-  if (pos < 0) { \
-    li.kvs_type = KVS_TYPE_##VAL_T; \
-    strncpy(li.key, key, MAX_KEY_LEN); \
-  } \
+  int pos = find_key_int_w(h, &li, key); \
+  li.kvs_type = KVS_TYPE_##VAL_T; \
+  strncpy(li.key, key, MAX_KEY_LEN); \
   li.nval.val_##VAL_T = val; \
   int res = kvs_write(h, &li, pos); \
   return res > 0; \
@@ -314,15 +407,14 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, u
   }
 
   if (do_write) {
-    int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_ANY);
+
+    int pos = find_key_blob_w(h, &li, key, length);
     char *src = src_or_dst;
     unsigned src_len = length;
 
     if (pos >= 0) {
       if (!(li.kvs_type == KVS_TYPE_STR || li.kvs_type == KVS_TYPE_BLOB) || li.nval.blob_size < src_len) {
-        SET_BIT(li.kvs_type, 7);
-        li.key[0] = '\0';
-        int res = kvs_write(h, &li, pos);
+        kvs_deleteNode(h, &li, pos);
         pos = -1;
       }
     }
@@ -338,7 +430,9 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, u
     int res = kvs_write(h, &li, pos);
 
     res = write(h->fd, src, src_len);
+    return res;
   }
+  return -1;
 }
 
 unsigned kvs_rw_str(kvshT h, const char *key, void *src_or_dst, unsigned length, bool do_write) {
