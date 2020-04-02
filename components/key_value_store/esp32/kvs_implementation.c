@@ -48,7 +48,7 @@ bool kvs_erase_key(kvshT handle, const char *key) {
   return ESP_OK == nvs_erase_key(VP2H(handle), key);
 }
 
-size_t kvs_rw_str(kvshT handle, const char *key, void *src_or_dst, unsigned length, bool write) {
+size_t kvs_rw_str(kvshT handle, const char *key, char *src_or_dst, unsigned length, bool write) {
   if (write) {
     if (nvs_set_str(VP2H(handle), key, src_or_dst) == ESP_OK)
       return 1;
