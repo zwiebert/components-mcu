@@ -24,7 +24,7 @@ void kvs_close(kvshT handle);
 bool kvs_erase_key(kvshT handle, const char *key);
 
 unsigned kvs_rw_blob(kvshT handle, const char *key, void *src_or_dst, unsigned length, bool write);
-unsigned kvs_rw_str(kvshT handle, const char *key, void *src_or_dst, unsigned length, bool write);
+unsigned kvs_rw_str(kvshT handle, const char *key, char *src_or_dst, unsigned length, bool write);
 
 
 bool kvs_set_i8(kvshT handle, const char *key, int8_t val);
