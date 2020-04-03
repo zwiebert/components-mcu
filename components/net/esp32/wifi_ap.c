@@ -70,7 +70,11 @@ void wifiAp_setup(const char *ap_ssid, const char *ap_passwd)
     ESP_LOGI(TAG, "wifi_init_softap finished. ap_ssid:%s password:%s",
              ap_ssid, ap_passwd);
 
-    hts_enable_http_server(true);
+    struct cfg_http *cfg_http = calloc(1, sizeof(struct cfg_http));
+    if (cfg_http) {
+      cfg_http->enable = true;
+      hts_setup(cfg_http);
+    }
     tcps_startServer();
 }
 

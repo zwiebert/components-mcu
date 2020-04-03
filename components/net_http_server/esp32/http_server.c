@@ -2,7 +2,7 @@
 #include "http_server.h"
 #include "userio/status_json.h"
 #include "net/http/server/esp32/register_uris.h"
-
+#include "debug/debug.h"
 #include <esp_wifi.h>
 #include <esp_event.h>
 #include <esp_log.h>
@@ -90,6 +90,8 @@ static httpd_handle_t start_webserver(void) {
 
 void hts_enable_http_server(bool enable) {
   static httpd_handle_t server;
+
+  precond(chs);
 
   if (enable && chs->enable && !server) {
     server = start_webserver();
