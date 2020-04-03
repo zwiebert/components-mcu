@@ -1,22 +1,14 @@
-/*
- * cli_json.c
- *
- *  Created on: 28.03.2019
- *      Author: bertw
- */
-
+#include "app_config/proj_app_cfg.h"
+#include "debug/debug.h"
+#include "userio/status_json.h"
+#include "cli/mutex.h"
 #include "cli/cli_json.h"
 #include "cli/cli.h"
 
-#include "app_config/proj_app_cfg.h"
-#include "config/config.h"
 #include "string.h"
-
 #include <ctype.h>
-#include "debug/debug.h"
 #include <stdlib.h>
-#include "userio/status_json.h"
-#include "cli/mutex.h"
+
 
 
 // like get command line:

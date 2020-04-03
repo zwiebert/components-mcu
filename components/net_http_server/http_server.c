@@ -94,7 +94,10 @@ void hts_query(hts_query_t qtype, const char *qstr, int qstr_len) {
 extern struct cfg_http *chs;
 
 void hts_setup(struct cfg_http *config) {
-  chs = config;
+  if (config)
+    chs = config;
+  if (chs)
+    hts_enable_http_server(chs->enable);
 }
 #endif
 

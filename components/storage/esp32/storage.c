@@ -1,27 +1,25 @@
-#include <stdio.h>
-#include <string.h>
-#include <sys/unistd.h>
-#include <sys/stat.h>
+#include "app_config/proj_app_cfg.h"
+#include "storage/storage.h"
+#include "debug/debug.h"
+
 #ifndef TEST_HOST
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_spiffs.h"
 #endif
 
-
-#include "app_config/proj_app_cfg.h"
-
-#include "config/config.h"
-#include "app_config/proj_app_cfg.h"
-#include "storage/storage.h"
-#include "debug/debug.h"
+#include <stdio.h>
+#include <string.h>
+#include <sys/unistd.h>
+#include <sys/stat.h>
+#include <stdbool.h>
 
 #ifdef TEST_HOST
 #define DB(x) x
 #define DB2(x)
 #define BASE_PATH "."
 #else
-#define DB(x) ((C.app_verboseOutput >= vrbDebug) && (x),1)
+#define DB(x) (TXTIO_IS_VERBOSE(vrbDebug) && (x),1)
 #define DB2(x) DB(x)
 #define BASE_PATH "/spiffs"
 #endif

@@ -1,16 +1,15 @@
+#include "app_config/proj_app_cfg.h"
+#include "http_server.h"
+#include "userio/status_json.h"
+#include "net/http/server/esp32/register_uris.h"
+
 #include <esp_wifi.h>
 #include <esp_event.h>
 #include <esp_log.h>
 #include <esp_system.h>
 #include <sys/param.h>
 #include <mbedtls/base64.h>
-
 #include <esp_http_server.h>
-
-#include "app_config/proj_app_cfg.h"
-#include "http_server.h"
-#include "userio/status_json.h"
-#include "net/http/server/esp32/register_uris.h"
 
 static const char *TAG="APP";
 

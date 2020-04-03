@@ -25,15 +25,12 @@ void ipnet_connected(void) {
   Is_connected = true;
  //XXX so_output_message(SO_INET_PRINT_ADDRESS, 0);
   main_setup_ip_dependent();
-#ifdef USE_HTTP
-  hts_enable_http_server(true);
-#endif
 }
 
 void ipnet_disconnected(void) {
   Is_connected = false;
 #ifdef USE_HTTP
-  hts_enable_http_server(false);
+  hts_setup(0);
 #endif
 }
 

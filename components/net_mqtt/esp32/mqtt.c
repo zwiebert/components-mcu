@@ -1,35 +1,25 @@
-/*
- * mqtt.c
- *
- *  Created on: 16.03.2019
- *      Author: bertw
- */
 #include "app_config/proj_app_cfg.h"
 #include "mqtt.h"
 #include "mqtt_imp.h"
+#include "cli/cli.h"
+#include "txtio/inout.h"
 
-#include <stddef.h>
-#include <string.h>
 #include "esp_system.h"
 #include "esp_event.h"
+#include "esp_log.h"
+#include "mqtt_client.h"
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "freertos/queue.h"
 #include "freertos/event_groups.h"
-
 #include "lwip/sockets.h"
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
 
-#include "esp_log.h"
-#include "mqtt_client.h"
-
-#include "cli/cli.h"
-#include "txtio/inout.h"
-
-#include "config/config.h" // FIXME: remove the kludge at io_mqtt_setup
+#include <stddef.h>
+#include <string.h>
 #include <stdbool.h>
 
 #ifdef DISTRIBUTION
@@ -160,26 +150,30 @@ void io_mqtt_stop_and_destroy(void) {
 }
 
 void io_mqtt_setup(const char *client_id, struct cfg_mqtt *cfg_mqt) {
-  io_mqtt_config = cfg_mqt;
-  io_mqtt_client_id = client_id;
-  if (TXTIO_IS_VERBOSE(6)) {
-    ets_printf("\n\n----#####################################----------\n\n");
-    ESP_LOGI(TAG, "[APP] Startup..");
-    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
-    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+  bool is_initialized = !io_mqtt_config;
 
-    esp_log_level_set("*", ESP_LOG_INFO);
-    esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
-    esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
-    esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
-    esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
-    esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
+  if (cfg_mqt)
+    io_mqtt_config = cfg_mqt;
+
+  if (!is_initialized) {
+    io_mqtt_config = cfg_mqt;
+    io_mqtt_client_id = client_id;
+    if (TXTIO_IS_VERBOSE(6)) {
+      ets_printf("\n\n----#####################################----------\n\n");
+      ESP_LOGI(TAG, "[APP] Startup..");
+      ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
+      ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+
+      esp_log_level_set("*", ESP_LOG_INFO);
+      esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
+      esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
+      esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
+      esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
+      esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
+    }
   }
-  if (cmc->enable) {
-    cmc->enable = 0; //FIXME: kludge to avoid endless reboots when url parsing exception
-    save_config_item(CB_MQTT_ENABLE);
-    io_mqtt_enable(true);
-    cmc->enable = 1;
-    save_config_item(CB_MQTT_ENABLE);
+
+  if (io_mqtt_config) {
+    io_mqtt_enable(io_mqtt_config->enable);
   }
 }
