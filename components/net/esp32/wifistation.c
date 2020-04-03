@@ -18,7 +18,6 @@
 
 #include "net/ipnet.h"
 #include "txtio/inout.h"
-#include "config/config.h"
 
 #define printf io_printf_fun
 #ifndef DISTRIBUTION
@@ -29,14 +28,15 @@
 
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
+struct cfg_wlan *cwl;
 
 void
 user_set_station_config(void) {
 
   wifi_config_t sta_config = { };
 
-  strncpy((char*) sta_config.sta.ssid, C.wifi_SSID, sizeof sta_config.sta.ssid - 1);
-  strncpy((char*) sta_config.sta.password, C.wifi_password, sizeof sta_config.sta.password - 1);
+  strncpy((char*) sta_config.sta.ssid, cwl->SSID, sizeof sta_config.sta.ssid - 1);
+  strncpy((char*) sta_config.sta.password, cwl->password, sizeof sta_config.sta.password - 1);
   sta_config.sta.bssid_set = false;
   ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &sta_config));
   ESP_ERROR_CHECK(esp_wifi_start());
@@ -103,10 +103,9 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
       ipnet_gotIpAddr_cb();
 }
 
-void
-wifistation_setup(void) {
+void wifistation_setup(struct cfg_wlan *config)  {
   esp_netif_create_default_wifi_sta();
-
+  cwl = config;
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
 

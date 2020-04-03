@@ -90,5 +90,11 @@ void hts_query(hts_query_t qtype, const char *qstr, int qstr_len) {
     mutex_cliGive();
   }
 }
+
+extern struct cfg_http *chs;
+
+void hts_setup(struct cfg_http *config) {
+  chs = config;
+}
 #endif
 

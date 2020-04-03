@@ -10,18 +10,17 @@
 #include "app_config/proj_app_cfg.h"
 #include "http_server.h"
 #include "userio/status_json.h"
-#include "config/config.h"
 #include "net/http/server/esp32/register_uris.h"
 
 static const char *TAG="APP";
 
-
+struct cfg_http *chs;
 
 
 //////////////////////////Authorization//////////////////////
-#define HTTP_USER C.http_user
+#define HTTP_USER chs->user
 #define HTTP_USER_LEN (strlen(HTTP_USER))
-#define HTTP_PW C.http_password
+#define HTTP_PW chs->password
 #define HTTP_PW_LEN  (strlen(HTTP_PW))
 
 static bool verify_userName_and_passWord(const char *up, size_t up_len) {
@@ -93,7 +92,7 @@ static httpd_handle_t start_webserver(void) {
 void hts_enable_http_server(bool enable) {
   static httpd_handle_t server;
 
-  if (enable && !server) {
+  if (enable && chs->enable && !server) {
     server = start_webserver();
   }
 

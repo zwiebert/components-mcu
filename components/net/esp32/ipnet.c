@@ -1,7 +1,6 @@
 
 #include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
-#include "config/config.h"
 #include "misc/int_types.h"
 #include "esp_netif_ip_addr.h"
 

@@ -9,7 +9,6 @@
 #include "ipnet.h"
 //XXX #include "userio_app/status_output.h"
 #include "net/http/server/http_server.h"
-#include "config/config.h"
 #include "misc/int_types.h"
 
 void main_setup_ip_dependent(void);
@@ -27,7 +26,7 @@ void ipnet_connected(void) {
  //XXX so_output_message(SO_INET_PRINT_ADDRESS, 0);
   main_setup_ip_dependent();
 #ifdef USE_HTTP
-  hts_enable_http_server(C.http_enable);
+  hts_enable_http_server(true);
 #endif
 }
 

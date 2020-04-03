@@ -16,7 +16,6 @@
 #include "driver/periph_ctrl.h"
 
 #include "net/ipnet.h"
-#include "config/config.h"
 #include "net/ethernet.h"
 
 #ifdef USE_LAN
@@ -26,6 +25,8 @@ static esp_eth_phy_t *(*ethernet_create_phy)(const eth_phy_config_t *config);
 static esp_err_t (*ethernet_phy_pwrctl)(esp_eth_phy_t *phy, bool enable);
 static i8 ethernet_phy_power_pin = -1;
 static i32 ethernet_phy_address;
+
+
 
 
 static esp_eth_handle_t s_eth_handle = NULL;
@@ -147,8 +148,8 @@ void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
   }
 }
 
-void ethernet_setup(enum lanPhy lan_phy, int lan_pwr_gpio) {
-    ethernet_configure(lan_phy, lan_pwr_gpio);
+void ethernet_setup(struct cfg_lan *cfg_lan) {
+    ethernet_configure(cfg_lan->phy, cfg_lan->pwr_gpio);
 
     esp_netif_config_t cfg = ESP_NETIF_DEFAULT_ETH();
     esp_netif_t *eth_netif = esp_netif_new(&cfg);

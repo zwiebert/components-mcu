@@ -2,6 +2,7 @@
 #define DEBUG_H_
 
 #include "app_config/proj_app_cfg.h"
+#include "txtio/inout.h"
 
 extern int unit_testing;
 #define UNIT_TEST (unit_testing+0)
@@ -17,6 +18,8 @@ extern int unit_testing;
 #include <esp32/rom/ets_sys.h>
 #define db_puts(s) ets_printf("%s\n",s)
 #define db_printf ets_printf
+#else
+#define db_printf io_printf
 #endif
 
 void abort_precond(const char *msg, int line);
@@ -51,12 +54,9 @@ void abort_postcond(const char *msg, int line);
 
 #define if_verbose_do(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
 
-#if defined USE_DEBUG_CONFIG && defined db_printf && ! defined DISTRIBUTION
-#include "config/config.h"
-#define dbg_vpf(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
-#else
-#define dbg_vpf(x)
-#endif
+
+#define dbg_vpf(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
+
 
 
 

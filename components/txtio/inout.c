@@ -7,6 +7,15 @@
 
 #include "misc/int_macros.h"
 
+struct cfg_txtio *txtio_config;
+
+void txtio_mcu_setup(void);
+
+void txtio_setup(struct cfg_txtio *cfg_txtio) {
+  txtio_config = cfg_txtio;
+  txtio_mcu_setup();
+}
+
 int (*io_putc_fun)(char c);
 int (*io_getc_fun)(void);
 int (*io_printf_fun)(const char *fmt, ...);

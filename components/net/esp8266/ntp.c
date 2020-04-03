@@ -17,27 +17,28 @@
 #include "app/rtc.h"
 #include "config/config.h"
 #include <sntp.h>
+#include "ntp.h"
 #include "txtio/inout.h"
 #include "misc/int_types.h"
 
 static time_t last_ntp_time;
 
 
-void ntp_setup(void) {
+void ntp_setup(struct cfg_ntp *cfg_ntp) {
   static int once;
   if (once == 0) {
     once = 1;
     ip_addr_t *addr = (ip_addr_t*) os_zalloc(sizeof(ip_addr_t));
-    if (strcmp(C.ntp_server, "gateway") == 0) {
+    if (strcmp(cfg_ntp->server, "gateway") == 0) {
       extern struct ip_addr  ip4_gateway_address;
       sntp_setserver(0, &ip4_gateway_address);
       io_printf("gateway ntp: " IPSTR "\n", IP2STR(&ip4_gateway_address));
-    } else if (ipaddr_aton(C.ntp_server, addr) > 0) {
+    } else if (ipaddr_aton(cfg_ntp->server, addr) > 0) {
       io_printf("ntp server address: " IPSTR "\n", IP2STR(addr));
       sntp_setserver(0, addr);
     } else {
-      io_printf("ntp-server-name: %s\n", C.ntp_server);
-      sntp_setservername(0, C.ntp_server);
+      io_printf("ntp-server-name: %s\n", cfg_ntp->server);
+      sntp_setservername(0, cfg_ntp->server);
     }
 #if 0
     else {
@@ -54,50 +55,22 @@ void ntp_setup(void) {
   }
 }
 
-#define NO_ADJUST_UNTIL (SECS_PER_HOUR) // if ntp is updated too often, don't adjust to avoid wrong values and burning out persistent storage
-#define ADJUST_TOLERANCE_MS 100    // allow tolerance to avoid burning out persistent storage
+bool ntp_set_system_time(void) {
+u32 time_stamp = sntp_get_current_timestamp();
+if (time_stamp != 0) {
+  time_t rtc_time, ntp_time;
 
-void  auto_adjust_time(time_t rtc_time, time_t ntp_time) {
+  rtc_time = time(NULL);
+  rtc_set_system_time(sntp_get_current_timestamp() - 946684800, RTC_SRC_NTP);
+  ntp_time = time(NULL);
 
-  if (last_ntp_time != 0 && last_ntp_time + NO_ADJUST_UNTIL < ntp_time) {
-    i32 diff_time, interval_time;
-    double interval_days;
-    i32 adj_ms_per_day;
-    i32 diff_ms;
+  io_printf_v(vrb1, "ntp stamp: %lu, %s (interval=%d, diff=%d)\n", sntp_get_current_timestamp(), sntp_get_real_time(sntp_get_current_timestamp()),
+      (int) difftime(ntp_time, last_ntp_time), (int) (rtc_time - ntp_time));
 
-    diff_time = difftime(rtc_time, ntp_time);
-    diff_ms = difftime(rtc_time, ntp_time) * 1000L;
-    interval_time = difftime(ntp_time, last_ntp_time);
-    interval_days = (ntp_time - last_ntp_time) / (double) ONE_DAY;
-    if (abs(adj_ms_per_day = diff_ms / interval_days) > ADJUST_TOLERANCE_MS) {
-      C.app_rtcAdjust += adj_ms_per_day;
-      save_config(~0);
-    }
-  }
+  last_ntp_time = ntp_time;
+  return true;
 }
-
-bool  ntp_set_system_time(void) {
-  u32 time_stamp = sntp_get_current_timestamp();
-  if (time_stamp != 0) {
-    time_t rtc_time, ntp_time;
-    bool autoAdjust = (rtc_last_time_source == RTC_SRC_NTP);
-
-    rtc_time = time(NULL);
-    rtc_set_system_time(sntp_get_current_timestamp() - 946684800, RTC_SRC_NTP);
-    ntp_time = time(NULL);
-    if (autoAdjust) {
-#ifdef RTC_AUTO_ADJUST
-      auto_adjust_time(rtc_time, ntp_time);
-#endif
-    }
-    if (C.app_verboseOutput >= vrb1) {
-      io_printf("ntp stamp: %lu, %s (adjust=%ld, interval=%d, diff=%d)\n", sntp_get_current_timestamp(), sntp_get_real_time(sntp_get_current_timestamp()),
-          (long) C.app_rtcAdjust, (int) difftime(ntp_time, last_ntp_time), (int) (rtc_time - ntp_time));
-    }
-    last_ntp_time = ntp_time;
-    return true;
-  }
-  return false;
+return false;
 }
 
 bool  ntp_update_system_time(unsigned interval_seconds) {

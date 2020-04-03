@@ -4,8 +4,16 @@
 #include "stdbool.h"
 #include "stdint.h"
 
+enum verbosity {
+  vrbNone, vrb1, vrb2, vrb3, vrb4, vrbDebug
+};
 
-void txtio_setup(void);
+
+struct cfg_txtio { enum verbosity verbose; };
+extern struct cfg_txtio *txtio_config;
+#define TXTIO_IS_VERBOSE(lvl) (txtio_config->verbose >= (lvl))
+
+void txtio_setup(struct cfg_txtio *cfg_txtio);
 
 
 extern char *itoa(int val, char *s, int radix);
@@ -62,6 +70,10 @@ typedef enum mcu_pin_state { PIN_DEFAULT=0, PIN_INPUT, PIN_INPUT_PULLUP, PIN_OUT
 const char* mcu_access_pin(int gpio_number, mcu_pin_state *result, mcu_pin_state state);
 bool  is_gpio_number_usable(int gpio_number, bool cli);
 void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
+
+
+#define io_printf_v(v, args...)    (TXTIO_IS_VERBOSE(v) && io_printf(args))
+#define io_printf_v1(...)    (TXTIO_IS_VERBOSE(vrb1) && io_printf(__VA_ARGS__))
 
 #endif
 

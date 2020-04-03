@@ -6,10 +6,8 @@
 #include <gpio.h>
 #include <espconn.h>
 #include <mem.h>
-
-#include "config/config.h"
 #include "time.h"
-
+#include "net/wifistation.h"
 #include "txtio/inout.h"
 #include "net/ipnet.h"
 #include "app/rtc.h"
@@ -23,17 +21,15 @@
 #endif
 
 extern struct ip_addr ip4_address, ip4_gateway_address, ip4_netmask;
-
+struct cfg_wlan *cwl;
 // WIFI Station ////////////////////////////////////////
 
 void 
 user_set_station_config(void) {
   struct station_config stationConf;
   stationConf.bssid_set = 0; //need not check MAC address of AP
-#ifdef USE_WLAN
-  os_memcpy(&stationConf.ssid, C.wifi_SSID, 32);
-  os_memcpy(&stationConf.password, C.wifi_password, 64);
-#endif
+  os_memcpy(&stationConf.ssid, cwl->SSID, 32);
+  os_memcpy(&stationConf.password, cwl->password, 64);
   wifi_station_set_config(&stationConf);
 }
 
@@ -73,8 +69,8 @@ void wifi_handle_event_cb(System_Event_t *evt) {
   }
 }
 
-void 
-wifistation_setup(void) {
+void wifistation_setup(struct cfg_wlan *config) {
+  cwl = config;
   wifi_set_opmode(STATION_MODE);
   user_set_station_config();
   wifi_set_event_handler_cb(wifi_handle_event_cb);

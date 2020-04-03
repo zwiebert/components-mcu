@@ -1,17 +1,4 @@
-/*
- * storage.c
- *
- *  Created on: 13.09.2018
- *      Author: bertw
- */
-
-
-/*
- * timer_data_spiffs.c
- *
- *  Created on: 08.09.2018
- *      Author: bertw
- */#include <stdio.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/unistd.h>
 #include <sys/stat.h>
@@ -23,8 +10,6 @@
 
 
 #include "app_config/proj_app_cfg.h"
-
-
 
 #include "config/config.h"
 #include "app_config/proj_app_cfg.h"

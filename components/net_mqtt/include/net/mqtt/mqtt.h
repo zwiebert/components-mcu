@@ -10,9 +10,16 @@
 
 #include "app_config/proj_app_cfg.h"
 #include "stdbool.h"
+#include <stdint.h>
 
 void io_mqtt_enable(bool enable);
 
+struct cfg_mqtt {
+char url[64];
+char user[16];
+char password[31];
+int8_t enable;
+};
 
 #ifdef USE_MQTT
 // low level wrapper to hide MQTT implementation
@@ -21,7 +28,7 @@ void io_mqtt_stop_and_destroy(void);
 void io_mqtt_subscribe(const char *topic, int qos);
 void io_mqtt_unsubscribe(const char *topic);
 void io_mqtt_publish(const char *topic, const char *data);
-void io_mqtt_setup(const char *client_id);
+void io_mqtt_setup(const char *client_id, struct cfg_mqtt *cfg_mqt);
 
 #else
 

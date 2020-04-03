@@ -14,7 +14,7 @@
 
 #include "app_config/proj_app_cfg.h"
 #ifdef USE_NTP
-#include "config/config.h"
+#include "ntp.h"
 #include "esp_event.h"
 #include "esp_event.h"
 #include "esp_system.h"
@@ -25,14 +25,14 @@
 
 extern ip_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 
-static void set_server_by_config() {
+static void set_server_by_config(struct cfg_ntp *cfg_ntp) {
   int server_number = 0;
   ip_addr_t addr[SNTP_MAX_SERVERS];
 
 #if SNTP_MAX_SERVERS > 1
-  static char servers[sizeof C.ntp_server];
+  static char servers[sizeof C.ntp.server];
 
-  memcpy(servers,C.ntp_server, sizeof servers);
+  memcpy(servers,C.ntp.server, sizeof servers);
   const char *server = servers;
   char *sep[SNTP_MAX_SERVERS-1];
 
@@ -55,7 +55,7 @@ static void set_server_by_config() {
     }
 #else
   {
-    const char *server = C.ntp_server;
+    const char *server = cfg_ntp->server;
 #endif
     bool use_dhcp = strcmp(server, "dhcp") == 0;
     bool use_gateway = strcmp(server, "gateway") == 0;
@@ -79,12 +79,12 @@ static void set_server_by_config() {
   sntp_init();
 }
 
-void ntp_setup(void) {
+void ntp_setup(struct cfg_ntp *cfg_ntp) {
   static int once;
   if (once == 0) {
     once = 1;
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
-    set_server_by_config();
+    set_server_by_config(cfg_ntp);
     D(ets_printf("server:<%s> <%s> <%s>\n",sntp_getservername(0), sntp_getservername(1), sntp_getservername(2)));
   }
 }

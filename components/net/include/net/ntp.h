@@ -8,7 +8,9 @@
 #ifndef COMPSHARE_NET_INCLUDE_NET_NTP_H_
 #define COMPSHARE_NET_INCLUDE_NET_NTP_H_
 
-void ntp_setup(void);
+struct cfg_ntp { char server[64]; };
+
+void ntp_setup(struct cfg_ntp *cfg_ntp);
 
 
 #endif /* COMPSHARE_NET_INCLUDE_NET_NTP_H_ */

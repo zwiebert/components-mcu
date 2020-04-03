@@ -8,7 +8,12 @@
 #ifndef USER_ESP32_MAIN_WIFISTATION_H_
 #define USER_ESP32_MAIN_WIFISTATION_H_
 
-void wifistation_setup(void);
+struct cfg_wlan {
+  char SSID[32];
+  char password[64];
+};
+
+void wifistation_setup(struct cfg_wlan *config);
 
 typedef void (*wifistation_cb)(void);
 void wifistation_cbRegister_gotIpAddr(wifistation_cb cb);

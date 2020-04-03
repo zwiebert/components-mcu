@@ -27,7 +27,10 @@
 #include "mqtt_client.h"
 
 #include "cli/cli.h"
-#include "config/config.h"
+#include "txtio/inout.h"
+
+#include "config/config.h" // FIXME: remove the kludge at io_mqtt_setup
+#include <stdbool.h>
 
 #ifdef DISTRIBUTION
 #define D(x)
@@ -35,13 +38,15 @@
 #define D(x) x
 #endif
 
+
 static const char *TAG = "MQTT_EXAMPLE";
 
 #define CONFIG_MQTT_CLIENT_ID io_mqtt_client_id
 const char *io_mqtt_client_id;
 
 static bool is_connected;
-
+static struct cfg_mqtt *io_mqtt_config;
+#define cmc io_mqtt_config
 // implementation interface
 
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
@@ -124,12 +129,12 @@ void io_mqtt_publish(const char *topic, const char *data) {
 
 static void io_mqtt_create_client(void) {
   esp_mqtt_client_config_t mqtt_cfg = {
-      .uri = C.mqtt_url,
+      .uri = cmc->url,
   //  .host = CONFIG_MQTT_HOST,
   //  .port = CONFIG_MQTT_PORT,
       .event_handle = mqtt_event_handler,
-      .username = C.mqtt_user,
-      .password = C.mqtt_password,
+      .username = cmc->user,
+      .password = cmc->password,
       .client_id = CONFIG_MQTT_CLIENT_ID,
   // .user_context = (void *)your_context
       };
@@ -154,11 +159,10 @@ void io_mqtt_stop_and_destroy(void) {
   }
 }
 
-
-
-void io_mqtt_setup(const char *client_id) {
+void io_mqtt_setup(const char *client_id, struct cfg_mqtt *cfg_mqt) {
+  io_mqtt_config = cfg_mqt;
   io_mqtt_client_id = client_id;
-  if (C.app_verboseOutput > 5) {
+  if (TXTIO_IS_VERBOSE(6)) {
     ets_printf("\n\n----#####################################----------\n\n");
     ESP_LOGI(TAG, "[APP] Startup..");
     ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
@@ -171,11 +175,11 @@ void io_mqtt_setup(const char *client_id) {
     esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
   }
-  if (C.mqtt_enable) {
-    C.mqtt_enable = 0; //FIXME: kludge to avoid endless reboots when url parsing exception
+  if (cmc->enable) {
+    cmc->enable = 0; //FIXME: kludge to avoid endless reboots when url parsing exception
     save_config_item(CB_MQTT_ENABLE);
     io_mqtt_enable(true);
-    C.mqtt_enable = 1;
+    cmc->enable = 1;
     save_config_item(CB_MQTT_ENABLE);
   }
 }

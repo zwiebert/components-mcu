@@ -10,6 +10,7 @@
 #include <esp32/rom/ets_sys.h>
 
 
+
 static int es_io_putc(char c) {
   putchar(c);
   return 1;
@@ -19,7 +20,7 @@ static int  es_io_getc(void) {
  return getchar();
 }
 
-void txtio_setup() {
+void txtio_mcu_setup() {
 
   io_putc_fun = es_io_putc;
   io_getc_fun = es_io_getc;
