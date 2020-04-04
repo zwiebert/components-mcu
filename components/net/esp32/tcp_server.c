@@ -21,7 +21,7 @@
 #include <errno.h>
 #include "txtio/inout.h"
 
-#include "tcp_server.h"
+#include "tcp_cli_server.h"
 #include "misc/int_types.h"
 
 #define TCP_HARD_TIMEOUT  (60 * 10)  // terminate connections to avoid dead connections piling up
@@ -274,7 +274,7 @@ static int  tcp_io_getc_buf(void) {
 
  
 void
-tcps_loop(void) {
+tcpCli_loop(void) {
   /** Server run continuously */
   if (sockfd < 0)
     return;
@@ -313,11 +313,14 @@ static void modify_io_fun(bool add_connection) {
   }
 }
 
-void
-tcps_startServer(void) {
+
+void tcpCli_setup(const struct cfg_tcps *cfg_tcps) {
+  if (!cfg_tcps || !cfg_tcps->enable)
+    return;
+
   u8 i;
 
-  for (i=0; i < TCPS_CCONN_MAX; ++i) {
+  for (i = 0; i < TCPS_CCONN_MAX; ++i) {
     cconn_table[i].fd = -1;
   }
 
@@ -325,6 +328,5 @@ tcps_startServer(void) {
   if (tcps_create_server() == 0) {
     printf("tcp server created\n");
   }
-
-
 }
+

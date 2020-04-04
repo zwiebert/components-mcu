@@ -4,10 +4,10 @@
 #include "stdbool.h"
 #include "cli/cli.h"
 
-char cmd_buf[CMD_BUF_SIZE];
+typedef int (*getc_funT)(void);
 
 char * 
-get_commandline() {
+cli_get_commandline(char *cbuf, unsigned buf_size, getc_funT getc_fun) {
   char *result = NULL;
 
   static int cmd_buf_idx;
@@ -15,7 +15,7 @@ get_commandline() {
   int c;
   static int quoteCount;
 
-  while ((c = io_getc()) != -1) {
+  while ((c = (*getc_fun)()) != -1) {
 
     // line ended before ';' terminator received. throw it away
     if (c == '\r' || c == '\n') {
@@ -28,7 +28,7 @@ get_commandline() {
     if (c == '\b') {
       if (cmd_buf_idx == 0)
         continue;
-      if (cmd_buf[--cmd_buf_idx] == '\"')
+      if (cbuf[--cmd_buf_idx] == '\"')
         --quoteCount;
       continue;
     }
@@ -45,7 +45,7 @@ get_commandline() {
       continue;
     }
     // to make sure there is at least 1 free byte available in CMD_BUF
-    if (!((cmd_buf_idx + 1) < CMD_BUF_SIZE)) {
+    if (!((cmd_buf_idx + 1) < buf_size)) {
       goto err;
     }
 
@@ -55,14 +55,14 @@ get_commandline() {
       if (c == ';' && (quoteCount & 1) == 0) {
         if (cmd_buf_idx == 0)
           goto succ;
-        cmd_buf[cmd_buf_idx] = '\0';
-        result = cmd_buf;
+        cbuf[cmd_buf_idx] = '\0';
+        result = cbuf;
         goto succ;
       }
     }
 
     // store char to buffer
-    cmd_buf[cmd_buf_idx++] = (char) c;
+    cbuf[cmd_buf_idx++] = (char) c;
   }
 
   goto cont;
