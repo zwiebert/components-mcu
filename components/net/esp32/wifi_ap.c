@@ -8,7 +8,7 @@
 #include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
 #include "net/http/server/http_server.h"
-#include "net/tcp_server.h"
+#include "net/tcp_cli_server.h"
 
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -75,7 +75,11 @@ void wifiAp_setup(const char *ap_ssid, const char *ap_passwd)
       cfg_http->enable = true;
       hts_setup(cfg_http);
     }
-    tcps_startServer();
+    struct cfg_tcps *cfg_tcps = calloc(1, sizeof(struct cfg_tcps));
+    if (cfg_tcps) {
+      cfg_tcps->enable = true;
+      tcpCli_setup(cfg_tcps);
+    }
 }
 
 

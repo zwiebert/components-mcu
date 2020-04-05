@@ -12,6 +12,7 @@
 
 #include "txtio/inout.h"
 #include "app/rtc.h"
+#include "net/tcp_cli_server.h"
 
 #define TCP_HARD_TIMEOUT  (60 * 10)  // terminate connections to avoid dead connections piling up
 #define PUTC_LINE_BUFFER 1
@@ -400,7 +401,7 @@ tcps_command_processing_hook(bool done) {
 #endif
 
 void 
-tcps_loop(void) {
+tcpCli_loop(void) {
   int i;
 
   tcps_tx_loop();
@@ -434,9 +435,11 @@ tcps_loop(void) {
   }
 }
 
-void 
-tcps_startServer(void) {
+void tcpCli_setup(const struct cfg_tcps *cfg_tcps) {
   // create tcp server
+  if (!cfg_tcps || !cfg_tcps->enable)
+    return;
+
   struct espconn *pesp_conn = os_zalloc((uint32 )sizeof(struct espconn));
   int result = 0;
 

@@ -16,6 +16,8 @@
 //#undef USE_NTP
 //#undef USE_WLAN
 //#undef USE_MQTT
+#undef USE_TCPS
+
 #define NO_SPIFFS
 
 #undef CONFIG_BLOB

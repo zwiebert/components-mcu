@@ -72,7 +72,7 @@ bool  is_gpio_number_usable(int gpio_number, bool cli);
 void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
 
 
-#define io_printf_v(v, args...)    (TXTIO_IS_VERBOSE(v) && io_printf(args))
+#define io_printf_v(v, args...)    (void)(TXTIO_IS_VERBOSE(v) && io_printf(args))
 #define io_printf_v1(...)    (TXTIO_IS_VERBOSE(vrb1) && io_printf(__VA_ARGS__))
 
 #endif

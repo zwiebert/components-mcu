@@ -14,11 +14,15 @@
 #include "stdbool.h"
 
 // user interface
-char *get_commandline(void);
-char *set_commandline(const char *src, uint8_t len); // copy src  (e.g. from mqtt event) to writable buffer
+typedef int (*getc_funT)(void);
+char *cli_get_commandline(char *cbuf, unsigned buf_size, getc_funT getc_fun);
 void cli_process_cmdline(char *line, so_target_bits tgt);
 void cli_process_json(char *json, so_target_bits tgt);
 void cli_loop(void);
+
+// XXX: functions working on a static buffer
+char *get_commandline(void);
+char *set_commandline(const char *src, uint8_t len); // copy src  (e.g. from mqtt event) to writable buffer
 
 // implementation interface
 typedef struct {
