@@ -19,7 +19,7 @@
 #define SERIAL_ECHO 1
 #define SERIAL_INPUT 1
 
-#define printf io_printf_fun
+#define printf con_printf_fun
 #ifndef DISTRIBUTION
 #define D(x)
 #else

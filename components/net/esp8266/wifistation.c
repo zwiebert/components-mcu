@@ -35,7 +35,7 @@ user_set_station_config(void) {
 
 void wst_reconnect(void) {
   u8 status = wifi_station_get_connect_status();
-  io_printf_fun("wifi state: %d\n", (int) 0xff & status);
+  con_printf_fun("wifi state: %d\n", (int) 0xff & status);
 
   //wifi_station_connect();
 }
@@ -54,7 +54,7 @@ void wifi_handle_event_cb(System_Event_t *evt) {
     D(printf("mode: %d -> %d\n", evt->event_info.auth_change.old_mode, evt->event_info.auth_change.new_mode));
     break;
   case EVENT_STAMODE_GOT_IP:
-    D(printf("ip:" IPSTR ",mask:" IPSTR ",gw:" IPSTR, IP2STR(&evt->event_info.got_ip.ip), IP2STR(&evt->event_info.got_ip.mask), IP2STR(&evt->event_info.got_ip.gw)); printf("\n"));
+    D(printf("ip:" IPSTR ",mask:" IPSTR ",gw:" IPSTR "\n", IP2STR(&evt->event_info.got_ip.ip), IP2STR(&evt->event_info.got_ip.mask), IP2STR(&evt->event_info.got_ip.gw)));
     ip4_address = evt->event_info.got_ip.ip;
     ip4_gateway_address = evt->event_info.got_ip.gw;
     ip4_netmask = evt->event_info.got_ip.mask;

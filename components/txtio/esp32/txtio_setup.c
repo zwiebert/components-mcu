@@ -24,5 +24,5 @@ void txtio_mcu_setup() {
 
   io_putc_fun = es_io_putc;
   io_getc_fun = es_io_getc;
-  io_printf_fun = ets_printf;
+  con_printf_fun = ets_printf;
 }

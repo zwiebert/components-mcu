@@ -13,7 +13,7 @@ extern char *ltoa(long val, char *s, int radix);
 
 extern int (*io_putc_fun)(char c);
 extern int (*io_getc_fun)(void);
-extern int (*io_printf_fun)(const char *fmt, ...);
+extern int (*con_printf_fun)(const char *fmt, ...);
 extern int (*io_puts_fun)(const char *s);
 
 int io_putc(char c);
@@ -51,7 +51,7 @@ extern int ets_uart_printf(const char *fmt, ...);
 #ifdef MCU_ESP32 // XXX
 #define io_printf ets_uart_printf
 #else
-#define io_printf (*io_printf_fun)
+#define io_printf (*con_printf_fun)
 #endif
 
 bool mcu_get_buttonUpPin(void);

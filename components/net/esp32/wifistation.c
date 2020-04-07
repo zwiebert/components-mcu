@@ -18,7 +18,7 @@
 #include "net/ipnet.h"
 #include "txtio/inout.h"
 
-#define printf io_printf_fun
+#define printf con_printf_fun
 #ifndef DISTRIBUTION
 #define D(x) x
 #else

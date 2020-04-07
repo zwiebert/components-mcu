@@ -19,7 +19,7 @@
 #define DB(x)
 #define DB2(x)
 #else
-#define DB(x) ((C.app_verboseOutput >= vrbDebug) && (x),1)
+#define DB(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) {x;} } while(0)
 #define DB2(x) DB(x)
 #include "spiffs.h"
 #include "storage/spiffs_fs.h"

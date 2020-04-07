@@ -19,7 +19,8 @@ extern int unit_testing;
 #define db_puts(s) ets_printf("%s\n",s)
 #define db_printf ets_printf
 #else
-#define db_printf io_printf
+#define db_printf con_printf
+#define db_puts(s) db_printf("%s\n",s)
 #endif
 
 void abort_precond(const char *msg, int line);

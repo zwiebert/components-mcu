@@ -289,7 +289,7 @@ spiffs_format_fs(spiffs *fs) {
 
 // setup module
 void  setup_spiffs(void) {
-  printf("spiffs: mount filesystems...");
+  io_puts("spiffs: mount filesystems...");
 	int result = my_spiffs_mount(); // FIXME: error handling, like reformat fs
 }
 #endif

@@ -21,7 +21,7 @@ extern char *ltoa(long val, char *s, int radix);
 
 extern int (*io_putc_fun)(char c);
 extern int (*io_getc_fun)(void);
-extern int (*io_printf_fun)(const char *fmt, ...);
+extern int (*con_printf_fun)(const char *fmt, ...);
 extern int (*io_puts_fun)(const char *s);
 
 int io_putc(char c);
@@ -54,14 +54,6 @@ void printBCD(uint8_t bcd);
 void print_array_8(const uint8_t *src, int len);
 void print_array_8_inv(const uint8_t *src, int len);
 
-#ifndef TEST_HOST
-//extern int ets_uart_printf(const char *fmt, ...);
-//#define io_printf ets_uart_printf
-#define io_printf (*io_printf_fun)
-#else
-#define io_printf printf
-#endif
-
 bool mcu_get_buttonUpPin(void);
 bool mcu_get_buttonDownPin(void);
 bool mcu_get_buttonPin(void);
@@ -71,9 +63,26 @@ const char* mcu_access_pin(int gpio_number, mcu_pin_state *result, mcu_pin_state
 bool  is_gpio_number_usable(int gpio_number, bool cli);
 void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
 
+#ifdef TEST_HOST
+#include <stdio.h>
+#define io_printf printf
+#define con_printf printf
+#elif defined MCU_ESP8266
+#include <osapi.h>
+#define io_printf(args...)  do { char buf[120]; if (ets_snprintf(buf, sizeof buf, args) > 0) io_puts(buf); } while(0)
+#define  con_printf (*con_printf_fun)
+#else
+#include <stdio.h>
+#define io_printf(args...)  do { char buf[120]; if (snprintf(buf, sizeof buf, args) > 0) io_puts(buf); } while(0)
+#define  con_printf (*con_printf_fun)
+#endif
 
-#define io_printf_v(v, args...)    (void)(TXTIO_IS_VERBOSE(v) && io_printf(args))
-#define io_printf_v1(...)    (TXTIO_IS_VERBOSE(vrb1) && io_printf(__VA_ARGS__))
+
+
+#define io_printf_v(v, fmt, args...)   do { if(TXTIO_IS_VERBOSE(v)) io_printf(fmt, args); } while(0)
+#define con_printf_v(v, fmt, args...)   do { if(TXTIO_IS_VERBOSE(v)) con_printf(fmt, args); } while(0)
+
+
 
 #endif
 
