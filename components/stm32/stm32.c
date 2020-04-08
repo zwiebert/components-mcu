@@ -67,13 +67,28 @@ void stm32_reset() {
 }
 
 int stm32_write(const char *data, unsigned data_len) {
+  if (stm32_mode != STM32_MODE_FIRMWARE)
+    return -1;
 	return   uart_write_bytes(UART_NUM_1, (const char *) data, data_len);
 }
 
 int stm32_read(char *buf, unsigned buf_size) {
+  if (stm32_mode != STM32_MODE_FIRMWARE)
+    return -1;
 	 return uart_read_bytes(UART_NUM_1, (u8 *)buf, buf_size, 20 / portTICK_RATE_MS);
 }
 
+int stm32_write_bl(const char *data, unsigned data_len) {
+  if (stm32_mode != STM32_MODE_BOOTLOADER)
+    return -1;
+  return   uart_write_bytes(UART_NUM_1, (const char *) data, data_len);
+}
+
+int stm32_read_bl(char *buf, unsigned buf_size) {
+  if (stm32_mode != STM32_MODE_BOOTLOADER)
+    return -1;
+   return uart_read_bytes(UART_NUM_1, (u8 *)buf, buf_size, 20 / portTICK_RATE_MS);
+}
 
 static void stm32_configSerial(stm32_mode_T mode) {
   esp_err_t err;
@@ -142,7 +157,7 @@ void stm32_setup(const struct cfg_stm32 *cfg_stm32)
 
   gpio_pad_select_gpio(stm32_cfg->boot_gpio);
   STM32_SET_BOOT_PIN(0);
-  gpio_set_direction(stm32_cfg->boot_gpio, GPIO_MODE_OUTPUT_OD);
+  gpio_set_direction(stm32_cfg->boot_gpio, stm32_cfg->boot_gpio_is_inverse ? GPIO_MODE_OUTPUT_OD : GPIO_MODE_OUTPUT); // XXX: if inverse we would have a pullup resistor (guesswork)
   STM32_SET_BOOT_PIN(0);
 
   stm32_configSerial(STM32_MODE_FIRMWARE);

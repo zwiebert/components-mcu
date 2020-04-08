@@ -13,6 +13,8 @@
 
 int stm32_write(const char *data, unsigned data_len);
 int stm32_read(char *buf, unsigned buf_size);
+int stm32_write_bl(const char *data, unsigned data_len);
+int stm32_read_bl(char *buf, unsigned buf_size);
 
 void stm32_runBootLoader(void);
 void stm32_runFirmware(void);

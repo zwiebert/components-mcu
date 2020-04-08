@@ -34,18 +34,18 @@
 
 void stm32Bl_sendStart(void) {
   char c = STM32_INIT;
-  stm32_write(&c, 1);
+  stm32_write_bl(&c, 1);
 }
 
 void stm32Bl_sendCommand(stm32_cmd_T cmd) {
   char buf[2] = { cmd, ~cmd };
-  stm32_write(buf, sizeof buf);
+  stm32_write_bl(buf, sizeof buf);
 }
 
 void stm32Bl_sendAddress(u32 addr) {
   char buf[5] = { GET_BYTE_3(addr), GET_BYTE_2(addr), GET_BYTE_1(addr), GET_BYTE_0(addr)};
   buf[4] = buf[0] ^ buf[1] ^ buf[2] ^ buf[3];
-  stm32_write(buf, sizeof buf);
+  stm32_write_bl(buf, sizeof buf);
 }
 
 int stm32Bl_recv(char *buf, int buf_size, int wait_ms) {
@@ -60,7 +60,7 @@ int stm32Bl_recv(char *buf, int buf_size, int wait_ms) {
   for (int i = 0; i < (WFR_TOTAL_MS / WFR_INTERVAL_MS); ++i) {
     vTaskDelay(WFR_INTERVAL_MS / portTICK_PERIOD_MS);
     DD(db_printf(":"));
-    n += stm32_read(buf + n, buf_size - 1 - n);
+    n += stm32_read_bl(buf + n, buf_size - 1 - n);
     if (n > 0) {
       DD(db_printf("stm32Bl: %d bytes received\n", n));
       return n;
@@ -124,13 +124,13 @@ bool stm32Bl_doWriteMemory(u32 dst_addr, char *data, unsigned data_len) {
   }
 
   buf[0] = data_len - 1;
-  stm32_write(buf, 1);
+  stm32_write_bl(buf, 1);
   u8 chksum = buf[0];
   for (int i = 0; i < data_len; ++i) {
     chksum ^= data[i];
   }
-  stm32_write(data, data_len);
-  stm32_write((char*)&chksum, 1);
+  stm32_write_bl(data, data_len);
+  stm32_write_bl((char*)&chksum, 1);
 
   if (1 != stm32Bl_recv(buf, sizeof buf, 20000) || buf[0] != STM32_ACK) {
     return false;
@@ -147,15 +147,15 @@ bool stm32Bl_doEraseFlash(int start_page, u8 page_count) {
   }
 
   buf[0] = page_count - 1;
-  stm32_write(buf, 1);
+  stm32_write_bl(buf, 1);
   u8 chksum = buf[0];
 
   for (int i=0; i < page_count; ++i) {
     u8 c = start_page + i;
     chksum ^= c;
-    stm32_write((char*)&c, 1);
+    stm32_write_bl((char*)&c, 1);
   }
-  stm32_write((char*)&chksum, 1);
+  stm32_write_bl((char*)&chksum, 1);
 
   db_printf("waiting for erase to complete\n");
   if (1 != stm32Bl_recv(buf, sizeof buf, 60000) || buf[0] != STM32_ACK) {
@@ -176,19 +176,19 @@ bool stm32Bl_doExtEraseFlash(u16 start_page, u16 page_count) {
 
   buf[0] = GET_BYTE_1(page_count-1);
   buf[1] = GET_BYTE_0(page_count-1);
-  stm32_write(buf, 2);
+  stm32_write_bl(buf, 2);
 
   u8 chksum = buf[0] ^ buf[1];
   for (u16 i=0; i < page_count; ++i) {
     u16 pn = start_page + i;
     buf[0] = GET_BYTE_1(pn);
     buf[1] = GET_BYTE_0(pn);
-    stm32_write(buf, 2);
+    stm32_write_bl(buf, 2);
 
     chksum ^= buf[0];
     chksum ^= buf[1];
   }
-  stm32_write((char*)&chksum, 1);
+  stm32_write_bl((char*)&chksum, 1);
 
   n = stm32Bl_recv(buf, 1, 60000);
   if (!(n == 1 && buf[0] == STM32_ACK)) {
