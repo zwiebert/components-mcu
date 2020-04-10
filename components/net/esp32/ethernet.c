@@ -14,7 +14,7 @@
 #include "esp_netif.h"
 #include "driver/gpio.h"
 #include "driver/periph_ctrl.h"
-
+#include "debug/debug.h"
 #include "net/ipnet.h"
 #include "net/ethernet.h"
 
@@ -27,7 +27,7 @@ static i8 ethernet_phy_power_pin = -1;
 static i32 ethernet_phy_address;
 
 
-
+#define DX(x) x
 
 static esp_eth_handle_t s_eth_handle = NULL;
 
@@ -46,12 +46,12 @@ static esp_err_t (*orig_pwrctl)(esp_eth_phy_t *phy, bool enable);
  */
 static esp_err_t phy_pwctl_with_voltage(esp_eth_phy_t *phy, bool enable) {
   esp_err_t result = ESP_OK;
+ //DX(io_printf("%s: enable:%d\n", __func__, (int)enable));
 
   if (enable) {
-
     if (ethernet_phy_power_pin >= 0) {
       gpio_set_level(ethernet_phy_power_pin, 1);
-      vTaskDelay(10 / portTICK_PERIOD_MS);; // Allow the power up/down to take effect, min 300us
+      vTaskDelay(pdMS_TO_TICKS(300));
     }
     if (orig_pwrctl) {
       result = orig_pwrctl(phy, enable);
@@ -163,8 +163,6 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
     if (ethernet_phy_power_pin >= 0) {
       gpio_pad_select_gpio(ethernet_phy_power_pin);
       gpio_set_direction(ethernet_phy_power_pin, GPIO_MODE_OUTPUT);
-      vTaskDelay(500 / portTICK_PERIOD_MS);  //XXX: phy power fails without this delay before gpio_set_level (???)
-      //gpio_set_level(ethernet_phy_power_pin, 1);  // done in powerctl anyway
     }
 
     // Setup MAC
@@ -174,13 +172,18 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
     // Setup PHY
     eth_phy_config_t phy_config = ETH_PHY_DEFAULT_CONFIG();
 
-    phy_config.phy_addr = ethernet_phy_address;
+    phy_config.phy_addr = 0;
+    phy_config.reset_gpio_num = -1;
     esp_eth_phy_t *phy = ethernet_create_phy(&phy_config);
 
+
     if (ethernet_phy_pwrctl) {
+#if 0  // XXX: the original PhyLAN8270 pwrctl seems to get in the way and fails unpredictable on OLIMEX with power-pin and without hardware reset pin. Dunno why...
       orig_pwrctl = phy->pwrctl;
-      phy->pwrctl = ethernet_phy_pwrctl;
+#endif
+      phy->pwrctl = ethernet_phy_pwrctl;  // XXX: this requires a patch in ESP-IDF's esp_eth component, which just calls the pwrctl directly instead using the function pointer in esp_eth_phy_t
     }
+
 
     // Ethernet Driver
     esp_eth_config_t config = ETH_DEFAULT_CONFIG(mac, phy);
