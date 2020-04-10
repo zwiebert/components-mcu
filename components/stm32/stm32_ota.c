@@ -42,6 +42,7 @@ bool stm32Ota_firmwareUpdate(const char *file_name) {
 }
 
 bool stm32Ota_firmwareDownload(const char *url, const char *file_name) {
+  db_printf("download file name=<%s> url=<%s>\n", file_name, url);
   return httpClient_downloadFile(url, file_name);
 }
 
@@ -50,7 +51,7 @@ void stm32ota_doUpdate_task(void *pvParameter) {
 
   state = stm32ota_RUN;
 
-  if (true || stm32Ota_firmwareDownload(url, STM32_FW_FILE_NAME)) {
+  if (stm32Ota_firmwareDownload(url, STM32_FW_FILE_NAME)) {
     if (stm32Ota_firmwareUpdate(STM32_FW_FILE_NAME)) {
       state = stm32ota_DONE;
       goto done;

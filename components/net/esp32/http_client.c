@@ -19,6 +19,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <sys/fcntl.h>
+#include <sys/unistd.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
@@ -58,6 +60,9 @@ esp_err_t _http_event_handler(esp_http_client_event_t *evt)
               db_printf("write to file %s\n", fileName);
 
             fd = open(fileName, O_CREAT | O_TRUNC | O_WRONLY);
+            if (fd < 0) {
+              perror(fileName);
+            }
           }
 
           if (fd >= 0) {
