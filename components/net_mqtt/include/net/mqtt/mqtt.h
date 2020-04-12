@@ -18,6 +18,7 @@ struct cfg_mqtt {
 char url[64];
 char user[16];
 char password[31];
+char client_id[32];
 int8_t enable;
 };
 
@@ -28,7 +29,7 @@ void io_mqtt_stop_and_destroy(void);
 void io_mqtt_subscribe(const char *topic, int qos);
 void io_mqtt_unsubscribe(const char *topic);
 void io_mqtt_publish(const char *topic, const char *data);
-void io_mqtt_setup(const char *client_id, struct cfg_mqtt *cfg_mqt);
+void io_mqtt_setup(struct cfg_mqtt *cfg_mqt);
 
 #else
 
@@ -37,7 +38,7 @@ void io_mqtt_setup(const char *client_id, struct cfg_mqtt *cfg_mqt);
 #define io_mqtt_subscribe(topic, qos)
 #define io_mqtt_unsubscribe(topic)
 #define io_mqtt_publish(topic, data)
-#define setup_mqtt()
+#define setup_mqtt(cfg)
 #endif
 
 

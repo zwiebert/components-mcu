@@ -31,9 +31,6 @@
 
 static const char *TAG = "MQTT_EXAMPLE";
 
-#define CONFIG_MQTT_CLIENT_ID io_mqtt_client_id
-const char *io_mqtt_client_id;
-
 static bool is_connected;
 static struct cfg_mqtt *io_mqtt_config;
 #define cmc io_mqtt_config
@@ -125,7 +122,7 @@ static void io_mqtt_create_client(void) {
       .event_handle = mqtt_event_handler,
       .username = cmc->user,
       .password = cmc->password,
-      .client_id = CONFIG_MQTT_CLIENT_ID,
+      .client_id = cmc->client_id,
   // .user_context = (void *)your_context
       };
 
@@ -149,7 +146,7 @@ void io_mqtt_stop_and_destroy(void) {
   }
 }
 
-void io_mqtt_setup(const char *client_id, struct cfg_mqtt *cfg_mqt) {
+void io_mqtt_setup(struct cfg_mqtt *cfg_mqt) {
   bool is_initialized = !io_mqtt_config;
 
   if (cfg_mqt)
@@ -157,7 +154,6 @@ void io_mqtt_setup(const char *client_id, struct cfg_mqtt *cfg_mqt) {
 
   if (!is_initialized) {
     io_mqtt_config = cfg_mqt;
-    io_mqtt_client_id = client_id;
     if (TXTIO_IS_VERBOSE(6)) {
       ets_printf("\n\n----#####################################----------\n\n");
       ESP_LOGI(TAG, "[APP] Startup..");
