@@ -45,7 +45,9 @@
 #define D(x)
 #endif
 
-#define MY_PORT   7777
+#ifndef TCPS_TASK_PORT
+#define TCPS_TASK_PORT   7777
+#endif
 #define MAX_BUF   1024
 #define TCPS_CCONN_MAX 5
 
@@ -123,7 +125,7 @@ static int tcps_create_server() {
   /** Initialize address/port structure */
   bzero(&self, sizeof(self));
   self.sin_family = AF_INET;
-  self.sin_port = htons(MY_PORT);
+  self.sin_port = htons(TCPS_TASK_PORT);
   self.sin_addr.s_addr = INADDR_ANY;
 
   /** Assign a port number to the socket */

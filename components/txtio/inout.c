@@ -6,6 +6,8 @@
 #include <string.h>
 
 #include "misc/int_macros.h"
+#include "txtio_mutex.h"
+
 
 struct cfg_txtio *txtio_config;
 
@@ -23,8 +25,29 @@ int (*con_printf_fun)(const char *fmt, ...);
 extern char *itoa(int val, char *s, int radix);
 extern char *ltoa(long val, char *s, int radix);
 
-int  io_putc(char c) { return (io_putc_fun == 0) ? -1 : io_putc_fun(c); }
-int  io_getc(void)   { return (io_getc_fun == 0) ? -1 : io_getc_fun(); }
+int io_putc(char c) {
+  int result = -1;
+
+  if (io_putc_fun) {
+    if (txtio_mutexTake()) {
+      result = io_putc_fun(c);
+      txtio_mutexGive();
+    }
+  }
+  return result;
+}
+
+int io_getc(void) {
+  int result = -1;
+
+  if (io_getc_fun) {
+    if (txtio_mutexTake()) {
+      result = io_getc_fun();
+      txtio_mutexGive();
+    }
+  }
+  return result;
+}
 
 
 
