@@ -24,6 +24,8 @@ typedef enum { HQT_NONE, } hts_query_t;
 void hts_query(hts_query_t qtype, const char *qstr, int qstr_len);
 //void hts_query_json(char *qstr);
 
+struct httpd_req;
+bool check_access_allowed(struct httpd_req *req); // XXX: esp32 specific types should be moved to esp32 folder
 
 // interface which has to be implemented by mcu specific code
 #ifdef USE_HTTP
