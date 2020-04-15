@@ -115,7 +115,7 @@ void  cli_warning_optionUnknown(const char *key) {
 void  cli_reply_print(const char *tag) {
   if (!so_tgt_test(SO_TGT_CLI) || cli_isJson)
     return;
-  msg_print("cli_replyResult", tag);
+  msg_print("cli_reply", tag);
 }
 
 void  reply_message(const char *tag, const char *msg) {

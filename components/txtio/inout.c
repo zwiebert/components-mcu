@@ -58,13 +58,18 @@ int io_getc(void) {
 
 int  io_putlf(void) { return io_putc('\n'); }
 
-
-int  io_puts(const char *s) {
-  for (;*s != '\0'; ++s) {
-    if (io_putc(*s) == -1)
-      return -1;
+int io_puts(const char *s) {
+  int result = 0;
+  if (txtio_mutexTake()) {
+    for (; *s != '\0'; ++s) {
+      if (io_putc(*s) == -1) {
+        result = -1;
+        break;
+      }
+    }
+    txtio_mutexGive();
   }
-  return 0;
+  return result;
 }
 
 void 

@@ -69,18 +69,18 @@ void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
 #define con_printf printf
 #elif defined MCU_ESP8266
 #include <osapi.h>
-#define io_printf(args...)  do { char buf[120]; if (ets_snprintf(buf, sizeof buf, args) > 0) io_puts(buf); } while(0)
+#define io_printf(...)  do { char buf[120]; if (ets_snprintf(buf, sizeof buf, __VA_ARGS__) > 0) io_puts(buf); } while(0)
 #define  con_printf (*con_printf_fun)
 #else
 #include <stdio.h>
-#define io_printf(args...)  do { char buf[120]; if (snprintf(buf, sizeof buf, args) > 0) io_puts(buf); } while(0)
+#define io_printf(...)  do { char buf[120]; if (snprintf(buf, sizeof buf, __VA_ARGS__) > 0) io_puts(buf); } while(0)
 #define  con_printf (*con_printf_fun)
 #endif
 
 
 
-#define io_printf_v(v, fmt, args...)   do { if(TXTIO_IS_VERBOSE(v)) io_printf(fmt, args); } while(0)
-#define con_printf_v(v, fmt, args...)   do { if(TXTIO_IS_VERBOSE(v)) con_printf(fmt, args); } while(0)
+#define io_printf_v(v, ...)   do { if(TXTIO_IS_VERBOSE(v)) io_printf(__VA_ARGS__); } while(0)
+#define con_printf_v(v, ...)   do { if(TXTIO_IS_VERBOSE(v)) con_printf(__VA_ARGS__); } while(0)
 
 
 
