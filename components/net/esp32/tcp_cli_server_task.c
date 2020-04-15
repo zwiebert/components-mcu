@@ -37,13 +37,17 @@
 #define SERIAL_INPUT 1
 #define PUTC_LINE_BUFFER 1
 
-#define printf ets_printf
+#define printf(...) io_printf_v(vrb3, __VA_ARGS__)
+#define perror(s)   io_printf_v(vrb3, "%s: %s\n", s, strerror(errno))
+
 #ifndef DISTRIBUTION
 #define DP(x) printf("db:tcps: %s\n", (x))
-#define D(x) x
+#define D(x)
 #else
 #define D(x)
 #endif
+
+
 
 #ifndef TCPS_TASK_PORT
 #define TCPS_TASK_PORT   7777
@@ -82,6 +86,10 @@ static void add_fd(int fd) {
 }
 
 static void rm_fd(int fd) {
+  if (!FD_ISSET(fd, &wait_fds)) {
+    D(printf("tcp_cli.rm_fd: fd already removed: %d\n", fd));
+    return; // XXX
+  }
   FD_CLR(fd, &wait_fds);
   if (fd - 1 == nfds)
     --nfds;
@@ -147,27 +155,9 @@ static int tcps_create_server() {
   return (errno);
 }
 
-void tcps_task_write(int fd, const char *txt) {
-  if (cconn_count <= 0) {
-    D(printf("%s: no open connections\n", __func__));
-    return;
-  }
-
-  if (fd >= 0) {
-    lwip_write(fd, txt, strlen(txt));
-    return;
-  }
-
-  if (fd == -2)
-    for (fd = 0; fd < nfds; ++fd) {
-      if (!FD_ISSET(fd, &wait_fds))
-        continue;
-      lwip_write(fd, txt, strlen(txt));
-    }
-}
-
 static void tcpst_putc(int fd, void *c) {
-  lwip_write(fd, c, 1);
+  if (lwip_write(fd, c, 1) < 0)
+    tcps_close_cconn(fd);
 }
 
 static void tcpst_putc_all(char c) {
@@ -184,14 +174,14 @@ static int  tcp_io_putc(char c) {
 static void modify_io_fun(bool add_connection) {
   if (add_connection && cconn_count == 1) {
     // fist connection opened
-    printf("modify io to tcp\n");
+    D(printf("modify io to tcp\n"));
   //  old_io_getc_fun = io_getc_fun;
     old_io_putc_fun = io_putc_fun;
    // io_getc_fun = tcp_io_getc;
     io_putc_fun = tcp_io_putc;
   } else if (cconn_count == 0) {
     // last connection closed
-    printf("modify io to serial\n");
+    D(printf("modify io to serial\n"));
  //   io_getc_fun = old_io_getc_fun;
     io_putc_fun = old_io_putc_fun;
   }
@@ -297,7 +287,7 @@ static void tcps_task(void *pvParameters) {
 }
 
 static TaskHandle_t xHandle = NULL;
-#define STACK_SIZE  2000
+#define STACK_SIZE  3000
 void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
   static uint8_t ucParameterToPass;
 
