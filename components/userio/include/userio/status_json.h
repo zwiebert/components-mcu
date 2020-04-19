@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef SRC_USERIO_STATUS_JSON_H_
-#define SRC_USERIO_STATUS_JSON_H_
+#pragma once
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -29,4 +28,3 @@ bool sj_realloc_buffer(size_t buf_size);
 char *sj_get_json();
 void sj_free_buffer();
 
-#endif /* SRC_USERIO_STATUS_JSON_H_ */

@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef COMPONENTS_KEY_VALUE_STORE_INCLUDE_KEY_VALUE_STORE_KVS_WRAPPER_H_
-#define COMPONENTS_KEY_VALUE_STORE_INCLUDE_KEY_VALUE_STORE_KVS_WRAPPER_H_
+#pragma once
 
 #include <stdint.h>
 #include "stdbool.h"
@@ -74,4 +73,3 @@ int kvs_foreach(const char *name_space, kvs_type_t, const char*key_match, kvs_fo
 void kvs_setup(void);
 
 
-#endif /* COMPONENTS_KEY_VALUE_STORE_INCLUDE_KEY_VALUE_STORE_KVS_WRAPPER_H_ */

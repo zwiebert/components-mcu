@@ -1,6 +1,5 @@
 
-#ifndef COMPONENTS_USERIO_INCLUDE_USERIO_STATUS_OUTPOUT_H_
-#define COMPONENTS_USERIO_INCLUDE_USERIO_STATUS_OUTPOUT_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -21,4 +20,3 @@ extern uint8_t so_target;
 #define so_tgt_default() (so_tgt_set(SO_TGT_ANY))
 #define so_tgt_test(bitmask) (so_target & (bitmask))
 
-#endif /* COMPONENTS_USERIO_INCLUDE_USERIO_STATUS_OUTPOUT_H_ */

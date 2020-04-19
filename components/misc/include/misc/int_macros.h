@@ -1,5 +1,4 @@
-#ifndef int_macros_h_
-#define int_macros_h_
+#pragma once
 
 #ifndef MIN
 #define MIN( a, b ) ( ((a) < (b)) ? (a) : (b) )
@@ -32,4 +31,3 @@
 
 #define BIT(nr)  (1UL << (nr))
 
-#endif

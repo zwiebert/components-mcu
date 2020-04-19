@@ -1,5 +1,4 @@
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#pragma once
 
 #include "app_config/proj_app_cfg.h"
 #include "txtio/inout.h"
@@ -61,4 +60,3 @@ void abort_postcond(const char *msg, int line);
 
 
 
-#endif /* DEBUG_H_ */

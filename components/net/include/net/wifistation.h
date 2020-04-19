@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef USER_ESP32_MAIN_WIFISTATION_H_
-#define USER_ESP32_MAIN_WIFISTATION_H_
+#pragma once
 
 struct cfg_wlan {
   char SSID[32];
@@ -19,4 +18,3 @@ typedef void (*wifistation_cb)(void);
 void wifistation_cbRegister_gotIpAddr(wifistation_cb cb);
 void wifistation_cbRegister_lostIpAddr(wifistation_cb cb);
 
-#endif /* USER_ESP32_MAIN_WIFISTATION_H_ */

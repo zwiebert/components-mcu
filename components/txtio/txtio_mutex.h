@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef COMPONENTS_TXTIO_TXTIO_MUTEX_H_
-#define COMPONENTS_TXTIO_TXTIO_MUTEX_H_
+#pragma once
 
 #include "app_config/proj_app_cfg.h"
 
@@ -23,4 +22,3 @@ void txtio_mutexGive();
 #endif
 
 
-#endif /* COMPONENTS_TXTIO_TXTIO_MUTEX_H_ */

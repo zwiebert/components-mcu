@@ -1,5 +1,4 @@
-#ifndef _inout_h
-#define _inout_h
+#pragma once
 
 #include "stdbool.h"
 #include "stdint.h"
@@ -63,7 +62,6 @@ const char* mcu_access_pin(int gpio_number, mcu_pin_state *result, mcu_pin_state
 bool  is_gpio_number_usable(int gpio_number, bool cli);
 void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
 
-#endif
 
 
 

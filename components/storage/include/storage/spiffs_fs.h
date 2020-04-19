@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef USER_MAIN_SPIFFS_FS_H_
-#define USER_MAIN_SPIFFS_FS_H_
+#pragma once
 
 #ifndef NO_SPIFFS
 
@@ -19,4 +18,3 @@ extern spiffs fs;
 bool spiffs_format_fs(spiffs *fs);  // unmout, format, mount. returns success
 
 #endif /* ENABLE_SPIFFS */
-#endif /* USER_MAIN_SPIFFS_FS_H_ */

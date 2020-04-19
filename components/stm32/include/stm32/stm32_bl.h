@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef MAIN_STM32_BL_H_
-#define MAIN_STM32_BL_H_
+#pragma once
 
 #include <stdbool.h>
 #include "misc/int_types.h"
@@ -51,4 +50,3 @@ bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, u32 addr);
 bool stm32Bl_eraseFlashByFileSize(u32 addr, unsigned size);
 
 
-#endif /* MAIN_STM32_BL_H_ */

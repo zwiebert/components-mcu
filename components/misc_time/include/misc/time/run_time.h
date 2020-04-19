@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef MISC_TIME_INCLUDE_MISC_TIME_RUN_TIME_H_
-#define MISC_TIME_INCLUDE_MISC_TIME_RUN_TIME_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -27,4 +26,3 @@ uint32_t run_time_s();
 #define get_now_time_ts run_time_ts
 #define get_now_time_s run_time_s
 
-#endif /* MISC_TIME_INCLUDE_MISC_TIME_RUN_TIME_H_ */

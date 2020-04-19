@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef MAIN_STM32_H_
-#define MAIN_STM32_H_
+#pragma once
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -34,4 +33,3 @@ extern struct cfg_stm32 *stm32_cfg;
 
 void stm32_setup(const struct cfg_stm32 *cfg_stm32);
 
-#endif /* MAIN_STM32_H_ */

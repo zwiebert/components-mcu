@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef SRC_USERIO_HTTP_SERVER_H_
-#define SRC_USERIO_HTTP_SERVER_H_
+#pragma once
 
 
 #include "app_config/proj_app_cfg.h"
@@ -36,4 +35,3 @@ void hts_enable_http_server(bool enable);
 
 void hts_setup(struct cfg_http *config);
 
-#endif /* SRC_USERIO_HTTP_SERVER_H_ */

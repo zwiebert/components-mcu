@@ -6,8 +6,7 @@
  */
 
 
-#ifndef CLI_H_
-#define CLI_H_
+#pragma once
 
 #include "userio/status_output.h"
 #include "stdint.h"
@@ -78,4 +77,3 @@ void cli_print_json(const char *json); //FIXME
 
 
 
-#endif /* CLI_H_ */

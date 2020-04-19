@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef COMPONENTS_MISC_INCLUDE_MISC_INT_TYPES_H_
-#define COMPONENTS_MISC_INCLUDE_MISC_INT_TYPES_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -20,4 +19,3 @@ typedef uint64_t u64;
 typedef int64_t i64;
 
 
-#endif /* COMPONENTS_MISC_INCLUDE_MISC_INT_TYPES_H_ */

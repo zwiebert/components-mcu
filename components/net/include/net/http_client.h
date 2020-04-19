@@ -5,12 +5,10 @@
  *      Author: bertw
  */
 
-#ifndef MAIN_HTTP_CLIENT_H_
-#define MAIN_HTTP_CLIENT_H_
+#pragma once
 
 #include <stdbool.h>
 
 bool httpClient_downloadFile(const char *srcUrl, const char *dstFile);
 
 
-#endif /* MAIN_HTTP_CLIENT_H_ */

@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef MAIN_STM32_OTA_H_
-#define MAIN_STM32_OTA_H_
+#pragma once
 
 #include <stdbool.h>
 
@@ -20,4 +19,3 @@ bool stm32Ota_firmwareDownload(const char *url, const char *file_name);
 
 bool stm32ota_doUpdate(const char *firmware_url);
 
-#endif /* MAIN_STM32_OTA_H_ */

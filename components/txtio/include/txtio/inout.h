@@ -1,5 +1,4 @@
-#ifndef _inout_h
-#define _inout_h
+#pragma once
 
 #include "stdbool.h"
 #include "stdint.h"
@@ -84,7 +83,6 @@ void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
 
 
 
-#endif
 
 
 

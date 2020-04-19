@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef USER_ESP8266_SPIFFS_CONFIG_H_
-#define USER_ESP8266_SPIFFS_CONFIG_H_
+#pragma once
 
 #include "user_interface.h"
 #include "txtio/inout.h"
@@ -423,4 +422,3 @@ typedef u16_t spiffs_span_ix;
 
 
 
-#endif /* USER_ESP8266_SPIFFS_CONFIG_H_ */

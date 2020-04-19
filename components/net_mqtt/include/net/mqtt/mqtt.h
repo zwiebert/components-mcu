@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef SRC_USERIO_MQTT_H_
-#define SRC_USERIO_MQTT_H_
+#pragma once
 
 #include "app_config/proj_app_cfg.h"
 #include "stdbool.h"
@@ -67,4 +66,3 @@ bool topic_endsWith(const char *topic, int topic_len, const char *s);
 
 
 
-#endif /* SRC_USERIO_MQTT_H_ */

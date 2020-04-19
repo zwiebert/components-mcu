@@ -5,11 +5,9 @@
  *      Author: bertw
  */
 
-#ifndef COMPONENTS_CLI_CLI_APP_CONFIG_H_
-#define COMPONENTS_CLI_CLI_APP_CONFIG_H_
+#pragma once
 
 #include "misc/int_types.h"
 
 #include "app_config/proj_app_cfg.h"
 
-#endif /* COMPONENTS_CLI_CLI_APP_CONFIG_H_ */
