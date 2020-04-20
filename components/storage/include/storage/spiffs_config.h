@@ -26,7 +26,7 @@ typedef u32 u32_t;
 #define memcpy ets_memcpy
 #define memset ets_memset
 #define strncpy ets_strncpy
-#define spiffs_printf io_printf
+#define spiffs_printf(...) io_printf(__VA_ARGS__)
 #define strlen ets_strlen
 #define strcpy ets_strcpy
 #define offsetof(TYPE, MEMBER) __builtin_offsetof (TYPE, MEMBER)
@@ -35,13 +35,30 @@ typedef u32 u32_t;
 #define malloc os_malloc
 #define free os_free
 #define realloc os_realloc
-#define sprintf os_sprintf
+
 
 #define SPIFFS_USE_MAGIC 0
 #define SPIFFS_ALIGNED_OBJECT_INDEX_TABLES 1
-//#define SPIFFS_SINGLETON 1
 
-//#define SPIFFS_API_DBG ets_uart_printf
+#define SECTOR_SIZE SPI_FLASH_SEC_SIZE
+#ifdef C_SPIFFS_FLASH_ADDR
+#define PHYS_SIZE C_SPIFFS_FLASH_SIZE
+#define PHYS_ADDR C_SPIFFS_FLASH_ADDR
+#else
+#define PHYS_SIZE (65536 * 8)
+#define PHYS_ADDR (0xF0000)  // we start at 1MB of 4MB flash
+#endif
+
+#if 1
+#define SPIFFS_SINGLETON 1
+#define SPIFFS_CFG_PHYS_SZ(ignore)        (PHYS_SIZE)
+#define SPIFFS_CFG_PHYS_ERASE_SZ(ignore)  (65536)
+#define SPIFFS_CFG_PHYS_ADDR(ignore)      (PHYS_ADDR)
+#define SPIFFS_CFG_LOG_PAGE_SZ(ignore)    (256)
+#define SPIFFS_CFG_LOG_BLOCK_SZ(ignore)   (65536)
+#endif
+
+//#define SPIFFS_API_DBG io_printf
 
 /*
  * spiffs_config.h
@@ -73,7 +90,7 @@ typedef u32 u32_t;
 
 // Set generic spiffs debug output call.
 #ifndef SPIFFS_DBG
-#define SPIFFS_DBG(_f, ...) //printf(_f, ## __VA_ARGS__)
+#define SPIFFS_DBG(_f, ...) //io_printf(_f, ## __VA_ARGS__)
 #endif
 // Set spiffs debug output call for garbage collecting.
 #ifndef SPIFFS_GC_DBG
@@ -89,7 +106,7 @@ typedef u32 u32_t;
 #endif
 // Set spiffs debug output call for all api invocations.
 #ifndef SPIFFS_API_DBG
-#define SPIFFS_API_DBG(_f, ...) //printf(_f, ## __VA_ARGS__)
+#define SPIFFS_API_DBG(_f, ...) //io_printf(_f, ## __VA_ARGS__)
 #endif
 
 

@@ -17,7 +17,6 @@ const char *asdfg = "asdfg", *asdf = "asdf", *asdfge = "asdfge";
 struct b { char data[8]; };
 
 
-
 static void test_for_foreach_bug() {
   struct b b = { .data = { 0, 1, 2, 3, 4, 5, 6, 7 } };
   const char *k1 = "blob_1", *k2 = "blob_2", *k3 = "blob_3";
@@ -49,6 +48,21 @@ static void test_for_foreach_bug() {
   res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0);
   TEST_ASSERT_EQUAL(1, res);
   //--------------------------------
+}
+
+void test_config() {
+  char buf[128];
+  handle = kvs_open(NS, kvs_WRITE);
+  TEST_ASSERT_NOT_NULL(handle);
+  succ = kvs_rw_str(handle, "C_MQTT_CID", "tfmcu_esp8266", 0, true);
+  TEST_ASSERT_TRUE(succ);
+  kvs_close(handle);
+
+  handle = kvs_open(NS, kvs_READ);
+  TEST_ASSERT_NOT_NULL(handle);
+  succ = kvs_rw_str(handle, "C_MQTT_USER", buf, 128, false);
+  TEST_ASSERT_FALSE(succ);
+  kvs_close(handle);
 }
 
 static void test_set_get_default() {
@@ -138,4 +152,5 @@ TEST_CASE("kvs", "[kvs]") {
   f();
   test_for_foreach_bug();
   test_set_get_default();
+  test_config();
 }

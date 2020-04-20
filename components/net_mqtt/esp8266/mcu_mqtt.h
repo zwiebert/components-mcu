@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef COMPONENTS_NET_MQTT_ESP8266_MCU_MQTT_H_
-#define COMPONENTS_NET_MQTT_ESP8266_MCU_MQTT_H_
+#pragma once
 
 #include "net/mqtt/mqtt.h"
 
@@ -15,4 +14,3 @@ extern const char *io_mqtt_host;
 extern unsigned io_mqtt_port;
 
 
-#endif /* COMPONENTS_NET_MQTT_ESP8266_MCU_MQTT_H_ */
