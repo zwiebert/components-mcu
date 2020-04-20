@@ -126,7 +126,12 @@ static void io_mqtt_create_client(void) {
   // .user_context = (void *)your_context
       };
 
-    client = esp_mqtt_client_init(&mqtt_cfg);
+  if (mqtt_cfg.uri && *mqtt_cfg.uri == '\0') {
+    io_puts("error: MQTT-URI is configured empty\n");
+    return;
+  }
+
+  client = esp_mqtt_client_init(&mqtt_cfg);
 
 }
 
