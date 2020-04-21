@@ -7,6 +7,7 @@
 
 #include "unity.h"
 #include "key_value_store/kvs_wrapper.h"
+#include <string.h>
 
 kvshT handle;
 bool succ;
@@ -50,8 +51,9 @@ static void test_for_foreach_bug() {
   //--------------------------------
 }
 
-void test_config() {
+static void test_config() {
   char buf[128];
+#define test_mqtt_user "zimbra"
   handle = kvs_open(NS, kvs_WRITE);
   TEST_ASSERT_NOT_NULL(handle);
   succ = kvs_rw_str(handle, "C_MQTT_CID", "tfmcu_esp8266", 0, true);
@@ -60,8 +62,10 @@ void test_config() {
 
   handle = kvs_open(NS, kvs_READ);
   TEST_ASSERT_NOT_NULL(handle);
+  strcpy(buf, test_mqtt_user);
   succ = kvs_rw_str(handle, "C_MQTT_USER", buf, 128, false);
   TEST_ASSERT_FALSE(succ);
+  TEST_ASSERT_EQUAL_STRING(test_mqtt_user, buf);  // original string must be untouched
   kvs_close(handle);
 }
 
@@ -148,9 +152,10 @@ static void f() {
 }
 
 TEST_CASE("kvs", "[kvs]") {
+  test_config();
   test_set_get_default();
   f();
   test_for_foreach_bug();
   test_set_get_default();
-  test_config();
 }
+

@@ -447,7 +447,7 @@ unsigned kvs_rw_str(kvshT h, const char *key, char *src_or_dst, unsigned length,
 
   }
   unsigned res = kvs_rw_str_or_blob(h, key, src_or_dst, length, do_write, KVS_TYPE_STR);
-  if (!do_write && res >= 0) {
+  if (!do_write && res > 0) {
     src_or_dst[res] = '\0';
   }
   return res;
