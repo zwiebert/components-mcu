@@ -22,10 +22,10 @@
 #define DB(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) {x;} } while(0)
 #define DB2(x) DB(x)
 #include "spiffs.h"
-#include "storage/spiffs_fs.h"
+#include "storage/esp8266/spiffs_fs.h"
 #endif
 
-#include "storage/spiffs_posix.h"
+#include "storage/esp8266/spiffs_posix.h"
 
 void spiffs_print_errno() {
   io_printf("errno: IMPLEMENT_ME");

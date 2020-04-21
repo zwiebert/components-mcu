@@ -27,7 +27,7 @@
 #define io_printf printf
 #endif
 
-#include "storage/spiffs_posix.h"
+#include "storage/esp8266/spiffs_posix.h"
 
 
 
