@@ -10,7 +10,7 @@
 #include "net/mqtt/mqtt.h"
 
 extern struct cfg_mqtt *io_mqtt_config;
-extern const char *io_mqtt_host;
+extern char *io_mqtt_host;
 extern unsigned io_mqtt_port;
 
 
