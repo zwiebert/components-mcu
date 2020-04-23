@@ -13,14 +13,13 @@
 
 static const char *TAG="APP";
 
-struct cfg_http *chs;
-
-
 //////////////////////////Authorization//////////////////////
-#define HTTP_USER chs->user
-#define HTTP_USER_LEN (strlen(HTTP_USER))
-#define HTTP_PW chs->password
-#define HTTP_PW_LEN  (strlen(HTTP_PW))
+static char *auth_user;
+static char *auth_password;
+#define HTTP_USER (auth_user ? auth_user : "")
+#define HTTP_USER_LEN (auth_user ? strlen(auth_user) : 0)
+#define HTTP_PW (auth_password ? auth_password : "")
+#define HTTP_PW_LEN  (auth_password ? strlen(auth_password) : 0)
 
 static bool verify_userName_and_passWord(const char *up, size_t up_len) {
 
@@ -69,9 +68,18 @@ bool check_access_allowed(httpd_req_t *req) {
   return true;
 }
 
+static httpd_handle_t start_webserver(struct cfg_http *c) {
+  if (strcmp(HTTP_USER, c->user) != 0) {
+    free(auth_user);
+    if ((auth_user = malloc(strlen(c->user + 1))))
+      strcpy(auth_user, c->user);
+  }
+  if (strcmp(HTTP_PW, c->password) != 0) {
+    free(auth_password);
+    if ((auth_password = malloc(strlen(c->password + 1))))
+      strcpy(auth_password, c->password);
+  }
 
-
-static httpd_handle_t start_webserver(void) {
   httpd_handle_t server = NULL;
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
   config.max_open_sockets = 6;
@@ -88,18 +96,17 @@ static httpd_handle_t start_webserver(void) {
 
 ///////// public interface ///////////////////
 
-void hts_enable_http_server(bool enable) {
+void hts_enable_http_server(struct cfg_http *c) {
   static httpd_handle_t server;
 
-  precond(chs);
-
-  if (enable && chs->enable && !server) {
-    server = start_webserver();
-  }
-
-  if (!enable && server) {
-    httpd_stop(server);
-    server = NULL;
+  if (c && c->enable) {
+    if (!server)
+      server = start_webserver(c);
+  } else {
+    if (server) {
+      httpd_stop(server);
+      server = NULL;
+    }
   }
 }
 

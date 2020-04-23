@@ -27,7 +27,7 @@
 #endif
 
 #if 0
-#define DV(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
+#define DV(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
 #else
 #undef DV
 #define DV(x)

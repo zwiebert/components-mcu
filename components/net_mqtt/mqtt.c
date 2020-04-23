@@ -17,17 +17,6 @@
 #include "cli/mutex.h"
 #include "userio/status_json.h"
 
-
-void io_mqtt_enable(bool enable) {
-  if (enable) {
-    io_mqtt_create_and_start();
-    io_mqttApp_enable(enable);
-  } else {
-    io_mqttApp_enable(enable);
-    io_mqtt_stop_and_destroy();
-  }
-}
-
 // implementation interface
 void io_mqtt_disconnected () {
   io_mqttApp_disconnected();

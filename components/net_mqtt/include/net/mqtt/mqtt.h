@@ -23,17 +23,12 @@ int8_t enable;
 
 #ifdef USE_MQTT
 // low level wrapper to hide MQTT implementation
-void io_mqtt_create_and_start(void);
-void io_mqtt_stop_and_destroy(void);
 void io_mqtt_subscribe(const char *topic, int qos);
 void io_mqtt_unsubscribe(const char *topic);
 void io_mqtt_publish(const char *topic, const char *data);
 void io_mqtt_setup(struct cfg_mqtt *cfg_mqt);
 
 #else
-
-#define io_mqtt_create_and_start()
-#define io_mqtt_stop_and_destroy()
 #define io_mqtt_subscribe(topic, qos)
 #define io_mqtt_unsubscribe(topic)
 #define io_mqtt_publish(topic, data)
@@ -41,7 +36,6 @@ void io_mqtt_setup(struct cfg_mqtt *cfg_mqt);
 #endif
 
 
-void io_mqttApp_enable(bool enable);
 void io_mqttApp_disconnected();
 void io_mqttApp_subscribed(const char *topic, int topic_len);
 void io_mqttApp_unsubscribed(const char *topic, int topic_len);

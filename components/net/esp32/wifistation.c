@@ -27,10 +27,10 @@
 
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
-struct cfg_wlan *cwl;
 
-void
-user_set_station_config(void) {
+
+static void
+user_set_station_config(struct cfg_wlan *cwl) {
 
   wifi_config_t sta_config = { };
 
@@ -104,7 +104,6 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
 
 void wifistation_setup(struct cfg_wlan *config)  {
   esp_netif_create_default_wifi_sta();
-  cwl = config;
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
 
@@ -114,7 +113,7 @@ void wifistation_setup(struct cfg_wlan *config)  {
 
   ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
   ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_STA) );
-  user_set_station_config();
+  user_set_station_config(config);
 }
 
 

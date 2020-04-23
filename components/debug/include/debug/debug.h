@@ -47,12 +47,12 @@ void abort_postcond(const char *msg, int line);
 #endif
 
 #ifndef DISTRIBUTION
-#define dbg_dbd(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
+#define dbg_dbd(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
 #else
 #define dbg_dbd(x)
 #endif
 
-#define if_verbose_do(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
+#define if_verbose_do(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
 
 
 #define dbg_vpf(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)

@@ -67,7 +67,7 @@ void io_mqtt_publish(const char *topic, const char *data) {
     return;
 
  // D(ESP_LOGI(TAG, "MQTT_PUBLISH, topic=%s, data=%s", topic, data));
-  /*int msg_id = */ MQTT_Publish(client, topic, data, 0, 1, 0);
+  /*int msg_id = */ MQTT_Publish(client, topic, data, strlen(data), 1, 0);
 }
 
 
@@ -104,13 +104,22 @@ static void mqttDataCb(uint32_t *args, const char* topic, uint32_t topic_len, co
   io_mqtt_received(topic, topic_len, data, data_len);
 }
 
-void io_mqtt_create_and_start(void) {
+static void io_mqtt_stop_and_destroy(void) {
+  D(io_puts("mqtt: stop\n"));
+  if (client) {
+    MQTT_Disconnect(client);
+    destroy_on_disconnect = true;
+  }
+}
+
+
+static void io_mqtt_create_and_start(struct cfg_mqtt *c, char *host, unsigned port) {
   io_puts("mqtt: starting...\n");
   if (client)
     io_mqtt_stop_and_destroy();
 
-  MQTT_InitConnection(&mqttClient, MQTT_HOST, MQTT_PORT, DEFAULT_SECURITY);
-  if (!MQTT_InitClient(&mqttClient, MQTT_CLIENT_ID, MQTT_USER, MQTT_PASS, MQTT_KEEPALIVE, MQTT_CLEAN_SESSION)) {
+  MQTT_InitConnection(&mqttClient, host, port, DEFAULT_SECURITY);
+  if (!MQTT_InitClient(&mqttClient, c->client_id, c->user, c->password, MQTT_KEEPALIVE, MQTT_CLEAN_SESSION)) {
     io_puts("Failed to initialize properly. Check MQTT version.\n");
     return;
   }
@@ -126,31 +135,20 @@ void io_mqtt_create_and_start(void) {
   io_puts("mqtt: ...started\n");
 }
 
-void io_mqtt_stop_and_destroy(void) {
-  D(io_puts("mqtt: stop\n"));
-  if (client) {
-    MQTT_Disconnect(client);
-    destroy_on_disconnect = true;
-  }
-}
 
-struct cfg_mqtt *io_mqtt_config;
-char *io_mqtt_host;
-unsigned io_mqtt_port;
 
-void io_mqtt_setup(struct cfg_mqtt *cfg_mqtt)
+void io_mqtt_setup(struct cfg_mqtt *c)
 {
-  io_mqtt_config = cfg_mqtt;
-  io_mqtt_port = 1883;
-  free(io_mqtt_host);
-  io_mqtt_host = 0;
+  if (c && c->enable) {
+    unsigned io_mqtt_port = 1883;
+    char *io_mqtt_host = 0;
 
   char *s1=0, *s2=0;
   char *host_start = 0;
   int host_len = 0;
   char *port_start = 0;
 
-  if ((s1 = strstr(cfg_mqtt->url, "://"))) {
+  if ((s1 = strstr(c->url, "://"))) {
     host_start = s1 + 3;
     if ((s2 = strchr(host_start, ':'))) {
       host_len = s2 - host_start;
@@ -163,17 +161,14 @@ void io_mqtt_setup(struct cfg_mqtt *cfg_mqtt)
   if (port_start)
     io_mqtt_port = atoi(port_start);
   if (host_start) {
-    io_mqtt_host = malloc(host_len+1);
+    io_mqtt_host = alloca(host_len+1);
     strncpy(io_mqtt_host, host_start, host_len);
     io_mqtt_host[host_len] = '\0';
   }
 
-
-  if (io_mqtt_config && io_mqtt_host) {
-    io_mqtt_enable(io_mqtt_config->enable);
+    io_mqtt_create_and_start(c, io_mqtt_host, io_mqtt_port);
+  } else {
+    io_mqtt_stop_and_destroy();
   }
 }
-static void user_init(void)
-{
-  //system_init_done_cb(app_init);
-}
+

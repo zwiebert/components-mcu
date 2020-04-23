@@ -28,9 +28,9 @@ bool check_access_allowed(struct httpd_req *req); // XXX: esp32 specific types s
 
 // interface which has to be implemented by mcu specific code
 #ifdef USE_HTTP
-void hts_enable_http_server(bool enable);
+void hts_enable_http_server(struct cfg_http *config);
 #else
-#define hts_enable_http_server(enable)
+#define hts_enable_http_server(config)
 #endif
 
 void hts_setup(struct cfg_http *config);
