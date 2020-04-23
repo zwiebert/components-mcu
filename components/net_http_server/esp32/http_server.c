@@ -71,12 +71,12 @@ bool check_access_allowed(httpd_req_t *req) {
 static httpd_handle_t start_webserver(struct cfg_http *c) {
   if (strcmp(HTTP_USER, c->user) != 0) {
     free(auth_user);
-    if ((auth_user = malloc(strlen(c->user + 1))))
+    if ((auth_user = malloc(strlen(c->user)+1)))
       strcpy(auth_user, c->user);
   }
   if (strcmp(HTTP_PW, c->password) != 0) {
     free(auth_password);
-    if ((auth_password = malloc(strlen(c->password + 1))))
+    if ((auth_password = malloc(strlen(c->password)+1)))
       strcpy(auth_password, c->password);
   }
 
