@@ -8,7 +8,7 @@ extern int unit_testing;
 
 
 #ifdef MCU_ESP8266
-#define assert(x) do { if (x) {} else { ets_printf("assert failed: %s at %s:%d\n", __func__, __FILE__, __LINE__);mcu_restart(); }} while(0)
+#define assert(x) do { if (x) {} else { con_printf("assert failed: %s at %s:%d\n", __func__, __FILE__, __LINE__);mcu_restart(); }} while(0)
 #else
 #include <assert.h>
 #endif
