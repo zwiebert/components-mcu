@@ -57,7 +57,7 @@ void io_mqtt_unsubscribe(const char *topic) {
   if (!client || !is_connected)
     return;
 
-  /*int msg_id = */ MQTT_UnSubscribe(client, topic);
+  /*int msg_id = */ MQTT_UnSubscribe(client, (char*)topic);
 }
 
 void io_mqtt_publish(const char *topic, const char *data) {

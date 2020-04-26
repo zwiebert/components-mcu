@@ -26,7 +26,8 @@
 
 
 
-struct cfg_stm32 *stm32_cfg;
+static struct cfg_stm32 stm32_config;
+#define stm32_cfg (&stm32_config)
 
 
 #define STM32_SET_BOOT_PIN(level) GPIO_OUTPUT_SET(stm32_cfg->boot_gpio, (!level != !stm32_cfg->boot_gpio_is_inverse));
@@ -148,7 +149,7 @@ void stm32_runFirmware() {
 
 void stm32_setup(const struct cfg_stm32 *cfg_stm32)
 {
-  stm32_cfg = cfg_stm32;
+  stm32_config = *cfg_stm32;
 
   gpio_pad_select_gpio(stm32_cfg->reset_gpio);
   GPIO_OUTPUT_SET(stm32_cfg->reset_gpio, 1);

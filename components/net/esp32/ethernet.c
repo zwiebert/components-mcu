@@ -24,7 +24,6 @@ extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 static esp_eth_phy_t *(*ethernet_create_phy)(const eth_phy_config_t *config);
 static esp_err_t (*ethernet_phy_pwrctl)(esp_eth_phy_t *phy, bool enable);
 static i8 ethernet_phy_power_pin = -1;
-static i32 ethernet_phy_address;
 
 
 #define DX(x) x

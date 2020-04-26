@@ -65,7 +65,7 @@ int nfds;
 static struct sockaddr_in self;
 static int cconn_count;
 static int (*old_io_putc_fun)(char c);
-static int (*old_io_getc_fun)(void);
+//static int (*old_io_getc_fun)(void);
 
 const unsigned cli_buf_size = 120;
 char *cli_buf;
@@ -249,8 +249,9 @@ void handle_input(int fd, void *args) {
 
 
 void wait_for_fd() {
-  fd_set rfds = wait_fds, wfds = wait_fds;
-  struct timeval tv = { .tv_sec = 10 };
+  fd_set rfds = wait_fds;
+  //fd_set wfds = wait_fds;
+  //struct timeval tv = { .tv_sec = 10 };
 
   FD_SET(sockfd, &rfds);
 
