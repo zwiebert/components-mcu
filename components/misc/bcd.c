@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include "bcd.h"
+#include "misc/bcd.h"
 
 
 uint8_t  bcd2dec(uint8_t bcd) {

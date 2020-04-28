@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include "base64.h"
+#include "misc/base64.h"
 
 #define os_malloc malloc
 #define os_free free

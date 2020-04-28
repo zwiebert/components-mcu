@@ -15,7 +15,7 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 
-#include "stm32.h"
+#include "stm32/stm32.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "driver/uart.h"

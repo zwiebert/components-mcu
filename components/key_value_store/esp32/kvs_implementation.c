@@ -5,7 +5,7 @@
  *      Author: bertw
  */
 
-#include "kvs_wrapper.h"
+#include "key_value_store/kvs_wrapper.h"
 
 #include "app_config/proj_app_cfg.h"
 

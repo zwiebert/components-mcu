@@ -9,7 +9,6 @@ endif()
 idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS . "./include" 
-    PRIV_INCLUDE_DIRS "./include/net/http/server" 
     REQUIRES  app_config
     PRIV_REQUIRES  cli debug userio http_server_content
                    esp_http_server mbedtls

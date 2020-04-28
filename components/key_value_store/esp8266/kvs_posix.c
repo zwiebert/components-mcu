@@ -8,7 +8,7 @@
 #ifndef TEST_HOST
 #include "app_config/proj_app_cfg.h"
 #endif
-#include "kvs_wrapper.h"
+#include "key_value_store/kvs_wrapper.h"
 #include "misc/int_types.h"
 #include "misc/int_macros.h"
 #include "debug/debug.h"

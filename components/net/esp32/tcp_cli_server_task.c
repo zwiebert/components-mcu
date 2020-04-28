@@ -15,7 +15,7 @@
 #include "net/tcp_cli_server.h"
 #include "cli/cli.h"
 #include "cli/mutex.h"
-#include "tcp_cli_server.h"
+#include "net/tcp_cli_server.h"
 
 #include "esp_wifi.h"
 #include "esp_event.h"
@@ -25,7 +25,7 @@
 #include <errno.h>
 #include "txtio/inout.h"
 
-#include "tcp_cli_server.h"
+#include "net/tcp_cli_server.h"
 #include "misc/int_types.h"
 
 #include <sys/select.h>

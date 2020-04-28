@@ -6,7 +6,7 @@
  */
 #include "app_config/proj_app_cfg.h"
 #ifdef USE_HTTP
-#include "http_server.h"
+#include "net/http/server/http_server.h"
 #include <string.h>
 #include "cli/cli.h"
 #include "cli/mutex.h"

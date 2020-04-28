@@ -7,10 +7,10 @@
 
 #include "cli_app_cfg.h"
 #include "misc/bcd.h"
-#include "cli.h"
+#include "cli/cli.h"
 #include "userio/status_output.h"
 #include "txtio/inout.h"
-#include "mutex.h"
+#include "cli/mutex.h"
 #include "userio/status_json.h"
 #include "debug/debug.h"
 

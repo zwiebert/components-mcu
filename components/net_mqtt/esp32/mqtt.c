@@ -1,6 +1,6 @@
 #include "app_config/proj_app_cfg.h"
-#include "mqtt.h"
-#include "mqtt_imp.h"
+#include "net/mqtt/mqtt.h"
+#include "net/mqtt/mqtt_imp.h"
 #include "cli/cli.h"
 #include "txtio/inout.h"
 

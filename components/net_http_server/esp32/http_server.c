@@ -1,5 +1,5 @@
 #include "app_config/proj_app_cfg.h"
-#include "http_server.h"
+#include "net/http/server/http_server.h"
 #include "userio/status_json.h"
 #include "net/http/server/esp32/register_uris.h"
 #include "debug/debug.h"

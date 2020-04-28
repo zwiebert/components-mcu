@@ -17,7 +17,7 @@
 #include "app/rtc.h"
 #include "config/config.h"
 #include <sntp.h>
-#include "ntp.h"
+#include "net/ntp.h"
 #include "txtio/inout.h"
 #include "misc/int_types.h"
 
