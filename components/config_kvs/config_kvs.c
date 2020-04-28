@@ -41,9 +41,10 @@ const char *configKvs_keys[] = {
 #endif
 };
 
-
-const char *config_get_kvs_key(uint8_t item) {
-  return cfg_key(item);
+extern const char *configKvs_keys[];
+extern const char *config_keys[];
+const char *config_get_kvs_key(uint8_t cb) {
+  return (((int)cb < (int)CB_size) ? configKvs_keys[(cb)] : config_keys[(cb-CB_size)]);
 }
 
 unsigned nvsStr(void *handle, const char *key, void *dst, size_t dst_len, bool save) {

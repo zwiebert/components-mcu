@@ -4,7 +4,7 @@
  *  Created on: 21.04.2020
  *      Author: bertw
  */
-
+#include "app_config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 #include "config_kvs.h"
 
@@ -17,13 +17,6 @@
 #include "net/tcp_cli_server.h"
 void config_setup_cliTcpServer() {
   struct cfg_tcps c = { .enable = true };
-#if 0
-  kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsR(i8, CB_VERBOSE, c.verbose);
-    kvs_close(h);
-  }
-#endif
 #ifdef USE_TCPS
  tcpCli_setup(&c);
 #elif defined USE_TCPS_TASK
@@ -34,90 +27,155 @@ void config_setup_cliTcpServer() {
 
 #if 1
 #include "txtio/inout.h"
-void config_setup_txtio() {
+struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   kvshT h;
-  struct cfg_txtio c = { .verbose = MY_VERBOSE };
-
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsR(i8, CB_VERBOSE, c.verbose);
+    kvsR(i8, CB_VERBOSE, c->verbose);
     kvs_close(h);
   }
- txtio_setup(&c);
+  return c;
+}
+void config_setup_txtio() {
+  struct cfg_txtio c = { .verbose = MY_VERBOSE };
+  config_read_txtio(&c);
+  txtio_setup(&c);
+}
+enum verbosity config_read_verbose() {
+  return config_read_item_i8(CB_VERBOSE, MY_VERBOSE);
 }
 #endif
 
 #ifdef USE_LAN
 #include "net/ethernet.h"
-void config_setup_ethernet() {
+struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   kvshT h;
-  struct cfg_lan c = { .phy = MY_LAN_PHY, .pwr_gpio = MY_LAN_PWR_GPIO, };
-
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsR(i8, CB_LAN_PHY, c.phy);
-    kvsR(i8, CB_LAN_PWR_GPIO, c.pwr_gpio);
+    kvsR(i8, CB_LAN_PHY, c->phy);
+    kvsR(i8, CB_LAN_PWR_GPIO, c->pwr_gpio);
     kvs_close(h);
   }
+  return c;
+}
+void config_setup_ethernet() {
+  struct cfg_lan c = { .phy = MY_LAN_PHY, .pwr_gpio = MY_LAN_PWR_GPIO, };
+  config_read_ethernet(&c);
   ethernet_setup(&c);
+}
+int8_t config_read_lan_phy() {
+  return config_read_item_i8(CB_LAN_PHY, MY_LAN_PHY);
+}
+int8_t config_read_lan_pwr_gpio() {
+  return config_read_item_i8(CB_LAN_PWR_GPIO, MY_LAN_PWR_GPIO);
 }
 #endif
 
 #ifdef USE_NTP
 #include "net/ntp.h"
-void config_setup_ntpClient() {
+struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   kvshT h;
-  struct cfg_ntp c = { .server = MY_NTP_SERVER };
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_NTP_SERVER, c.server);
+    kvsRs(CB_NTP_SERVER, c->server);
     kvs_close(h);
   }
+  return c;
+}
+void config_setup_ntpClient() {
+  struct cfg_ntp c = { .server = MY_NTP_SERVER };
+  config_read_ntpClient(&c);
   ntp_setup(&c);
+}
+const char* config_read_ntp_server(char *d, unsigned d_size) {
+  return config_read_item_s(CB_NTP_SERVER, d, d_size, MY_NTP_SERVER);
 }
 #endif
 
 #ifdef USE_WLAN
 #include "net/wifistation.h"
-void config_setup_wifiStation() {
+struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   kvshT h;
-  struct cfg_wlan c = { .SSID = MY_WIFI_SSID, .password = MY_WIFI_PASSWORD, };
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_WIFI_SSID, c.SSID);
-    kvsRs(CB_WIFI_PASSWD, c.password);
+    kvsRs(CB_WIFI_SSID, c->SSID);
+    kvsRs(CB_WIFI_PASSWD, c->password);
     kvs_close(h);
   }
+  return c;
+}
+void config_setup_wifiStation() {
+  struct cfg_wlan c = { .SSID = MY_WIFI_SSID, .password = MY_WIFI_PASSWORD, };
+  config_read_wifiStation(&c);
   wifistation_setup(&c);
+}
+const char* config_read_wifi_ssid(char *d, unsigned d_size) {
+  return config_read_item_s(CB_WIFI_SSID, d, d_size, MY_WIFI_SSID);
+}
+const char* config_read_wifi_passwd(char *d, unsigned d_size) {
+  return config_read_item_s(CB_WIFI_PASSWD, d, d_size, MY_WIFI_PASSWORD);
 }
 #endif
 
 #ifdef USE_MQTT
 #include "net/mqtt/mqtt.h"
-void config_setup_mqttClient() {
+struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   kvshT h;
-  struct cfg_mqtt c = { .url = MY_MQTT_URL, .user = MY_MQTT_USER, .password = MY_MQTT_PASSWORD, .client_id = MY_MQTT_CLIENT_ID, .enable =
-  MY_MQTT_ENABLE };
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_MQTT_URL, c.url);
-    kvsRs(CB_MQTT_USER, c.user);
-    kvsRs(CB_MQTT_PASSWD, c.password);
-    kvsRs(CB_MQTT_CLIENT_ID, c.client_id);
-    kvsR(i8, CB_MQTT_ENABLE, c.enable);
+    kvsRs(CB_MQTT_URL, c->url);
+    kvsRs(CB_MQTT_USER, c->user);
+    kvsRs(CB_MQTT_PASSWD, c->password);
+    kvsRs(CB_MQTT_CLIENT_ID, c->client_id);
+    kvsR(i8, CB_MQTT_ENABLE, c->enable);
     kvs_close(h);
   }
+  return c;
+}
+void config_setup_mqttClient() {
+  struct cfg_mqtt c = { .url = MY_MQTT_URL, .user = MY_MQTT_USER, .password = MY_MQTT_PASSWORD, .client_id = MY_MQTT_CLIENT_ID, .enable =
+  MY_MQTT_ENABLE };
+  config_read_mqttClient(&c);
   io_mqtt_setup(&c);
+}
+const char* config_read_mqtt_url(char *d, unsigned d_size) {
+  return config_read_item_s(CB_MQTT_URL, d, d_size, MY_MQTT_URL);
+}
+const char* config_read_mqtt_user(char *d, unsigned d_size) {
+  return config_read_item_s(CB_MQTT_USER, d, d_size, MY_MQTT_USER);
+}
+const char* config_read_mqtt_passwd(char *d, unsigned d_size) {
+  return config_read_item_s(CB_MQTT_PASSWD, d, d_size, MY_MQTT_PASSWORD);
+}
+const char* config_read_mqtt_client_id(char *d, unsigned d_size) {
+  return config_read_item_s(CB_MQTT_CLIENT_ID, d, d_size, MY_MQTT_CLIENT_ID);
+}
+bool config_read_mqtt_enable() {
+  return !!config_read_item_i8(CB_MQTT_ENABLE, MY_MQTT_ENABLE);
 }
 #endif
 
 #ifdef USE_HTTP
 #include "net/http/server/http_server.h"
-void config_setup_httpServer() {
+struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   kvshT h;
-  struct cfg_http c = { .user = MY_HTTP_USER, .password = MY_HTTP_PASSWORD, .enable = MY_HTTP_ENABLE };
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_HTTP_USER, c.user);
-    kvsRs(CB_HTTP_PASSWD, c.password);
-    kvsR(i8, CB_HTTP_ENABLE, c.enable);
+    kvsRs(CB_HTTP_USER, c->user);
+    kvsRs(CB_HTTP_PASSWD, c->password);
+    kvsR(i8, CB_HTTP_ENABLE, c->enable);
 
     kvs_close(h);
   }
+  return c;
+}
+void config_setup_httpServer() {
+  struct cfg_http c = { .user = MY_HTTP_USER, .password = MY_HTTP_PASSWORD, .enable = MY_HTTP_ENABLE };
+  config_read_httpServer(&c);
   hts_setup(&c);
+}
+const char* config_read_http_user(char *d, unsigned d_size) {
+  return config_read_item_s(CB_HTTP_USER, d, d_size, MY_HTTP_USER);
+}
+const char* config_read_http_passwd(char *d, unsigned d_size) {
+  return config_read_item_s(CB_HTTP_PASSWD, d, d_size, MY_HTTP_PASSWORD);
+}
+
+bool config_read_http_enable() {
+  return !!config_read_item_i8(CB_HTTP_ENABLE, MY_HTTP_ENABLE);
 }
 #endif

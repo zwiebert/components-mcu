@@ -10,10 +10,11 @@
 #include "app_config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 
+#ifndef CFG_NAMESPACE
+#define CFG_NAMESPACE "config"
+#endif
 
-extern const char *configKvs_keys[];
-extern const char *config_keys[];
-#define cfg_key(cb) (((int)cb < (int)CB_size) ? configKvs_keys[(cb)] : config_keys[(cb-CB_size)])
+#define cfg_key(cb) config_get_kvs_key(cb)
 
 
 
@@ -35,9 +36,3 @@ unsigned nvsBlob(void *handle, const char *key, void *dst, size_t dst_len, bool 
 #define kvsRb(cb, val)  kvs_rw_blob(h, cfg_key(cb), &val, sizeof val, false)
 #define kvsWs(cb, val)  kvs_rw_str(h, cfg_key(cb), val, 0, true)
 #define kvsWb(cb, val)  kvs_rw_blob(h, cfg_key(cb), &val, sizeof val, true)
-
-#ifdef MCU_ESP32
-#define CFG_NAMESPACE "Tronferno"
-#else
-#define CFG_NAMESPACE "config"
-#endif

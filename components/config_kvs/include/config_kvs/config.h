@@ -35,7 +35,7 @@ enum configItem {
   CB_size
 };
 
-const char *config_get_kvs_key(uint8_t item);
+const char* config_get_kvs_key(uint8_t item);
 
 bool config_save_item_s(enum configItem item, const char *val);
 bool config_save_item_b(enum configItem item, const void *val, unsigned size);
@@ -46,38 +46,48 @@ bool config_save_item_n_u32(enum configItem item, uint32_t val);
 bool config_save_item_n_i8(enum configItem item, int8_t val);
 bool config_save_item_n_f(enum configItem item, float val);
 
-const char *config_read_item_s(enum configItem item, char *d, unsigned d_size, const char *def);
+const char* config_read_item_s(enum configItem item, char *d, unsigned d_size, const char *def);
 uint32_t config_read_item_u32(enum configItem item, uint32_t def);
-int8_t config_read_item_i8(enum configItem item,  int8_t def);
+int8_t config_read_item_i8(enum configItem item, int8_t def);
 float config_read_item_f(enum configItem item, float def);
 
-
-void config_setup_cliTcpServer();
-void config_setup_txtio();
 void config_setup_mqttClient();
-void config_setup_httpServer();
-void config_setup_wifiStation();
-void config_setup_ntpClient();
-void config_setup_ethernet();
-
-const char *config_read_mqtt_url(char *d, unsigned d_size);
-const char *config_read_mqtt_user(char *d, unsigned d_size);
-const char *config_read_mqtt_passwd(char *d, unsigned d_size);
-const char *config_read_mqtt_client_id(char *d, unsigned d_size);
+struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c);
+const char* config_read_mqtt_url(char *d, unsigned d_size);
+const char* config_read_mqtt_user(char *d, unsigned d_size);
+const char* config_read_mqtt_passwd(char *d, unsigned d_size);
+const char* config_read_mqtt_client_id(char *d, unsigned d_size);
 bool config_read_mqtt_enable();
 
-const char *config_read_http_user(char *d, unsigned d_size);
-const char *config_read_http_passwd(char *d, unsigned d_size);
+void config_setup_httpServer();
+struct cfg_http* config_read_httpServer(struct cfg_http *c);
+const char* config_read_http_user(char *d, unsigned d_size);
+const char* config_read_http_passwd(char *d, unsigned d_size);
 bool config_read_http_enable();
 
-const char *config_read_wifi_ssid(char *d, unsigned d_size);
-const char *config_read_wifi_passwd(char *d, unsigned d_size);
+void config_setup_wifiStation();
+struct cfg_wlan* config_read_wifiStation(struct cfg_wlan *c);
+const char* config_read_wifi_ssid(char *d, unsigned d_size);
+const char* config_read_wifi_passwd(char *d, unsigned d_size);
 bool config_read_wifi_enable();
 
-const char *config_read_ntp_server(char *d, unsigned d_size);
+void config_setup_ntpClient();
+struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c);
+const char* config_read_ntp_server(char *d, unsigned d_size);
 
+void config_setup_ethernet();
+struct cfg_lan* config_read_ethernet(struct cfg_lan *c);
 int8_t config_read_lan_phy();
 int8_t config_read_lan_pwr_gpio();
 
+void config_setup_txtio();
+struct cfg_txtio* config_read_txtio(struct cfg_txtio *c);
 enum verbosity config_read_verbose();
+
+void config_setup_cliTcpServer();
+
+
+
+
+
 
