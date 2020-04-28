@@ -16,6 +16,8 @@
 #include "misc/int_types.h"
 #include "misc/stof.h"
 #include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
 
 #define D(x) 
 
@@ -39,6 +41,10 @@ const char *configKvs_keys[] = {
 #endif
 };
 
+
+const char *config_get_kvs_key(uint8_t item) {
+  return cfg_key(item);
+}
 
 unsigned nvsStr(void *handle, const char *key, void *dst, size_t dst_len, bool save) {
   if (save) {

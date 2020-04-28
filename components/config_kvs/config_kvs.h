@@ -12,7 +12,8 @@
 
 
 extern const char *configKvs_keys[];
-#define cfg_key(cb) (configKvs_keys[(cb)])
+extern const char *config_keys[];
+#define cfg_key(cb) (((int)cb < (int)CB_size) ? configKvs_keys[(cb)] : config_keys[(cb-CB_size)])
 
 
 

@@ -35,6 +35,8 @@ enum configItem {
   CB_size
 };
 
+const char *config_get_kvs_key(uint8_t item);
+
 bool config_save_item_s(enum configItem item, const char *val);
 bool config_save_item_b(enum configItem item, const void *val, unsigned size);
 bool config_save_item_u32(enum configItem item, const char *val);
@@ -57,4 +59,25 @@ void config_setup_httpServer();
 void config_setup_wifiStation();
 void config_setup_ntpClient();
 void config_setup_ethernet();
+
+const char *config_read_mqtt_url(char *d, unsigned d_size);
+const char *config_read_mqtt_user(char *d, unsigned d_size);
+const char *config_read_mqtt_passwd(char *d, unsigned d_size);
+const char *config_read_mqtt_client_id(char *d, unsigned d_size);
+bool config_read_mqtt_enable();
+
+const char *config_read_http_user(char *d, unsigned d_size);
+const char *config_read_http_passwd(char *d, unsigned d_size);
+bool config_read_http_enable();
+
+const char *config_read_wifi_ssid(char *d, unsigned d_size);
+const char *config_read_wifi_passwd(char *d, unsigned d_size);
+bool config_read_wifi_enable();
+
+const char *config_read_ntp_server(char *d, unsigned d_size);
+
+int8_t config_read_lan_phy();
+int8_t config_read_lan_pwr_gpio();
+
+enum verbosity config_read_verbose();
 

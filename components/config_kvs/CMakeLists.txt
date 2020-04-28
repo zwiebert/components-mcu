@@ -1,4 +1,4 @@
-set(srcs config_kvs.c config_comps.c)
+set(srcs config_kvs.c config_comps.c config_gs.c)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
 
