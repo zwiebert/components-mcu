@@ -15,6 +15,11 @@ bool sj_add_object(const char *key);
 bool sj_add_key_value_pair_s(const char *key, const char *val);
 bool sj_add_key_value_pair_d(const char *key, int val);
 bool sj_add_key_value_pair_f(const char *key, float val);
+
+bool sj_add_array(const char *key);
+void sj_close_array();
+bool sj_add_value_d(int val);
+
 void sj_close_object();
 void sj_close_root_object();
 

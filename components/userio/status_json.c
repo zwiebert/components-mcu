@@ -140,6 +140,28 @@ void sj_close_object() {
   json_idx += strlen(BUF + json_idx);
 }
 
+bool sj_add_array(const char *key) {
+  D(db_printf("%s(%s)\n", __func__, key));
+  precond(json_idx > 0);
+  if (sj_not_enough_buffer(key, 0))
+    return false;
+
+  strcat(strcat(strcpy(BUF + json_idx, "\""), key), "\":[");
+  json_idx += strlen(BUF + json_idx);
+  return true;
+}
+
+void sj_close_array() {
+  D(db_printf("%s()\n", __func__));
+  precond(BUF);
+  precond(json_idx > 0);
+  if (BUF[json_idx - 1] == ',') { // remove trailing comma...
+    --json_idx;
+  }
+  strcpy(BUF + json_idx, "],");
+  json_idx += strlen(BUF + json_idx);
+}
+
 void sj_close_root_object() {
   D(db_printf("%s()\n", __func__));
   precond(BUF);
@@ -156,6 +178,22 @@ void sj_close_root_object() {
 sj_callback_onClose_ifNotEmpty = 0;
 }
 
+bool sj_add_value_d(int val) {
+  D(db_printf("%s(%d)\n", __func__, val));
+  precond(json_idx > 0);
+
+  char buf[20];
+  ltoa(val, buf, 10);
+
+  if (sj_not_enough_buffer("", buf))
+    return false;
+
+  strcat(strcpy(BUF + json_idx, buf), ",");
+
+  json_idx += strlen(BUF + json_idx);
+  D(db_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
+  return true;
+}
 
 bool sj_add_key_value_pair_f(const char *key, float val) {
   D(db_printf("%s(%s, %f)\n", __func__, key, val));
