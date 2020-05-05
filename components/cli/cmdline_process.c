@@ -20,6 +20,7 @@
 int cli_processParameters(clpar p[], int len) {
   int i;
   int result = -1;
+  precond (len > 0);
 
   for (i = 0; i < parm_handlers.count; ++i) {
     if (strcmp(p[0].key, parm_handlers.handlers[i].parm) == 0) {
@@ -45,7 +46,7 @@ void cli_process_json(char *json, so_target_bits tgt) {
       int n = parse_json(name, cmd_obj);
       if (n < 0) {
         cli_replyFailure();
-      } else {
+      } else if (n > 0) {
         cli_processParameters(cli_par, n);
       }
     }
@@ -69,7 +70,7 @@ void cli_process_cmdline(char *line, so_target_bits tgt) {
   int n = cli_parseCommandline(line);
   if (n < 0) {
     cli_replyFailure();
-  } else {
+  } else if (n > 0) {
     if (sj_open_root_object("tfmcu")) {
       cli_processParameters(cli_par, n);
       sj_close_root_object();
