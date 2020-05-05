@@ -14,7 +14,9 @@ struct cfg_txtio *txtio_config;
 void txtio_mcu_setup(void);
 
 void txtio_setup(struct cfg_txtio *cfg_txtio) {
-  txtio_config = cfg_txtio;
+  static struct cfg_txtio cfg;
+  cfg = *cfg_txtio;
+  txtio_config = &cfg;
   txtio_mcu_setup();
 }
 

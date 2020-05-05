@@ -152,15 +152,6 @@ static void io_mqtt_create_and_start(struct cfg_mqtt *c) {
 
 
 void io_mqtt_setup(struct cfg_mqtt *c) {
-    if (TXTIO_IS_VERBOSE(6)) {
-      esp_log_level_set("*", ESP_LOG_INFO);
-      esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
-      esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
-      esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
-      esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
-      esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
-    }
-
     if (c && c->enable) {
       io_mqtt_create_and_start(c);
     } else {
