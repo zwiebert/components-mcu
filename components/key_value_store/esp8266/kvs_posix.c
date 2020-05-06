@@ -229,7 +229,7 @@ bool kvs_erase_key(kvshT h, const char *key) {
   return false;
 }
 
-int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb) {
+int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb, void *args) {
   int pos = 0;
   kvshT h = 0;
   int count = 0;
@@ -253,7 +253,7 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
       }
 
       if (cb) {
-        switch (cb(li.key, li.kvs_type)) {
+        switch (cb(li.key, li.kvs_type, args)) {
         case kvsCb_match:
           ++count;
           break;

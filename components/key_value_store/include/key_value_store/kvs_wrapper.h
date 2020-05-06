@@ -65,9 +65,9 @@ typedef enum {
   kvsCb_noMatch, kvsCb_match, kvsCb_done
 } kvs_cbrT;
 
-typedef kvs_cbrT (*kvs_foreach_cbT)(const char *key, kvs_type_t type);
+typedef kvs_cbrT (*kvs_foreach_cbT)(const char *key, kvs_type_t type, void *args);
 
-int kvs_foreach(const char *name_space, kvs_type_t, const char*key_match, kvs_foreach_cbT);
+int kvs_foreach(const char *name_space, kvs_type_t, const char*key_match, kvs_foreach_cbT, void *args);
 
 
 void kvs_setup(void);
