@@ -45,7 +45,6 @@ extern const struct parm_handlers parm_handlers; // defined by app
 extern uint16_t cli_msgid;
 #define MAX_PAR 20
 extern clpar cli_par[MAX_PAR];
-extern bool cli_isJson;
 
 #define CMD_BUF_SIZE 128
 extern char cmd_buf[CMD_BUF_SIZE];

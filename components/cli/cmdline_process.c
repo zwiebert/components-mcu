@@ -33,9 +33,7 @@ int cli_processParameters(clpar p[], int len) {
 
 
 void cli_process_json(char *json, so_target_bits tgt) {
-  cli_isJson = true;
-
-  so_tgt_set(tgt);
+  so_tgt_set(tgt|SO_TGT_FLAG_JSON);
 
   dbg_vpf(db_printf("process_json: %s\n", json));
 
@@ -64,8 +62,7 @@ void cli_process_json(char *json, so_target_bits tgt) {
 
 void cli_process_cmdline(char *line, so_target_bits tgt) {
   dbg_vpf(db_printf("process_cmdline: %s\n", line));
-  cli_isJson = false;
-  so_tgt_set(tgt);
+  so_tgt_set(tgt|SO_TGT_FLAG_TXT);
 
   int n = cli_parseCommandline(line);
   if (n < 0) {

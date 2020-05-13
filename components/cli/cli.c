@@ -17,7 +17,6 @@
 #include <string.h>
 
 u16 cli_msgid;
-bool cli_isJson;
 
 int asc2bool(const char *s) {
   if (!s)
@@ -91,7 +90,7 @@ void  print_enr(void) {
 }
 
 void  msg_print(const char *msg, const char *tag) {
-  if (!so_tgt_test(SO_TGT_CLI) || cli_isJson)
+ if (!cli_isInteractive())
     return;
   if (msg)
     io_puts(msg);
@@ -107,19 +106,19 @@ void  msg_print(const char *msg, const char *tag) {
 }
 
 void  cli_warning_optionUnknown(const char *key) {
-  if (!so_tgt_test(SO_TGT_CLI) || cli_isJson)
+ if (!cli_isInteractive())
     return;
   msg_print("warning", "unknown-option"), io_puts(key), io_putc('\n');
 }
 
 void  cli_reply_print(const char *tag) {
-  if (!so_tgt_test(SO_TGT_CLI) || cli_isJson)
+ if (!cli_isInteractive())
     return;
   msg_print("cli_reply", tag);
 }
 
 void  reply_message(const char *tag, const char *msg) {
-  if (!so_tgt_test(SO_TGT_CLI) || cli_isJson)
+ if (!cli_isInteractive())
     return;
   cli_reply_print(tag);
   if (msg)
@@ -128,14 +127,14 @@ void  reply_message(const char *tag, const char *msg) {
 }
 
 void  cli_msg_ready(void) {
-  if (!so_tgt_test(SO_TGT_CLI) || cli_isJson)
+ if (!cli_isInteractive())
     return;
   io_puts("\nready:\n");
 }
 
 void  reply_id_message(u16 id, const char *tag, const char *msg) {
   u16 old_id = cli_msgid;
-  if (!so_tgt_test(SO_TGT_CLI) || cli_isJson)
+ if (!cli_isInteractive())
     return;
 
   cli_msgid = id;
