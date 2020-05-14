@@ -27,8 +27,6 @@ void sj_close_root_object();
 bool sj_copy_to_buf(const char *s);
 bool sj_cat_to_buf(const char *s);
 
-extern void (*sj_callback_onClose_ifNotEmpty)(const char *json);
-
 bool sj_realloc_buffer(size_t buf_size);
 char *sj_get_json();
 void sj_free_buffer();

@@ -22,16 +22,12 @@ char *ftoa(float f, char *buf, int n);
 
 #define D(x)
 
-void (*sj_callback_onClose_ifNotEmpty)(const char *s);
-
 static int json_idx;
 static char *json_buf;
 static u16 json_buf_size;
 
 #define BUF (json_buf+0)
 #define BUF_SIZE (json_buf_size)
-#define USE_CALLBACK (!json_buf && sj_callback_onClose_ifNotEmpty)
-#define DO_CALLBACK() sj_callback_onClose_ifNotEmpty(BUF);
 #define BUF_MAX_SIZE 1024
 
 char *sj_get_json() { return BUF; }
@@ -171,11 +167,6 @@ void sj_close_root_object() {
   }
   strcpy(BUF + json_idx, "}");
   json_idx = 0;
-
-  if (USE_CALLBACK)
-    DO_CALLBACK();
-
-sj_callback_onClose_ifNotEmpty = 0;
 }
 
 bool sj_add_value_d(int val) {
