@@ -20,6 +20,14 @@
 #include "sensitive/defaults.h"
 #endif
 
+#ifndef MY_MCU_UART_BAUD_RATE
+#ifdef CONFIG_MY_MCU_UART_BAUD_RATE
+#define MY_MCU_UART_BAUD_RATE CONFIG_MY_MCU_UART_BAUD_RATE
+#else
+#define MY_MCU_UART_BAUD_RATE 115200
+#endif
+#endif
+
 #ifndef MY_WIFI_SSID
 #ifdef CONFIG_MY_WIFI_SSID
 #define MY_WIFI_SSID CONFIG_MY_WIFI_SSID
