@@ -1,3 +1,4 @@
+#include "app_config/proj_app_cfg.h"
 #include "freertos/FreeRTOS.h"
 #include "esp_wifi.h"
 #include "esp_system.h"
@@ -250,12 +251,18 @@ void handle_input(int fd, void *args) {
 
 void wait_for_fd() {
   fd_set rfds = wait_fds;
+  int n = nfds;
   //fd_set wfds = wait_fds;
   //struct timeval tv = { .tv_sec = 10 };
 
   FD_SET(sockfd, &rfds);
+#ifdef USE_CLI_TASK_EXP
+  FD_SET(STDIN_FILENO, &rfds);
+  if (n <= STDIN_FILENO)
+    n = STDIN_FILENO+1;
+#endif
 
-  int count = lwip_select(nfds, &rfds, NULL, NULL, NULL);
+  int count = lwip_select(n, &rfds, NULL, NULL, NULL);
   if (count < 0) {
     return;
   }
@@ -270,6 +277,14 @@ void wait_for_fd() {
     FD_CLR(sockfd, &rfds);
     --count;
   }
+#ifdef USE_CLI_TASK_EXP
+  if (FD_ISSET(STDIN_FILENO, &rfds)) {
+    cli_loop();
+
+    FD_CLR(STDIN_FILENO, &rfds);
+    --count;
+  }
+#endif
   count = foreach_fd(&rfds, count, handle_input, 0);
 
 }

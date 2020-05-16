@@ -18,6 +18,9 @@
 #include "esp_vfs_dev.h"
 #include "driver/uart.h"
 
+
+#define UART_RX_RINGBUF_SIZE (1024 * 2)
+
 static int  es_io_getc(void) {
 #ifdef USE_CLI_TASK
  return getchar();
@@ -48,9 +51,9 @@ static void initialize_console(void)
     setvbuf(stdin, NULL, _IONBF, 0);
 
     /* Minicom, screen, idf_monitor send CR when ENTER key is pressed */
-    esp_vfs_dev_uart_set_rx_line_endings(ESP_LINE_ENDINGS_CR);
+  //  esp_vfs_dev_uart_set_rx_line_endings(ESP_LINE_ENDINGS_CR);
     /* Move the caret to the beginning of the next line on '\n' */
-    esp_vfs_dev_uart_set_tx_line_endings(ESP_LINE_ENDINGS_CRLF);
+ //   esp_vfs_dev_uart_set_tx_line_endings(ESP_LINE_ENDINGS_CRLF);
 
     /* Configure UART. Note that REF_TICK is used so that the baud rate remains
      * correct while APB frequency is changing in light sleep mode.
@@ -61,9 +64,11 @@ static void initialize_console(void)
             .parity = UART_PARITY_DISABLE,
             .stop_bits = UART_STOP_BITS_1,
             .source_clk = UART_SCLK_REF_TICK,
+           //.flow_ctrl = UART_HW_FLOWCTRL_CTS_RTS,
+           // .rx_flow_ctrl_thresh = 64,
     };
     /* Install UART driver for interrupt-driven reads and writes */
-    ESP_ERROR_CHECK( uart_driver_install(CONFIG_ESP_CONSOLE_UART_NUM, 256, 0, 0, NULL, 0) );
+    ESP_ERROR_CHECK( uart_driver_install(CONFIG_ESP_CONSOLE_UART_NUM, UART_RX_RINGBUF_SIZE, 0, 0, NULL, 0) );
     ESP_ERROR_CHECK( uart_param_config(CONFIG_ESP_CONSOLE_UART_NUM, &uart_config) );
 
     /* Tell VFS to use UART driver */

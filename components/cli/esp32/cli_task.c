@@ -1,3 +1,4 @@
+#include "app_config/proj_app_cfg.h"
 #include "freertos/FreeRTOS.h"
 #include "esp_system.h"
 #include "esp_event.h"
@@ -26,6 +27,7 @@ static void cli_task(void *pvParameters) {
 
 
 void cli_setup_task(bool enable) {
+#if (!defined USE_CLI_TASK_EXP) && defined USE_TCPS_TASK
   static uint8_t ucParameterToPass;
 
   if (xHandle) {
@@ -38,6 +40,6 @@ void cli_setup_task(bool enable) {
 
   xTaskCreate(cli_task, "cli_server", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
   configASSERT( xHandle );
-
+#endif
 }
 
