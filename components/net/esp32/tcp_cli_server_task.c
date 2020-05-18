@@ -234,16 +234,26 @@ static void try_accept() {
 
 void handle_input(int fd, void *args) {
   selected_fd = fd;
-  char *cmdline = cli_get_commandline(cli_buf, cli_buf_size, tcps_getc);
-  if (cmdline) {
+  static int cli_buf_idx, quote_count;
+  switch (cli_get_commandline(cli_buf, cli_buf_size, &cli_buf_idx, &quote_count, tcps_getc)) {
+  case CMDL_DONE:
     if (mutex_cliTake()) {
-      if (cmdline[0] == '{') {
-        cli_process_json(cmdline, SO_TGT_CLI);
+      if (cli_buf[0] == '{') {
+        cli_process_json(cli_buf, SO_TGT_CLI);
       } else {
-        cli_process_cmdline(cmdline, SO_TGT_CLI);
+        cli_process_cmdline(cli_buf, SO_TGT_CLI);
       }
       mutex_cliGive();
     }
+    break;
+
+  case CMDL_INCOMPLETE:
+    break;
+  case CMDL_LINE_BUF_FULL:
+    cli_buf_idx = quote_count = 0; // TODO: enlarge cli_buf with realloc()
+    break;
+  case CMDL_ERROR:
+    break;
   }
 }
 

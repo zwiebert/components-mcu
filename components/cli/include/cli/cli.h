@@ -14,7 +14,8 @@
 
 // user interface
 typedef int (*getc_funT)(void);
-char *cli_get_commandline(char *cbuf, unsigned buf_size, getc_funT getc_fun);
+enum cli_get_commline_retT { CMDL_DONE, CMDL_ERROR, CMDL_INCOMPLETE, CMDL_LINE_BUF_FULL };
+enum cli_get_commline_retT cli_get_commandline(char *cbuf, unsigned buf_size, int *cmd_buf_idx, int *quote_count, getc_funT getc_fun);
 void cli_process_cmdline(char *line, so_target_bits tgt);
 void cli_process_json(char *json, so_target_bits tgt);
 void cli_loop(void);
@@ -22,7 +23,7 @@ void cli_setup_task(bool enable);
 
 // XXX: functions working on a static buffer
 char *get_commandline(void);
-char *set_commandline(const char *src, uint8_t len); // copy src  (e.g. from mqtt event) to writable buffer
+
 
 // implementation interface
 typedef struct {

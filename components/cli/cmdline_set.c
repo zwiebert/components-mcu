@@ -10,21 +10,26 @@
 #include "txtio/inout.h"
 #include <string.h>
 
-
-char cmd_buf[CMD_BUF_SIZE];
-
-
-
 char* get_commandline() {
-  return cli_get_commandline(cmd_buf, CMD_BUF_SIZE, io_getc_fun);
+  static char cmd_buf[CMD_BUF_SIZE];
+  static int cli_buf_idx, quote_count;
+
+  switch (cli_get_commandline(cmd_buf, CMD_BUF_SIZE, &cli_buf_idx, &quote_count, io_getc_fun)) {
+  case CMDL_DONE:
+    return cmd_buf;
+    break;
+
+  case CMDL_INCOMPLETE:
+    break;
+
+  case CMDL_LINE_BUF_FULL:
+    cli_buf_idx = quote_count = 0; // TODO: enlarge cli_buf with realloc()
+    break;
+
+  case CMDL_ERROR:
+    break;
+  }
+
+  return 0;
 }
 
-char*
-set_commandline(const char *src, u8 len) {  // FIXME: make sure cmd_buf is not in use by get_commandline()
-  if (len >= CMD_BUF_SIZE)
-    return 0;
-
-  memcpy(cmd_buf, src, len);
-  cmd_buf[len] = '\0';
-  return cmd_buf;
-}
