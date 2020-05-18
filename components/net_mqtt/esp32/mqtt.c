@@ -27,7 +27,7 @@
 #else
 #define D(x) x
 #endif
-
+#ifdef USE_MQTT
 
 static const char *TAG = "MQTT_EXAMPLE";
 
@@ -158,3 +158,4 @@ void io_mqtt_setup(struct cfg_mqtt *c) {
       io_mqtt_stop_and_destroy();
     }
 }
+#endif

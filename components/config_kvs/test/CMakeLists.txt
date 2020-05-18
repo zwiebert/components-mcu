@@ -10,7 +10,7 @@ endif()
 
 idf_component_register(SRC_DIRS "."
                        INCLUDE_DIRS "." ../include 
-                       PRIV_INCLUDE_DIRS ../ ../include/config
                        REQUIRES fernotron app txtio
                        PRIV_REQUIRES key_value_store
 )
+
