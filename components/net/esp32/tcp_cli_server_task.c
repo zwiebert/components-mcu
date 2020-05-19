@@ -68,8 +68,7 @@ static int cconn_count;
 static int (*old_io_putc_fun)(char c);
 //static int (*old_io_getc_fun)(void);
 
-const unsigned cli_buf_size = 120;
-char *cli_buf;
+static struct cli_buf buf;
 
 
 static void set_sockfd(int fd) {
@@ -234,26 +233,29 @@ static void try_accept() {
 
 void handle_input(int fd, void *args) {
   selected_fd = fd;
-  static int cli_buf_idx, quote_count;
-  switch (cli_get_commandline(cli_buf, cli_buf_size, &cli_buf_idx, &quote_count, tcps_getc)) {
-  case CMDL_DONE:
-    if (mutex_cliTake()) {
-      if (cli_buf[0] == '{') {
-        cli_process_json(cli_buf, SO_TGT_CLI);
-      } else {
-        cli_process_cmdline(cli_buf, SO_TGT_CLI);
+  for (;;) {
+    switch (cli_get_commandline(&buf, tcps_getc)) {
+    case CMDL_DONE:
+      if (mutex_cliTake()) {
+        if (buf.cli_buf[0] == '{') {
+          cli_process_json(buf.cli_buf, SO_TGT_CLI);
+        } else {
+          cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
+        }
+        mutex_cliGive();
       }
-      mutex_cliGive();
-    }
-    break;
+      break;
 
-  case CMDL_INCOMPLETE:
-    break;
-  case CMDL_LINE_BUF_FULL:
-    cli_buf_idx = quote_count = 0; // TODO: enlarge cli_buf with realloc()
-    break;
-  case CMDL_ERROR:
-    break;
+    case CMDL_INCOMPLETE:
+      break;
+    case CMDL_LINE_BUF_FULL:
+      if (cliBuf_enlarge(&buf))
+        continue;
+      break;
+    case CMDL_ERROR:
+      break;
+    }
+    return;
   }
 }
 
@@ -321,13 +323,12 @@ void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
     if (xHandle) {
       vTaskDelete(xHandle);
       xHandle = NULL;
-      free(cli_buf);
-      cli_buf = 0;
+      free(buf.cli_buf);
+      buf.cli_buf = 0;
     }
     return;
   }
 
-  cli_buf = calloc(cli_buf_size, 1);
   xTaskCreate(tcps_task, "tcp_server", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
   configASSERT( xHandle );
 

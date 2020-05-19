@@ -41,11 +41,13 @@ void cli_process_json(char *json, so_target_bits tgt) {
 
   if (sj_open_root_object("tfmcu")) {
     while ((cmd_obj = json_get_command_object(json, &name, &json))) {
-      int n = parse_json(name, cmd_obj);
+      clpar par[20] = {};
+      struct cli_parm clp = { .par = par, .size = 20 };
+      int n = parse_json(name, cmd_obj, &clp);
       if (n < 0) {
         cli_replyFailure();
       } else if (n > 0) {
-        cli_processParameters(cli_par, n);
+        cli_processParameters(clp.par, n);
       }
     }
     sj_close_root_object();
@@ -63,13 +65,15 @@ void cli_process_json(char *json, so_target_bits tgt) {
 void cli_process_cmdline(char *line, so_target_bits tgt) {
   dbg_vpf(db_printf("process_cmdline: %s\n", line));
   so_tgt_set(tgt|SO_TGT_FLAG_TXT);
+  clpar par[20] = {};
+  struct cli_parm clp = { .par = par, .size = 20 };
 
-  int n = cli_parseCommandline(line);
+  int n = cli_parseCommandline(line, &clp);
   if (n < 0) {
     cli_replyFailure();
   } else if (n > 0) {
     if (sj_open_root_object("tfmcu")) {
-      cli_processParameters(cli_par, n);
+      cli_processParameters(clp.par, n);
       sj_close_root_object();
     }
   }
