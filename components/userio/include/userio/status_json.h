@@ -10,6 +10,14 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#ifdef USE_SJ_WRITE
+extern int (*sj_write)(const char *src, unsigned len);
+#define sj_write_set(write_fun) sj_write = (write_fun)
+#else
+#define sj_write 0
+#define sj_write_set(write_fun)
+#endif
+
 bool sj_open_root_object(const char *id);
 bool sj_add_object(const char *key);
 bool sj_add_key_value_pair_s(const char *key, const char *val);

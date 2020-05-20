@@ -53,7 +53,7 @@ void cli_process_json(char *json, so_target_bits tgt) {
     sj_close_root_object();
   }
 
-  if (so_tgt_test(SO_TGT_CLI)) {
+  if (so_tgt_test(SO_TGT_CLI) && !sj_write) {
     cli_print_json(sj_get_json());
   }
 

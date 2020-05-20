@@ -74,6 +74,20 @@ int io_puts(const char *s) {
   return result;
 }
 
+int io_write(const char *s, unsigned len) {
+  int result = len;
+  if (txtio_mutexTake()) {
+    for (; len > 0; ++s, --len) {
+      if (io_putc(*s) == -1) {
+        result = -1;
+        break;
+      }
+    }
+    txtio_mutexGive();
+  }
+  return result - len;
+}
+
 void 
 io_putx8(u8 n) {
   char s[3];
