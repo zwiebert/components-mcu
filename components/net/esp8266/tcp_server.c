@@ -13,6 +13,9 @@
 #include "txtio/inout.h"
 #include "app/rtc.h"
 #include "net/tcp_cli_server.h"
+#include "cli/cli.h"
+#include "cli/mutex.h"
+#include "userio/status_json.h"
 
 #define TCP_HARD_TIMEOUT  (60 * 10)  // terminate connections to avoid dead connections piling up
 #define PUTC_LINE_BUFFER 1
@@ -23,10 +26,10 @@
 #ifndef DISTRIBUTION
 #define D(x)
 #else
-#define D(x)
+#define D(x) x
 #endif
 
-#if 0
+#if 1
 #define DV(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
 #else
 #undef DV
@@ -34,7 +37,8 @@
 #endif
 
 static int (*old_io_putc_fun)(char c);
-static int (*old_io_getc_fun)(void);
+
+static struct cli_buf buf;
 
 static void tcps_disconnect_cb(void *arg);
 
@@ -84,26 +88,7 @@ static int
 tcpSocket_io_getc(void) {
   u8 c;
 
-#if SERIAL_INPUT
-  if (old_io_getc_fun) {
-
-    int cc = old_io_getc_fun();
-    if (cc >= 0) {
-      return cc;
-    }
-  }
-#endif
-
-
   if (rxb_pop(&c)) {
-
-    if (nmbConnected <= 0) {
-      if (rxb_isEmpty()) {
-        io_getc_fun = old_io_getc_fun;
-        DV(printf("reset io_getc_fun to serial UART\n"));
-        rx_head = rx_tail = 0;
-      }
-    }
     D(printf("(%c)", c));
     return c;
   }
@@ -111,7 +96,7 @@ tcpSocket_io_getc(void) {
   return -1;
 }
 #if PUTC_LINE_BUFFER
-#define TCPS_LINE_LEN 120
+#define TCPS_LINE_LEN 512
 static char line_buf[TCPS_LINE_LEN];
 static int line_idx;
 static bool line_complete;
@@ -170,7 +155,7 @@ write_line(void) {
 
 }
 
-static int 
+static int
 tcpSocket_io_putc(char c) {
   u8 i;
 
@@ -194,7 +179,7 @@ tcpSocket_io_putc(char c) {
   }
 }
 #else
-static int 
+static int
 tcpSocket_io_putc(char c) {
   u8 new_tail = tx_tail + 1;
   if (new_tail == TX_BUFSIZE)
@@ -332,8 +317,6 @@ tcps_disconnect_cb(void *arg) {
     os_bzero(tcpclient_espconn, sizeof tcpclient_espconn);
 
     if (rxb_isEmpty()) {
-      io_getc_fun = old_io_getc_fun;
-      DV(printf("reset io_getc_fun to serial UART\n"));
       rx_head = rx_tail = 0;
     }
   }
@@ -349,6 +332,47 @@ tcps_recv_cb(void *arg, char *pdata, unsigned short len) {
     rxb_push(*pdata++);
   }
 }
+
+static int tcps_write(const char *s, unsigned len) {
+  if (tcpc_last_received) {
+    int res = espconn_send(tcpc_last_received, s, len);
+    if (res == 0)
+      return len;
+    os_printf("espconn_send failed with %d\n", res);
+  }
+  return -1;
+}
+
+void handle_input() {
+  for (;;) {
+    switch (cli_get_commandline(&buf, tcpSocket_io_getc)) {
+    case CMDL_DONE:
+      if (mutex_cliTake()) {
+        if (buf.cli_buf[0] == '{') {
+         // sj_write = tcps_write;
+          cli_process_json(buf.cli_buf, SO_TGT_CLI);
+          sj_write = 0;
+        } else {
+          cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
+        }
+        mutex_cliGive();
+      }
+      break;
+
+    case CMDL_INCOMPLETE:
+      break;
+    case CMDL_LINE_BUF_FULL:
+      if (cliBuf_enlarge(&buf))
+        continue;
+      break;
+    case CMDL_ERROR:
+      break;
+    }
+    return;
+  }
+}
+
+
 
 static void 
 tcps_connect_cb(void *arg) {
@@ -378,7 +402,6 @@ tcps_connect_cb(void *arg) {
   DV(printf("tcp client %d connected: %d.%d.%d.%d:%d\n", nmbConnected, pesp_conn->proto.tcp->remote_ip[0], pesp_conn->proto.tcp->remote_ip[1], pesp_conn->proto.tcp->remote_ip[2],
       pesp_conn->proto.tcp->remote_ip[3], pesp_conn->proto.tcp->remote_port));
 
-  io_getc_fun = tcpSocket_io_getc;
   io_putc_fun = tcpSocket_io_putc;
   espconn_regist_disconcb(pesp_conn, tcps_disconnect_cb);
   espconn_regist_recvcb(pesp_conn, tcps_recv_cb);
@@ -404,6 +427,7 @@ void
 tcpCli_loop(void) {
   int i;
 
+  handle_input();
   tcps_tx_loop();
 
 #if !PUTC_LINE_BUFFER
@@ -430,7 +454,6 @@ tcpCli_loop(void) {
 #endif
 
 
-    io_getc_fun = old_io_getc_fun;
     io_putc_fun = old_io_putc_fun;
   }
 }
@@ -443,7 +466,6 @@ void tcpCli_setup(const struct cfg_tcps *cfg_tcps) {
   struct espconn *pesp_conn = os_zalloc((uint32 )sizeof(struct espconn));
   int result = 0;
 
-  old_io_getc_fun = io_getc_fun;
   old_io_putc_fun = io_putc_fun;
 
   if (!(tcpserver_espconn = pesp_conn)) {
