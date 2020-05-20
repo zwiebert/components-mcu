@@ -27,6 +27,7 @@ int io_putc(char c);
 int io_getc(void);
 int io_putlf(void);
 int io_puts(const char *s);
+int io_write(const char *s, unsigned len);
 int io_getline(char *buf, unsigned buf_size);
 int io_printf(const char *fmt, ...);
 
