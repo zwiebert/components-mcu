@@ -40,7 +40,7 @@
 #include <stdbool.h>
 
 #define D(x) x
-
+#ifdef USE_MQTT
 MQTT_Client mqttClient;
 MQTT_Client* client;
 
@@ -171,4 +171,4 @@ void io_mqtt_setup(struct cfg_mqtt *c)
     io_mqtt_stop_and_destroy();
   }
 }
-
+#endif
