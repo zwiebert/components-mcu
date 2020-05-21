@@ -67,9 +67,9 @@ void cli_loop(void) {
   if ((cmdline = get_commandline())) {
     if (mutex_cliTake()) {
       if (cmdline[0] == '{') {
-        sj_write = io_write;
+        sj_write_set(io_write);
         cli_process_json(cmdline, SO_TGT_CLI);
-        sj_write = 0;
+        sj_write_set(0);
       } else {
 
         io_putlf();

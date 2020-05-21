@@ -17,8 +17,7 @@
 #include <stdlib.h>
 #include "userio_app_cfg.h"
 #include "misc/int_types.h"
-
-char *ftoa(float f, char *buf, int n);
+#include "misc/ftoa.h"
 
 #define D(x)
 
@@ -30,9 +29,8 @@ static u16 json_buf_size;
 #define BUF_SIZE (json_buf_size)
 #define BUF_MAX_SIZE 1024
 
+#ifdef USE_SJ_WRITE
 int (*sj_write)(const char *src, unsigned len);
-
-char *sj_get_json() { return BUF; }
 
 static void sj_write_out_buf() {
   if (!sj_write)
@@ -43,8 +41,12 @@ static void sj_write_out_buf() {
     json_idx = 0;
     return;
   }
-
 }
+#else
+#define sj_write_out_buf()
+#endif
+
+char *sj_get_json() { return BUF; }
 
 bool sj_realloc_buffer(size_t buf_size) {
   precond(buf_size > json_idx);

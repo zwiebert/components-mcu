@@ -349,9 +349,9 @@ void handle_input() {
     case CMDL_DONE:
       if (mutex_cliTake()) {
         if (buf.cli_buf[0] == '{') {
-         // sj_write = tcps_write;
+          sj_write_set(tcps_write);
           cli_process_json(buf.cli_buf, SO_TGT_CLI);
-          sj_write = 0;
+          sj_write_set(0);
         } else {
           cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
         }
