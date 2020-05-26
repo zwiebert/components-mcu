@@ -10,6 +10,7 @@
 #define USE_NTP
 #define USE_JSON
 #define USE_MQTT
+#define USE_WS
 #define USE_POSIX_TIME
 #define POSIX_TIME
 #define USE_SERIAL

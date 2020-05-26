@@ -83,6 +83,7 @@ static httpd_handle_t start_webserver(struct cfg_http *c) {
   httpd_handle_t server = NULL;
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
   config.max_open_sockets = 6;
+  config.uri_match_fn = httpd_uri_match_wildcard;
 
   ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
   if (httpd_start(&server, &config) != ESP_OK) {
@@ -95,17 +96,17 @@ static httpd_handle_t start_webserver(struct cfg_http *c) {
 }
 
 ///////// public interface ///////////////////
-
+httpd_handle_t hts_server;
 void hts_enable_http_server(struct cfg_http *c) {
-  static httpd_handle_t server;
+
 
   if (c && c->enable) {
-    if (!server)
-      server = start_webserver(c);
+    if (!hts_server)
+      hts_server = start_webserver(c);
   } else {
-    if (server) {
-      httpd_stop(server);
-      server = NULL;
+    if (hts_server) {
+      httpd_stop(hts_server);
+      hts_server = NULL;
     }
   }
 }

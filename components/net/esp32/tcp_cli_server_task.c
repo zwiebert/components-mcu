@@ -63,7 +63,6 @@ static void modify_io_fun(bool add_connection);
 static int sockfd = -1;
 fd_set wait_fds;
 int nfds;
-static struct sockaddr_in self;
 static int cconn_count;
 static int (*old_io_putc_fun)(char c);
 //static int (*old_io_getc_fun)(void);
@@ -121,6 +120,7 @@ int foreach_fd(fd_set *fdsp, int count, fd_funT fd_fun, void *args) {
 
 static int tcps_create_server() {
   int fd;
+  static struct sockaddr_in self;
   /** Create streaming socket */
   if ((fd = lwip_socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     perror("Socket");
