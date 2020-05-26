@@ -21,6 +21,7 @@ struct cfg_http {
 typedef enum { HQT_NONE, } hts_query_t;
 
 void hts_query(hts_query_t qtype, const char *qstr, int qstr_len);
+void hts_query0(hts_query_t qtype, char *qstr);
 //void hts_query_json(char *qstr);
 
 struct httpd_req;

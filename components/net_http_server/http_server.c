@@ -23,10 +23,17 @@ static bool isJson(const char *s, int s_len) {
 }
 
 ///////// public ///////////////////
+void hts_query0(hts_query_t qtype, char *qstr) {
+  if (isJson(qstr, strlen(qstr))) {
+    if (mutex_cliTake()) {
+      cli_process_json(qstr, SO_TGT_HTTP);
+    }
+    mutex_cliGive();
+  }
+}
+
 void hts_query(hts_query_t qtype, const char *qstr, int qstr_len) {
   char *buf, *p;
-#define cmd_len 20 // FIXME
-
   if (mutex_cliTake()) {
     if (isJson(qstr, qstr_len)) {
       if ((buf = malloc(qstr_len + 1))) {
