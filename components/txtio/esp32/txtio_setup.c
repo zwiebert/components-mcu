@@ -43,6 +43,11 @@ static int es_io_putc(char c) {
 
 static void initialize_console(void)
 {
+  static bool once;
+  if (once)
+    return;
+  once = 1;
+
     /* Drain stdout before reconfiguring it */
     fflush(stdout);
     fsync(fileno(stdout));
