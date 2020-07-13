@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef COMPONENTS_NET_INCLUDE_NET_ETHERNET_H_
-#define COMPONENTS_NET_INCLUDE_NET_ETHERNET_H_
+#pragma once
 
 #include <stdint.h>
 
@@ -23,4 +22,3 @@ void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio);
 void ethernet_setup(struct cfg_lan *config);
 
 
-#endif /* COMPONENTS_NET_INCLUDE_NET_ETHERNET_H_ */

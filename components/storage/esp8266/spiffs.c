@@ -10,25 +10,20 @@
 
 #ifndef NO_SPIFFS
 
+
+
 #include "spiffs_config.h"
 #include "spiffs.h"
 
 #define min(X,Y) ((X) < (Y) ? (X) : (Y))
 
 #if 0
-#define DEBUGV printf
+#define DEBUGV io_printf
 #else
 #define DEBUGV(...)
 #endif
 
-#define SECTOR_SIZE SPI_FLASH_SEC_SIZE
-#ifdef C_SPIFFS_FLASH_ADDR
-#define PHYS_SIZE C_SPIFFS_FLASH_SIZE
-#define PHYS_ADDR C_SPIFFS_FLASH_ADDR
-#else
-#define PHYS_SIZE 0x8000
-#define PHYS_ADDR (0xF0000)  // we start at 1MB of 4MB flash
-#endif
+
 
 
 #define FLASH_NMB_SECTORS (PHYS_SIZE / SECTOR_SIZE)
@@ -216,16 +211,12 @@ i32  my_spiffs_erase(u32 addr, u32 size) {
 
 int  my_spiffs_mount() {
 	spiffs_config cfg;
-	cfg.phys_size = PHYS_SIZE;
-	cfg.phys_addr = PHYS_ADDR; // start spiffs at start of spi flash
-	cfg.phys_erase_block = 65536; // according to datasheet
-	cfg.log_block_size = 65536; // let us not complicate things
-	cfg.log_page_size = LOG_PAGE_SIZE; // as we said
-
 	cfg.hal_read_f = my_spiffs_read;
 	cfg.hal_write_f = my_spiffs_write;
 	cfg.hal_erase_f = my_spiffs_erase;
-
+#if SPIFFS_SINGLETON == 0
+#error "configuration missing"
+#endif
 	int res = SPIFFS_mount(&fs, &cfg, spiffs_work_buf, spiffs_fds, sizeof(spiffs_fds), spiffs_cache_buf, sizeof(spiffs_cache_buf), 0);
 	printf("spiffs: mount result: %d\n", res);
 	return res;
@@ -234,7 +225,24 @@ int  my_spiffs_mount() {
 void  spiffs_test() {
 	char buf[12];
 
-	// Surely, I've mounted spiffs before entering here
+	if (SPIFFS_mounted(&fs)) {
+	  io_puts("ok: spiffs fs mounted\n");
+	} else {
+	  io_puts("error: spiffs fs not mounted\n");
+	}
+#if 0
+	if (SPIFFS_OK == SPIFFS_check(&fs)) {
+	  io_puts("ok: spiffs check");
+	} else {
+    io_puts("error: spiffs check");
+	}
+#endif
+	u32 total=0, used=0;
+	if (SPIFFS_OK == SPIFFS_info(&fs, &total, &used)) {
+	  io_printf("spiffs: total=%u, used=%u\n", total, used);
+	}
+
+	SPIFFS_vis(&fs);
 
 	spiffs_file fd = SPIFFS_open(&fs, "my_file", SPIFFS_CREAT | SPIFFS_TRUNC | SPIFFS_RDWR, 0);
 	if (fd < 0) {

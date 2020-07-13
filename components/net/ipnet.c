@@ -6,7 +6,7 @@
  */
 
 #include "app_config/proj_app_cfg.h"
-#include "ipnet.h"
+#include "net/ipnet.h"
 //XXX #include "userio_app/status_output.h"
 #include "net/http/server/http_server.h"
 #include "misc/int_types.h"

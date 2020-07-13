@@ -1,4 +1,4 @@
-#include "sun.h"
+#include "misc/sun.h"
 
 #include <stdlib.h>
 #include <math.h>

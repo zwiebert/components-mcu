@@ -8,7 +8,7 @@
 #ifndef TEST_HOST
 #include "app_config/proj_app_cfg.h"
 #endif
-#include "kvs_wrapper.h"
+#include "key_value_store/kvs_wrapper.h"
 #include "misc/int_types.h"
 #include "misc/int_macros.h"
 #include "debug/debug.h"
@@ -27,7 +27,7 @@
 #define io_printf printf
 #endif
 
-#include "storage/spiffs_posix.h"
+#include "storage/esp8266/spiffs_posix.h"
 
 
 
@@ -229,7 +229,7 @@ bool kvs_erase_key(kvshT h, const char *key) {
   return false;
 }
 
-int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb) {
+int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb, void *args) {
   int pos = 0;
   kvshT h = 0;
   int count = 0;
@@ -253,7 +253,7 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
       }
 
       if (cb) {
-        switch (cb(li.key, li.kvs_type)) {
+        switch (cb(li.key, li.kvs_type, args)) {
         case kvsCb_match:
           ++count;
           break;
@@ -447,7 +447,7 @@ unsigned kvs_rw_str(kvshT h, const char *key, char *src_or_dst, unsigned length,
 
   }
   unsigned res = kvs_rw_str_or_blob(h, key, src_or_dst, length, do_write, KVS_TYPE_STR);
-  if (!do_write && res >= 0) {
+  if (!do_write && res > 0) {
     src_or_dst[res] = '\0';
   }
   return res;

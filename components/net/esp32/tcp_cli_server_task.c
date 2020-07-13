@@ -1,3 +1,4 @@
+#include "app_config/proj_app_cfg.h"
 #include "freertos/FreeRTOS.h"
 #include "esp_wifi.h"
 #include "esp_system.h"
@@ -15,7 +16,7 @@
 #include "net/tcp_cli_server.h"
 #include "cli/cli.h"
 #include "cli/mutex.h"
-#include "tcp_cli_server.h"
+#include "net/tcp_cli_server.h"
 
 #include "esp_wifi.h"
 #include "esp_event.h"
@@ -25,7 +26,7 @@
 #include <errno.h>
 #include "txtio/inout.h"
 
-#include "tcp_cli_server.h"
+#include "net/tcp_cli_server.h"
 #include "misc/int_types.h"
 
 #include <sys/select.h>
@@ -62,13 +63,11 @@ static void modify_io_fun(bool add_connection);
 static int sockfd = -1;
 fd_set wait_fds;
 int nfds;
-static struct sockaddr_in self;
 static int cconn_count;
 static int (*old_io_putc_fun)(char c);
-static int (*old_io_getc_fun)(void);
+//static int (*old_io_getc_fun)(void);
 
-const unsigned cli_buf_size = 120;
-char *cli_buf;
+static struct cli_buf buf;
 
 
 static void set_sockfd(int fd) {
@@ -121,6 +120,7 @@ int foreach_fd(fd_set *fdsp, int count, fd_funT fd_fun, void *args) {
 
 static int tcps_create_server() {
   int fd;
+  static struct sockaddr_in self;
   /** Create streaming socket */
   if ((fd = lwip_socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     perror("Socket");
@@ -233,28 +233,48 @@ static void try_accept() {
 
 void handle_input(int fd, void *args) {
   selected_fd = fd;
-  char *cmdline = cli_get_commandline(cli_buf, cli_buf_size, tcps_getc);
-  if (cmdline) {
-    if (mutex_cliTake()) {
-      if (cmdline[0] == '{') {
-        cli_process_json(cmdline, SO_TGT_CLI);
-      } else {
-        cli_process_cmdline(cmdline, SO_TGT_CLI);
+  for (;;) {
+    switch (cli_get_commandline(&buf, tcps_getc)) {
+    case CMDL_DONE:
+      if (mutex_cliTake()) {
+        if (buf.cli_buf[0] == '{') {
+          cli_process_json(buf.cli_buf, SO_TGT_CLI);
+        } else {
+          cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
+        }
+        mutex_cliGive();
       }
-      mutex_cliGive();
+      break;
+
+    case CMDL_INCOMPLETE:
+      break;
+    case CMDL_LINE_BUF_FULL:
+      if (cliBuf_enlarge(&buf))
+        continue;
+      break;
+    case CMDL_ERROR:
+      break;
     }
+    return;
   }
 }
 
 
 
 void wait_for_fd() {
-  fd_set rfds = wait_fds, wfds = wait_fds;
-  struct timeval tv = { .tv_sec = 10 };
+  fd_set rfds = wait_fds;
+  int n = nfds;
+  //fd_set wfds = wait_fds;
+  //struct timeval tv = { .tv_sec = 10 };
 
   FD_SET(sockfd, &rfds);
+#ifdef USE_CLI_TASK_EXP
+  FD_SET(STDIN_FILENO, &rfds);
+  if (n <= STDIN_FILENO)
+    n = STDIN_FILENO+1;
+#endif
 
-  int count = lwip_select(nfds, &rfds, NULL, NULL, NULL);
+  int count = lwip_select(n, &rfds, NULL, NULL, NULL);
   if (count < 0) {
     return;
   }
@@ -269,6 +289,14 @@ void wait_for_fd() {
     FD_CLR(sockfd, &rfds);
     --count;
   }
+#ifdef USE_CLI_TASK_EXP
+  if (FD_ISSET(STDIN_FILENO, &rfds)) {
+    cli_loop();
+
+    FD_CLR(STDIN_FILENO, &rfds);
+    --count;
+  }
+#endif
   count = foreach_fd(&rfds, count, handle_input, 0);
 
 }
@@ -295,13 +323,12 @@ void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
     if (xHandle) {
       vTaskDelete(xHandle);
       xHandle = NULL;
-      free(cli_buf);
-      cli_buf = 0;
+      free(buf.cli_buf);
+      buf.cli_buf = 0;
     }
     return;
   }
 
-  cli_buf = calloc(cli_buf_size, 1);
   xTaskCreate(tcps_task, "tcp_server", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
   configASSERT( xHandle );
 

@@ -1,5 +1,4 @@
-#ifndef sun_h_
-#define sun_h_
+#pragma once
 
 /*
  * horizon values for twilight (in radian)
@@ -13,4 +12,3 @@
 void sun_calculateDuskDawn(double *sunrise, double *sunset, double timezone, double day_of_year, double longitude_deg, double latitude_deg, double horizon);
 
 
-#endif

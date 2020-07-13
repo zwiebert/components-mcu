@@ -6,7 +6,7 @@
  */
 
 
-#include "status_json.h"
+#include "userio/status_json.h"
 
 #include "userio/status_output.h"
 #include "misc/int_macros.h"
@@ -17,12 +17,9 @@
 #include <stdlib.h>
 #include "userio_app_cfg.h"
 #include "misc/int_types.h"
-
-char *ftoa(float f, char *buf, int n);
+#include "misc/ftoa.h"
 
 #define D(x)
-
-void (*sj_callback_onClose_ifNotEmpty)(const char *s);
 
 static int json_idx;
 static char *json_buf;
@@ -30,9 +27,24 @@ static u16 json_buf_size;
 
 #define BUF (json_buf+0)
 #define BUF_SIZE (json_buf_size)
-#define USE_CALLBACK (!json_buf && sj_callback_onClose_ifNotEmpty)
-#define DO_CALLBACK() sj_callback_onClose_ifNotEmpty(BUF);
 #define BUF_MAX_SIZE 1024
+
+#ifdef USE_SJ_WRITE
+int (*sj_write)(const char *src, unsigned len);
+
+static void sj_write_out_buf() {
+  if (!sj_write)
+    return;
+
+  int written = sj_write(json_buf, json_idx);
+  if (written == json_idx) {
+    json_idx = 0;
+    return;
+  }
+}
+#else
+#define sj_write_out_buf()
+#endif
 
 char *sj_get_json() { return BUF; }
 
@@ -119,12 +131,13 @@ bool sj_open_root_object(const char *id) {
 
 bool sj_add_object(const char *key) {
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(json_idx > 0);
+  precond(sj_write || json_idx > 0);
   if (sj_not_enough_buffer(key, 0))
     return false;
 
   strcat(strcat(strcpy(BUF + json_idx, "\""), key), "\":{");
   json_idx += strlen(BUF + json_idx);
+  sj_write_out_buf();
   return true;
 }
 
@@ -132,7 +145,7 @@ bool sj_add_object(const char *key) {
 void sj_close_object() {
   D(db_printf("%s()\n", __func__));
   precond(BUF);
-  precond(json_idx > 0);
+  precond(sj_write || json_idx > 0);
   if (BUF[json_idx - 1] == ',') { // remove trailing comma...
     --json_idx;
   }
@@ -140,28 +153,65 @@ void sj_close_object() {
   json_idx += strlen(BUF + json_idx);
 }
 
+bool sj_add_array(const char *key) {
+  D(db_printf("%s(%s)\n", __func__, key));
+  precond(sj_write || json_idx > 0);
+  sj_write_out_buf();
+  if (sj_not_enough_buffer(key, 0))
+    return false;
+
+  strcat(strcat(strcpy(BUF + json_idx, "\""), key), "\":[");
+  json_idx += strlen(BUF + json_idx);
+  return true;
+}
+
+void sj_close_array() {
+  D(db_printf("%s()\n", __func__));
+  precond(BUF);
+  precond(sj_write || json_idx > 0);
+  if (BUF[json_idx - 1] == ',') { // remove trailing comma...
+    --json_idx;
+  }
+  strcpy(BUF + json_idx, "],");
+  json_idx += strlen(BUF + json_idx);
+}
+
 void sj_close_root_object() {
   D(db_printf("%s()\n", __func__));
   precond(BUF);
-  precond(json_idx > 0);
+  precond(sj_write || json_idx > 0);
   if (BUF[json_idx - 1] == ',') { // remove trailing comma...
     --json_idx;
   }
   strcpy(BUF + json_idx, "}");
+  ++json_idx;
+  sj_write_out_buf();
   json_idx = 0;
-
-  if (USE_CALLBACK)
-    DO_CALLBACK();
-
-sj_callback_onClose_ifNotEmpty = 0;
 }
 
+bool sj_add_value_d(int val) {
+  D(db_printf("%s(%d)\n", __func__, val));
+  precond(sj_write || json_idx > 0);
+  sj_write_out_buf();
+  char buf[20];
+  ltoa(val, buf, 10);
+
+  if (sj_not_enough_buffer("", buf))
+    return false;
+
+  strcat(strcpy(BUF + json_idx, buf), ",");
+
+  json_idx += strlen(BUF + json_idx);
+  D(db_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
+
+  return true;
+}
 
 bool sj_add_key_value_pair_f(const char *key, float val) {
   D(db_printf("%s(%s, %f)\n", __func__, key, val));
-  precond(json_idx > 0);
+  precond(sj_write || json_idx > 0);;
   precond(key);
-
+  sj_write_out_buf();
   if (sj_not_enough_buffer(key, 0))
     return false;
 
@@ -171,14 +221,15 @@ bool sj_add_key_value_pair_f(const char *key, float val) {
 
   json_idx += strlen(BUF + json_idx);
   D(ets_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
+
   return true;
 }
 
 bool sj_add_key_value_pair_d(const char *key, int val) {
   D(db_printf("%s(%s, %d)\n", __func__, key, val));
-  precond(json_idx > 0);
+  precond(sj_write || json_idx > 0);
   precond(key);
-
+  sj_write_out_buf();
   if (sj_not_enough_buffer(key, 0))
     return false;
 
@@ -188,14 +239,15 @@ bool sj_add_key_value_pair_d(const char *key, int val) {
 
   json_idx += strlen(BUF + json_idx);
   D(db_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
+
   return true;
 }
 
 bool sj_add_key_value_pair_s(const char *key, const char *val) {
   D(db_printf("%s(%s, %s)\n", __func__, key, val));
-  precond(json_idx > 0);
+  precond(sj_write || json_idx > 0);
   precond(key);
-
+  sj_write_out_buf();
   if (sj_not_enough_buffer(key, val))
     return false;
 
@@ -203,6 +255,7 @@ bool sj_add_key_value_pair_s(const char *key, const char *val) {
 
   json_idx += strlen(BUF + json_idx);
   D(ets_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
+
   return true;
 }
 

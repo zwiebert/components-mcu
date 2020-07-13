@@ -8,25 +8,14 @@
 #include "app_config/proj_app_cfg.h"
 #ifdef USE_MQTT
 
-#include "mqtt.h"
-#include "mqtt_imp.h"
+#include "net/mqtt/mqtt.h"
+#include "net/mqtt/mqtt_imp.h"
 
 #include <string.h>
 #include <stdio.h>
 #include "cli/cli.h"
 #include "cli/mutex.h"
 #include "userio/status_json.h"
-
-
-void io_mqtt_enable(bool enable) {
-  if (enable) {
-    io_mqtt_create_and_start();
-    io_mqttApp_enable(enable);
-  } else {
-    io_mqttApp_enable(enable);
-    io_mqtt_stop_and_destroy();
-  }
-}
 
 // implementation interface
 void io_mqtt_disconnected () {

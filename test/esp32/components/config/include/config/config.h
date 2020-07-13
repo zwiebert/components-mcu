@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef MAIN_CONFIG_CONFIG_H_
-#define MAIN_CONFIG_CONFIG_H_
+#pragma once
 
 #include "app_config/proj_app_cfg.h"
 #include "net/ethernet.h"
@@ -105,4 +104,3 @@ void read_config(uint32_t mask);
 
 void config_setup();
 
-#endif /* MAIN_CONFIG_CONFIG_H_ */

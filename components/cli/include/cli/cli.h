@@ -6,25 +6,13 @@
  */
 
 
-#ifndef CLI_H_
-#define CLI_H_
+#pragma once
 
 #include "userio/status_output.h"
 #include "stdint.h"
 #include "stdbool.h"
 
-// user interface
-typedef int (*getc_funT)(void);
-char *cli_get_commandline(char *cbuf, unsigned buf_size, getc_funT getc_fun);
-void cli_process_cmdline(char *line, so_target_bits tgt);
-void cli_process_json(char *json, so_target_bits tgt);
-void cli_loop(void);
 
-// XXX: functions working on a static buffer
-char *get_commandline(void);
-char *set_commandline(const char *src, uint8_t len); // copy src  (e.g. from mqtt event) to writable buffer
-
-// implementation interface
 typedef struct {
   char *key;
   char *val;
@@ -41,15 +29,37 @@ struct parm_handlers {
   int count;
 };
 
+struct cli_buf {
+   char *cli_buf;
+   unsigned size;
+   int cli_buf_idx, quote_count;
+};
+struct cli_parm {
+  clpar *par;
+  unsigned size;
+};
+
+bool cliBuf_enlarge(struct cli_buf *buf);
+
+// user interface
+typedef int (*getc_funT)(void);
+enum cli_get_commline_retT { CMDL_DONE, CMDL_ERROR, CMDL_INCOMPLETE, CMDL_LINE_BUF_FULL };
+enum cli_get_commline_retT cli_get_commandline(struct cli_buf *buf, getc_funT getc_fun);
+void cli_process_cmdline(char *line, so_target_bits tgt);
+void cli_process_json(char *json, so_target_bits tgt);
+void cli_loop(void);
+void cli_setup_task(bool enable);
+
+// XXX: functions working on a static buffer
+char *get_commandline(void);
+
+
+// implementation interface
+
+
 extern const struct parm_handlers parm_handlers; // defined by app
 
 extern uint16_t cli_msgid;
-#define MAX_PAR 20
-extern clpar cli_par[MAX_PAR];
-extern bool cli_isJson;
-
-#define CMD_BUF_SIZE 128
-extern char cmd_buf[CMD_BUF_SIZE];
 
 void print_enr(void);
 void msg_print(const char *msg, const char *tag);
@@ -67,7 +77,7 @@ void cli_warning_optionUnknown(const char *key);
 void cli_msg_ready(void);
 char *get_commandline(void);
 int asc2bool(const char *s);
-int cli_parseCommandline(char *cl);
+int cli_parseCommandline(char *cl, struct cli_parm *clp);
 void cli_replySuccess(void);
 int cli_replyFailure(void);
 bool cli_replyResult(bool success);
@@ -78,4 +88,3 @@ void cli_print_json(const char *json); //FIXME
 
 
 
-#endif /* CLI_H_ */

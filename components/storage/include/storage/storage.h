@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef USER_MAIN_STORAGE_H_
-#define USER_MAIN_STORAGE_H_
+#pragma once
 
 #include "stdbool.h"
 #include "stddef.h"
@@ -17,4 +16,3 @@ bool stor_fileDelete(const char *path);
 
 void stor_setup(void);
 
-#endif /* USER_MAIN_STORAGE_H_ */

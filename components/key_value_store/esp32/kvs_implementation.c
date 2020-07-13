@@ -5,7 +5,7 @@
  *      Author: bertw
  */
 
-#include "kvs_wrapper.h"
+#include "key_value_store/kvs_wrapper.h"
 
 #include "app_config/proj_app_cfg.h"
 
@@ -104,7 +104,7 @@ SET_GET_DT_FUN(i64);
 SET_GET_DT_FUN(u64);
 
 
-int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb) {
+int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb, void *args) {
   nvs_iterator_t it = nvs_entry_find(CFG_PARTNAME, name_space, type);
   int count = 0;
   while (it != NULL) {
@@ -121,7 +121,7 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
     }
 
     if (cb) {
-      switch (cb(info.key, info.type)) {
+      switch (cb(info.key, info.type, args)) {
       case kvsCb_match:
         ++count;
         break;

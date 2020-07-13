@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef SRC_MAIN_IPNET_H_
-#define SRC_MAIN_IPNET_H_
+#pragma once
 
 #include "stdbool.h"
 // interface implemented by mcu specific code
@@ -29,4 +28,3 @@ void ipnet_cbRegister_lostIpAddr(ipnet_cb cb);
 
 extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
 
-#endif /* SRC_MAIN_IPNET_H_ */

@@ -43,7 +43,9 @@ static void test_json() {
   //printf("name: %s, obj: %s\n", name, cmd_obj);
 
   if (cmd_obj) {
-    int len = parse_json(name, cmd_obj);
+    clpar cli_par[20] = {};
+    struct cli_parm clp = { .par = cli_par, .size = 20 };
+    int len = parse_json(name, cmd_obj, &clp);
     i=0;
     TEST_ASSERT_EQUAL_STRING(NAME, cli_par[i].key);
     TEST_ASSERT_EQUAL_STRING("", cli_par[i].val);

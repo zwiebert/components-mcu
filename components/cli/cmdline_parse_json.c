@@ -93,7 +93,10 @@ char *json_get_command_object(char *s, char **ret_name, char **next) {
 }
 
 int
-parse_json(char *name, char *s) {
+parse_json(char *name, char *s, struct cli_parm *clp) {
+#define cli_par (clp->par)
+#undef MAX_PAR
+#define MAX_PAR (clp->size)
   int p;
   cli_msgid = 0;
   int start = 0, i, k, n;

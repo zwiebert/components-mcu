@@ -7,6 +7,7 @@
 
 #include "unity.h"
 #include "key_value_store/kvs_wrapper.h"
+#include <string.h>
 
 kvshT handle;
 bool succ;
@@ -15,7 +16,6 @@ const char *NS = "testing";
 const char *asdfg = "asdfg", *asdf = "asdf", *asdfge = "asdfge";
 
 struct b { char data[8]; };
-
 
 
 static void test_for_foreach_bug() {
@@ -34,7 +34,7 @@ static void test_for_foreach_bug() {
 
   return;
 
-  res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0);
+  res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0, 0);
   TEST_ASSERT_EQUAL(1, res);
   //-------------------------------
   handle = kvs_open(NS, kvs_WRITE);
@@ -46,9 +46,27 @@ static void test_for_foreach_bug() {
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
-  res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0);
+  res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0, 0);
   TEST_ASSERT_EQUAL(1, res);
   //--------------------------------
+}
+
+static void test_config() {
+  char buf[128];
+#define test_mqtt_user "zimbra"
+  handle = kvs_open(NS, kvs_WRITE);
+  TEST_ASSERT_NOT_NULL(handle);
+  succ = kvs_rw_str(handle, "C_MQTT_CID", "tfmcu_esp8266", 0, true);
+  TEST_ASSERT_TRUE(succ);
+  kvs_close(handle);
+
+  handle = kvs_open(NS, kvs_READ);
+  TEST_ASSERT_NOT_NULL(handle);
+  strcpy(buf, test_mqtt_user);
+  succ = kvs_rw_str(handle, "C_MQTT_USER", buf, 128, false);
+  TEST_ASSERT_FALSE(succ);
+  TEST_ASSERT_EQUAL_STRING(test_mqtt_user, buf);  // original string must be untouched
+  kvs_close(handle);
 }
 
 static void test_set_get_default() {
@@ -97,13 +115,13 @@ static void g(uint8_t g, uint8_t m) {
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdf, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, asdf, 0, 0);
   TEST_ASSERT_EQUAL(2, res);
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdfg, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, asdfg, 0, 0);
   TEST_ASSERT_EQUAL(1, res);
-  res = kvs_foreach(NS, KVS_TYPE_u8, asdfg, 0);
+  res = kvs_foreach(NS, KVS_TYPE_u8, asdfg, 0, 0);
   TEST_ASSERT_EQUAL_MESSAGE(0, res, "wrong type");
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdfge, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, asdfge, 0, 0);
   TEST_ASSERT_EQUAL_MESSAGE(0, res, "match string longer than key");
 
   handle = kvs_open(NS, kvs_WRITE);
@@ -114,7 +132,7 @@ static void g(uint8_t g, uint8_t m) {
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdf, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, asdf, 0, 0);
   TEST_ASSERT_EQUAL(2, res);
 
   handle = kvs_open(NS, kvs_WRITE);
@@ -134,8 +152,10 @@ static void f() {
 }
 
 TEST_CASE("kvs", "[kvs]") {
+  test_config();
   test_set_get_default();
   f();
   test_for_foreach_bug();
   test_set_get_default();
 }
+

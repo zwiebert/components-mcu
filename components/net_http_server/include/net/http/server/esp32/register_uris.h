@@ -1,9 +1,8 @@
-#ifndef COMPONENTS_NET_HTTP_SERVER_INCLUDE_NET_HTTP_SERVER_ESP32_REGISTER_URIS_H_
-#define COMPONENTS_NET_HTTP_SERVER_INCLUDE_NET_HTTP_SERVER_ESP32_REGISTER_URIS_H_
+#pragma once
 
 #include <esp_http_server.h>
 
+extern httpd_handle_t hts_server;
 void hts_register_uri_handlers(httpd_handle_t server); // IMPLEMENT_ME
 
 
-#endif /* COMPONENTS_NET_HTTP_SERVER_INCLUDE_NET_HTTP_SERVER_ESP32_REGISTER_URIS_H_ */

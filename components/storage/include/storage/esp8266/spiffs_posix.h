@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef STORAGE_INCLUDE_STORAGE_SPIFFS_POSIX_H_
-#define STORAGE_INCLUDE_STORAGE_SPIFFS_POSIX_H_
+#pragma once
 
 #ifndef TEST_HOST
 #include "spiffs_fs.h"
@@ -44,4 +43,3 @@
 #include <stdint.h>
 #endif
 
-#endif /* STORAGE_INCLUDE_STORAGE_SPIFFS_POSIX_H_ */

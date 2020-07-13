@@ -1,5 +1,4 @@
-#ifndef ESP32_USER_CONFIG_H_
-#define ESP32_USER_CONFIG_H_
+#pragma once
 
 #define MCU_TYPE "esp32"
 
@@ -33,5 +32,4 @@
 
 #include "esp_attr.h"
 
-#endif
 

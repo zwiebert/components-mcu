@@ -1,5 +1,4 @@
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#pragma once
 
 #include "app_config/proj_app_cfg.h"
 #include "txtio/inout.h"
@@ -9,7 +8,7 @@ extern int unit_testing;
 
 
 #ifdef MCU_ESP8266
-#define assert(x) do { if (x) {} else { ets_printf("assert failed: %s at %s:%d\n", __func__, __FILE__, __LINE__);mcu_restart(); }} while(0)
+#define assert(x) do { if (x) {} else { con_printf("assert failed: %s at %s:%d\n", __func__, __FILE__, __LINE__);mcu_restart(); }} while(0)
 #else
 #include <assert.h>
 #endif
@@ -48,12 +47,12 @@ void abort_postcond(const char *msg, int line);
 #endif
 
 #ifndef DISTRIBUTION
-#define dbg_dbd(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
+#define dbg_dbd(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
 #else
 #define dbg_dbd(x)
 #endif
 
-#define if_verbose_do(x) do { if (C.app_verboseOutput >= vrbDebug) { x; } } while(0)
+#define if_verbose_do(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
 
 
 #define dbg_vpf(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) { x; } } while(0)
@@ -61,4 +60,3 @@ void abort_postcond(const char *msg, int line);
 
 
 
-#endif /* DEBUG_H_ */

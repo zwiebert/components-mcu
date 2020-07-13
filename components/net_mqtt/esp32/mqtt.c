@@ -1,6 +1,6 @@
 #include "app_config/proj_app_cfg.h"
-#include "mqtt.h"
-#include "mqtt_imp.h"
+#include "net/mqtt/mqtt.h"
+#include "net/mqtt/mqtt_imp.h"
 #include "cli/cli.h"
 #include "txtio/inout.h"
 
@@ -27,13 +27,12 @@
 #else
 #define D(x) x
 #endif
-
+#ifdef USE_MQTT
 
 static const char *TAG = "MQTT_EXAMPLE";
 
 static bool is_connected;
-static struct cfg_mqtt *io_mqtt_config;
-#define cmc io_mqtt_config
+
 // implementation interface
 
 static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
@@ -114,7 +113,7 @@ void io_mqtt_publish(const char *topic, const char *data) {
   /*int msg_id = */ esp_mqtt_client_publish(client, topic, data, 0, 1, 0);
 }
 
-static void io_mqtt_create_client(void) {
+static void io_mqtt_create_client(struct cfg_mqtt *cmc) {
   esp_mqtt_client_config_t mqtt_cfg = {
       .uri = cmc->url,
   //  .host = CONFIG_MQTT_HOST,
@@ -126,18 +125,16 @@ static void io_mqtt_create_client(void) {
   // .user_context = (void *)your_context
       };
 
-    client = esp_mqtt_client_init(&mqtt_cfg);
+  if (mqtt_cfg.uri && *mqtt_cfg.uri == '\0') {
+    io_puts("error: MQTT-URI is configured empty\n");
+    return;
+  }
+
+  client = esp_mqtt_client_init(&mqtt_cfg);
 
 }
 
-void io_mqtt_create_and_start(void) {
-  if (client)
-    io_mqtt_stop_and_destroy();
-  io_mqtt_create_client();
-  esp_mqtt_client_start(client);
-}
-
-void io_mqtt_stop_and_destroy(void) {
+static void io_mqtt_stop_and_destroy(void) {
   if (client) {
     esp_mqtt_client_stop(client);
     esp_mqtt_client_destroy(client);
@@ -146,30 +143,19 @@ void io_mqtt_stop_and_destroy(void) {
   }
 }
 
-void io_mqtt_setup(struct cfg_mqtt *cfg_mqt) {
-  bool is_initialized = !io_mqtt_config;
-
-  if (cfg_mqt)
-    io_mqtt_config = cfg_mqt;
-
-  if (!is_initialized) {
-    io_mqtt_config = cfg_mqt;
-    if (TXTIO_IS_VERBOSE(6)) {
-      ets_printf("\n\n----#####################################----------\n\n");
-      ESP_LOGI(TAG, "[APP] Startup..");
-      ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
-      ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
-
-      esp_log_level_set("*", ESP_LOG_INFO);
-      esp_log_level_set("MQTT_CLIENT", ESP_LOG_VERBOSE);
-      esp_log_level_set("TRANSPORT_TCP", ESP_LOG_VERBOSE);
-      esp_log_level_set("TRANSPORT_SSL", ESP_LOG_VERBOSE);
-      esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
-      esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
-    }
-  }
-
-  if (io_mqtt_config) {
-    io_mqtt_enable(io_mqtt_config->enable);
-  }
+static void io_mqtt_create_and_start(struct cfg_mqtt *c) {
+  if (client)
+    io_mqtt_stop_and_destroy();
+  io_mqtt_create_client(c);
+  esp_mqtt_client_start(client);
 }
+
+
+void io_mqtt_setup(struct cfg_mqtt *c) {
+    if (c && c->enable) {
+      io_mqtt_create_and_start(c);
+    } else {
+      io_mqtt_stop_and_destroy();
+    }
+}
+#endif

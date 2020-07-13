@@ -27,10 +27,10 @@
 
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
-struct cfg_wlan *cwl;
 
-void
-user_set_station_config(void) {
+
+static void
+user_set_station_config(struct cfg_wlan *cwl) {
 
   wifi_config_t sta_config = { };
 
@@ -47,36 +47,29 @@ const char *TAG = "wifistation";
 //#define RETRY_RECONNECT (s_retry_num < 255)
 #define RETRY_RECONNECT (1)
 
-static void wifi_event_handler(void* arg, esp_event_base_t event_base,
-        i32 event_id, void* event_data) {
+static void wifi_event_handler(void *arg, esp_event_base_t event_base, i32 event_id, void *event_data) {
 
-    switch (event_id) {
+  switch (event_id) {
 
-    case WIFI_EVENT_STA_START:
-        esp_wifi_connect();
-        ESP_LOGI(TAG, "wifi sta start");
-        break;
+  case WIFI_EVENT_STA_START:
+    esp_wifi_connect();
+    break;
 
-    case WIFI_EVENT_STA_DISCONNECTED:
-        ESP_LOGI(TAG, "wifi sta disconnected");
-
-        {
-            if (RETRY_RECONNECT) {
-                ip4_address.addr = 0;
-                esp_wifi_connect();
-                s_retry_num++;
-                // ESP_LOGI(TAG, "retry to connect to the AP");
-            }
-            break;
-        }
-
-    default:
-        break;
+  case WIFI_EVENT_STA_DISCONNECTED:
+    if (RETRY_RECONNECT) {
+      ip4_address.addr = 0;
+      esp_wifi_connect();
+      s_retry_num++;
+      // ESP_LOGI(TAG, "retry to connect to the AP");
     }
+    break;
+
+  default:
+    break;
+  }
 }
 
 static void lost_ip_event_handler(void *arg, esp_event_base_t event_base, i32 event_id, void *event_data) {
-  ESP_LOGI(TAG, "STA Lost IP Address");
   if (ipnet_lostIpAddr_cb)
     ipnet_lostIpAddr_cb();
 }
@@ -86,13 +79,6 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
 
     ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
     const esp_netif_ip_info_t *ip_info = &event->ip_info;
-
-    ESP_LOGI(TAG, "STA Got IP Address");
-    ESP_LOGI(TAG, "~~~~~~~~~~~");
-    ESP_LOGI(TAG, "IP:" IPSTR, IP2STR(&ip_info->ip));
-    ESP_LOGI(TAG, "NETMASK:" IPSTR, IP2STR(&ip_info->netmask));
-    ESP_LOGI(TAG, "GW:" IPSTR, IP2STR(&ip_info->gw));
-    ESP_LOGI(TAG, "~~~~~~~~~~~");
 
     ip4_address = ip_info->ip;
     ip4_gateway_address = ip_info->gw;
@@ -104,7 +90,6 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
 
 void wifistation_setup(struct cfg_wlan *config)  {
   esp_netif_create_default_wifi_sta();
-  cwl = config;
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK( esp_wifi_init(&cfg) );
 
@@ -114,7 +99,7 @@ void wifistation_setup(struct cfg_wlan *config)  {
 
   ESP_ERROR_CHECK( esp_wifi_set_storage(WIFI_STORAGE_RAM) );
   ESP_ERROR_CHECK( esp_wifi_set_mode(WIFI_MODE_STA) );
-  user_set_station_config();
+  user_set_station_config(config);
 }
 
 

@@ -1,4 +1,4 @@
-#include "stof.h"
+#include "misc/stof.h"
 
 float  stof(const char* s) {
   int point_seen;

@@ -1,6 +1,5 @@
 // User configuration
-#ifndef PROJ_APP_CONFIG_H_
-#define PROJ_APP_CONFIG_H_
+#pragma once
 
 #define APP_VERSION "0.5.0"
 
@@ -11,6 +10,7 @@
 #define USE_NTP
 #define USE_JSON
 #define USE_MQTT
+#define USE_WS
 #define USE_POSIX_TIME
 #define POSIX_TIME
 #define USE_SERIAL
@@ -46,4 +46,3 @@
 
 
 
-#endif /* PROJ_APP_CONFIG_H_ */

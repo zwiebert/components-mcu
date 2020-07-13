@@ -14,7 +14,6 @@ endif()
 idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS . "./include" 
-    PRIV_INCLUDE_DIRS "./include/net" 
     REQUIRES ""
     PRIV_REQUIRES app_config misc net_http_server txtio cli debug
                   esp_netif esp_wifi esp_eth esp_http_client

@@ -5,8 +5,6 @@
 #include <stdlib.h>
 
 
-clpar cli_par[MAX_PAR];
-
 static char * 
 skip_leading_whitespace(char *s) {
   while (*s == ' ')
@@ -31,7 +29,10 @@ find_next_whitespace_or_eol(char *s) {
 }
 
 int 
-cli_parseCommandline(char *cl) {
+cli_parseCommandline(char *cl, struct cli_parm *clp) {
+#define cli_par (clp->par)
+#undef MAX_PAR
+#define MAX_PAR (clp->size)
   int p;
   cli_msgid = 0;
 

@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef SRC_USERIO_HTTP_SERVER_H_
-#define SRC_USERIO_HTTP_SERVER_H_
+#pragma once
 
 
 #include "app_config/proj_app_cfg.h"
@@ -22,6 +21,7 @@ struct cfg_http {
 typedef enum { HQT_NONE, } hts_query_t;
 
 void hts_query(hts_query_t qtype, const char *qstr, int qstr_len);
+void hts_query0(hts_query_t qtype, char *qstr);
 //void hts_query_json(char *qstr);
 
 struct httpd_req;
@@ -29,11 +29,10 @@ bool check_access_allowed(struct httpd_req *req); // XXX: esp32 specific types s
 
 // interface which has to be implemented by mcu specific code
 #ifdef USE_HTTP
-void hts_enable_http_server(bool enable);
+void hts_enable_http_server(struct cfg_http *config);
 #else
-#define hts_enable_http_server(enable)
+#define hts_enable_http_server(config)
 #endif
 
 void hts_setup(struct cfg_http *config);
 
-#endif /* SRC_USERIO_HTTP_SERVER_H_ */

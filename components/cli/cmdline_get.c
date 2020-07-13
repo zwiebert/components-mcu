@@ -6,36 +6,39 @@
 
 typedef int (*getc_funT)(void);
 
-char * 
-cli_get_commandline(char *cbuf, unsigned buf_size, getc_funT getc_fun) {
-  char *result = NULL;
 
-  static int cmd_buf_idx;
-  static bool error;
+
+enum cli_get_commline_retT
+cli_get_commandline(struct cli_buf *buf, getc_funT getc_fun) {
+  bool error = false;
+  bool done = false;
   int c;
-  static int quoteCount;
+
+  if (!((buf->cli_buf_idx + 1) < buf->size)) {
+    return CMDL_LINE_BUF_FULL;
+  }
 
   while ((c = (*getc_fun)()) != -1) {
 
     // line ended before ';' terminator received. throw it away
     if (c == '\r' || c == '\n') {
-      quoteCount = 0;
-      cmd_buf_idx = 0;
+      buf->quote_count = 0;
+      buf->cli_buf_idx = 0;
       continue;
     }
 
     // backspace: remove last character from buffer
     if (c == '\b') {
-      if (cmd_buf_idx == 0)
+      if (buf->cli_buf_idx == 0)
         continue;
-      if (cbuf[--cmd_buf_idx] == '\"')
-        --quoteCount;
+      if (buf->cli_buf[--buf->cli_buf_idx] == '\"')
+        --buf->quote_count;
       continue;
     }
 
     // count the quotes, so we know if we are inside or outside a quoted word
     if (c == '\"') {
-      ++quoteCount;
+      ++buf->quote_count;
     }
 
     // to throw away rest of a too long command line from earlier
@@ -45,30 +48,29 @@ cli_get_commandline(char *cbuf, unsigned buf_size, getc_funT getc_fun) {
       continue;
     }
     // to make sure there is at least 1 free byte available in CMD_BUF
-    if (!((cmd_buf_idx + 1) < buf_size)) {
-      goto err;
+    if (!((buf->cli_buf_idx + 1) < buf->size)) {
+      return CMDL_LINE_BUF_FULL;
     }
 
     // handle special characters, if outside a quoted word
-    if ((quoteCount & 1) == 0) {
+    if ((buf->quote_count & 1) == 0) {
       // ';' is used to terminate a command line
-      if (c == ';' && (quoteCount & 1) == 0) {
-        if (cmd_buf_idx == 0)
+      if (c == ';' && (buf->quote_count & 1) == 0) {
+        if (buf->cli_buf_idx == 0)
           goto succ;
-        cbuf[cmd_buf_idx] = '\0';
-        result = cbuf;
+        buf->cli_buf[buf->cli_buf_idx] = '\0';
         goto succ;
       }
     }
 
     // store char to buffer
-    cbuf[cmd_buf_idx++] = (char) c;
+    buf->cli_buf[buf->cli_buf_idx] = (char) c;
+    ++buf->cli_buf_idx;
   }
 
   goto cont;
-
-  err: error = true;
-  succ: cmd_buf_idx = 0;
-  quoteCount = 0;
-  cont: return result;
+  succ: buf->cli_buf_idx = 0;
+  buf->quote_count = 0;
+  done = true;
+  cont: return error ? CMDL_ERROR : (done ? CMDL_DONE : CMDL_INCOMPLETE);
 }

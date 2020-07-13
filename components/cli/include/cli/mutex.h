@@ -5,8 +5,7 @@
  *      Author: bertw
  */
 
-#ifndef SRC_ESP32_MAIN_MUTEX_H_
-#define SRC_ESP32_MAIN_MUTEX_H_
+#pragma once
 
 #include "stdbool.h"
 
@@ -23,4 +22,3 @@ void mutex_setup();
 #define mutex_setup()
 #endif
 
-#endif /* SRC_ESP32_MAIN_MUTEX_H_ */

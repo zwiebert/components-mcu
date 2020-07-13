@@ -21,11 +21,10 @@
 #endif
 
 extern struct ip_addr ip4_address, ip4_gateway_address, ip4_netmask;
-struct cfg_wlan *cwl;
 // WIFI Station ////////////////////////////////////////
 
 void 
-user_set_station_config(void) {
+user_set_station_config(struct cfg_wlan *cwl) {
   struct station_config stationConf;
   stationConf.bssid_set = 0; //need not check MAC address of AP
   os_memcpy(&stationConf.ssid, cwl->SSID, 32);
@@ -70,8 +69,7 @@ void wifi_handle_event_cb(System_Event_t *evt) {
 }
 
 void wifistation_setup(struct cfg_wlan *config) {
-  cwl = config;
   wifi_set_opmode(STATION_MODE);
-  user_set_station_config();
+  user_set_station_config(config);
   wifi_set_event_handler_cb(wifi_handle_event_cb);
 }

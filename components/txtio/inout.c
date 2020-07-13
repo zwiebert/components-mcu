@@ -14,7 +14,9 @@ struct cfg_txtio *txtio_config;
 void txtio_mcu_setup(void);
 
 void txtio_setup(struct cfg_txtio *cfg_txtio) {
-  txtio_config = cfg_txtio;
+  static struct cfg_txtio cfg;
+  cfg = *cfg_txtio;
+  txtio_config = &cfg;
   txtio_mcu_setup();
 }
 
@@ -70,6 +72,20 @@ int io_puts(const char *s) {
     txtio_mutexGive();
   }
   return result;
+}
+
+int io_write(const char *s, unsigned len) {
+  int result = len;
+  if (txtio_mutexTake()) {
+    for (; len > 0; ++s, --len) {
+      if (io_putc(*s) == -1) {
+        result = -1;
+        break;
+      }
+    }
+    txtio_mutexGive();
+  }
+  return result - len;
 }
 
 void 

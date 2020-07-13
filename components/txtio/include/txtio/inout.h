@@ -1,5 +1,4 @@
-#ifndef _inout_h
-#define _inout_h
+#pragma once
 
 #include "stdbool.h"
 #include "stdint.h"
@@ -28,6 +27,7 @@ int io_putc(char c);
 int io_getc(void);
 int io_putlf(void);
 int io_puts(const char *s);
+int io_write(const char *s, unsigned len);
 int io_getline(char *buf, unsigned buf_size);
 int io_printf(const char *fmt, ...);
 
@@ -48,20 +48,9 @@ void io_putd(int n);
 void io_putld(int32_t n);
 void io_putx8(uint8_t n);
 
-
-
 void printBCD(uint8_t bcd);
 void print_array_8(const uint8_t *src, int len);
 void print_array_8_inv(const uint8_t *src, int len);
-
-bool mcu_get_buttonUpPin(void);
-bool mcu_get_buttonDownPin(void);
-bool mcu_get_buttonPin(void);
-
-typedef enum mcu_pin_state { PIN_DEFAULT=0, PIN_INPUT, PIN_INPUT_PULLUP, PIN_OUTPUT, PIN_ERROR, PIN_READ, PIN_CLEAR, PIN_SET, PIN_TOGGLE, PIN_INPUT_OUTPUT } mcu_pin_state;
-const char* mcu_access_pin(int gpio_number, mcu_pin_state *result, mcu_pin_state state);
-bool  is_gpio_number_usable(int gpio_number, bool cli);
-void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
 
 #ifdef TEST_HOST
 #include <stdio.h>
@@ -84,7 +73,6 @@ void gpio_get_levels(unsigned long long gpio_mask, char *buf, int buf_size);
 
 
 
-#endif
 
 
 
