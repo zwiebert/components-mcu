@@ -57,6 +57,11 @@ void cli_process_json(char *json, so_target_bits tgt) {
     cli_print_json(sj_get_json());
   }
 
+#ifdef USE_WS
+  if (so_tgt_test(SO_TGT_WS)) {
+    ws_print_json(sj_get_json());
+  }
+#endif
   so_tgt_default();
 }
 
@@ -75,6 +80,11 @@ void cli_process_cmdline(char *line, so_target_bits tgt) {
     if (sj_open_root_object("tfmcu")) {
       cli_processParameters(clp.par, n);
       sj_close_root_object();
+#ifdef USE_WS
+      if (so_tgt_test(SO_TGT_WS)) {
+        ws_print_json(sj_get_json());
+      }
+#endif
     }
   }
   so_tgt_default();
