@@ -1,34 +1,22 @@
 #include "app_config/proj_app_cfg.h"
-#include "freertos/FreeRTOS.h"
-#include "esp_wifi.h"
-#include "esp_system.h"
-#include "esp_event.h"
-#include "esp_log.h"
-
-#include "time.h"
-#include <string.h>
-
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/event_groups.h"
-
-#include "net/http/server/http_server.h"
-#include "net/tcp_cli_server.h"
 #include "cli/cli.h"
 #include "cli/mutex.h"
-#include "net/tcp_cli_server.h"
-
-#include "esp_wifi.h"
 #include "esp_event.h"
+#include "esp_log.h"
+#include "esp_system.h"
+#include "esp_wifi.h"
+#include "freertos/FreeRTOS.h"
+#include "freertos/event_groups.h"
+#include "freertos/task.h"
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
-
-#include <errno.h>
-#include "txtio/inout.h"
-
-#include "net/tcp_cli_server.h"
 #include "misc/int_types.h"
-
+#include "net/http/server/http_server.h"
+#include "net/tcp_cli_server.h"
+#include "time.h"
+#include "txtio/inout.h"
+#include <errno.h>
+#include <string.h>
 #include <sys/select.h>
 
 #define TAG "tcps"
