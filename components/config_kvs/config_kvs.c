@@ -135,6 +135,15 @@ const char* config_read_item_s(enum configItem item, char *d, unsigned d_size, c
   }
   return def;
 }
+void* config_read_item_b(enum configItem item, void *d, unsigned d_size, void *def) {
+  kvshT h;
+  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+    if (kvs_rw_blob(h, cfg_key(item), d, d_size, false))
+      def = d;
+    kvs_close(h);
+  }
+  return def;
+}
 uint32_t config_read_item_u32(enum configItem item, uint32_t def) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {

@@ -47,6 +47,7 @@ bool config_save_item_n_i8(enum configItem item, int8_t val);
 bool config_save_item_n_f(enum configItem item, float val);
 
 const char* config_read_item_s(enum configItem item, char *d, unsigned d_size, const char *def);
+void* config_read_item_b(enum configItem item, void *d, unsigned d_size, void *def);
 uint32_t config_read_item_u32(enum configItem item, uint32_t def);
 int8_t config_read_item_i8(enum configItem item, int8_t def);
 float config_read_item_f(enum configItem item, float def);
@@ -85,9 +86,4 @@ struct cfg_txtio* config_read_txtio(struct cfg_txtio *c);
 enum verbosity config_read_verbose();
 
 void config_setup_cliTcpServer();
-
-
-
-
-
 
