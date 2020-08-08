@@ -12,6 +12,5 @@
 
 char *json_get_command_object(char *s, char **ret_name, char **next);
 int parse_json(char *name, char *s, struct cli_parm *clp);
-void cli_process_json(char *json, so_target_bits tgt);
 void cli_print_json(const char *json);
 

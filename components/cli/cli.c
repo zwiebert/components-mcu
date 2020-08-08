@@ -146,3 +146,8 @@ void  reply_id_message(u16 id, const char *tag, const char *msg) {
   io_putlf();
   cli_msgid = old_id;
 }
+
+void
+cli_print_json(const char *json) {
+    io_puts(json), io_putlf();
+}
