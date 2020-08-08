@@ -4,3 +4,6 @@
 [submodule "components/net_mqtt/esp8266/esp_mqtt"]
 	path = components/net_mqtt/esp8266/esp_mqtt
 	url = https://github.com/tuanpmt/esp_mqtt.git
+[submodule "components/jsmn"]
+	path = components/jsmn/jsmn
+	url = https://github.com/zserge/jsmn.git
