@@ -7,3 +7,6 @@
 [submodule "components/jsmn"]
 	path = components/jsmn/jsmn
 	url = https://github.com/zserge/jsmn.git
+[submodule "components/nanopb/nanopb"]
+	path = components/nanopb/nanopb
+	url = https://github.com/nanopb/nanopb.git
