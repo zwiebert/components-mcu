@@ -21,4 +21,3 @@ struct cfg_lan {
 void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio);
 void ethernet_setup(struct cfg_lan *config);
 
-

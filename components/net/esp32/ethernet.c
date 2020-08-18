@@ -18,6 +18,8 @@
 #include "net/ipnet.h"
 #include "net/ethernet.h"
 
+esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
+
 #ifdef USE_LAN
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 
@@ -135,7 +137,7 @@ void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
     break;
   case lanPhyLAN8270:
   default:
-    ethernet_create_phy = esp_eth_phy_new_lan8720;
+    ethernet_create_phy = my_esp_eth_phy_new_lan8720;
     break;
   }
 
