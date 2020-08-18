@@ -9,6 +9,7 @@
 #include "cli/cli.h"
 #include "txtio/inout.h"
 #include <string.h>
+#include <stdlib.h>
 
 bool cliBuf_enlarge(struct cli_buf *buf) {
   unsigned new_size = buf->size ? buf->size + 32 : 64;
