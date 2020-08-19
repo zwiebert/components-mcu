@@ -14,6 +14,7 @@ typedef enum {
   SO_TGT_FLAG_JSON = (1<<4),
   SO_TGT_FLAG_TXT = (1<<5),
   SO_TGT_WS = (1<<6),
+  SO_TGT_STM32 = (1<<7),
   SO_TGT_ANY = (SO_TGT_CLI|SO_TGT_HTTP|SO_TGT_MQTT|SO_TGT_WS)
 } so_target_bits;
 
