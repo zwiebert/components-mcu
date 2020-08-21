@@ -53,6 +53,8 @@ void cli_process_json(char *json, so_target_bits tgt);
 void cli_loop(void);
 void cli_setup_task(bool enable);
 
+bool (*cli_hook_process_json)(char *json);
+
 // XXX: functions working on a static buffer
 char *get_commandline(void);
 
@@ -86,7 +88,6 @@ int cli_replyFailure(void);
 bool cli_replyResult(bool success);
 bool  asc2uint8_t(const char *s, uint8_t *n, uint8_t limit);
 int cli_processParameters(clpar p[], int len);
-void cli_loop(void);
 void cli_print_json(const char *json); //FIXME
 
 

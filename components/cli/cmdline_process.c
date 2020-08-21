@@ -33,7 +33,11 @@ int cli_processParameters(clpar p[], int len) {
   return result;
 }
 
+bool (*cli_hook_process_json)(char *json);
+
 void cli_process_json(char *json, so_target_bits tgt) {
+  if (cli_hook_process_json && cli_hook_process_json(json))
+    return;
   cli_process_json2(json, tgt, cli_processParameters);
 }
 
