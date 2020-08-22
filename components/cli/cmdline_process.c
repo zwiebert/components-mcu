@@ -19,10 +19,14 @@
 
 #define D(x)
 
+bool (*cli_hook_checkPassword)(clpar p[], int len, so_target_bits tgt);
+
+
 int cli_processParameters(clpar p[], int len) {
   int i;
   int result = -1;
   precond (len > 0);
+
 
   for (i = 0; i < parm_handlers.count; ++i) {
     if (strcmp(p[0].key, parm_handlers.handlers[i].parm) == 0) {
@@ -144,14 +148,18 @@ void cli_process_cmdline(char *line, so_target_bits tgt) {
 
 void cli_process_cmdline2(char *line, so_target_bits tgt, process_parm_cb proc_parm) {
   dbg_vpf(db_printf("process_cmdline: %s\n", line));
-  so_tgt_set(tgt|SO_TGT_FLAG_TXT);
-  clpar par[20] = {};
+  so_tgt_set(tgt | SO_TGT_FLAG_TXT);
+  clpar par[20] = { };
   struct cli_parm clp = { .par = par, .size = 20 };
 
   int n = cli_parseCommandline(line, &clp);
   if (n < 0) {
     cli_replyFailure();
   } else if (n > 0) {
+
+    if (cli_hook_checkPassword && !cli_hook_checkPassword(clp.par, n, tgt))
+      return;
+
     if (sj_open_root_object("tfmcu")) {
       proc_parm(clp.par, n);
       sj_close_root_object();
