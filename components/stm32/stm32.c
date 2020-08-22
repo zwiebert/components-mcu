@@ -17,12 +17,19 @@
 
 #include "stm32/stm32.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
 #include "debug/debug.h"
 #include <stdio.h>
 #include <stdint.h>
+
+
+
+
+static SemaphoreHandle_t stm32_mutex;
+
 
 
 
@@ -157,6 +164,23 @@ void stm32_runFirmware() {
 }
 
 
+bool stm32_mutexTake() {
+  if (xSemaphoreTake(stm32_mutex, portMAX_DELAY)) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool stm32_mutexTakeTry() {
+  return 0 != xSemaphoreTake(stm32_mutex, 0);
+}
+
+void stm32_mutexGive() {
+  xSemaphoreGive(stm32_mutex);
+}
+
+
 void stm32_setup(const struct cfg_stm32 *cfg_stm32)
 {
   stm32_config = *cfg_stm32;
@@ -172,6 +196,8 @@ void stm32_setup(const struct cfg_stm32 *cfg_stm32)
   STM32_SET_BOOT_PIN(0);
 
   stm32_configSerial(STM32_MODE_FIRMWARE);
+
+  stm32_mutex = xSemaphoreCreateMutex();
 
    //xTaskCreate(echo_task, "uart_echo_task", 1024, NULL, 10, NULL);
 }
