@@ -1,4 +1,4 @@
-set(srcs bcd.c  stof.c  sun.c esp32/itoa.c ftoa.c)
+set(srcs bcd.c  stof.c  sun.c esp32/itoa.c ftoa.c cstring_utils.cc)
 
 if(DEFINED ENV{DISTRO})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDISTRIBUTION")

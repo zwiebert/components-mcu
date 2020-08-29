@@ -15,9 +15,6 @@ extern struct cfg_txtio *txtio_config;
 void txtio_setup(struct cfg_txtio *cfg_txtio);
 
 
-extern char *itoa(int val, char *s, int radix);
-extern char *ltoa(long val, char *s, int radix);
-
 extern int (*io_putc_fun)(char c);
 extern int (*io_getc_fun)(void);
 extern int (*con_printf_fun)(const char *fmt, ...);

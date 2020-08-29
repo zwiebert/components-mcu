@@ -18,6 +18,7 @@
 #include "userio_app_cfg.h"
 #include "misc/int_types.h"
 #include "misc/ftoa.h"
+#include "misc/itoa.h"
 
 #define D(x)
 
