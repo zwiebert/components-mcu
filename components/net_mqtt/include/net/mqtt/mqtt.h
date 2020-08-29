@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * mqtt.h
  *
@@ -60,3 +63,6 @@ bool topic_endsWith(const char *topic, int topic_len, const char *s);
 
 
 
+#ifdef __cplusplus
+  }
+#endif

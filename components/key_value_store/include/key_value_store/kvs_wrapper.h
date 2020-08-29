@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * kvs_wrapper.h
  *
@@ -73,3 +76,6 @@ int kvs_foreach(const char *name_space, kvs_type_t, const char*key_match, kvs_fo
 void kvs_setup(void);
 
 
+#ifdef __cplusplus
+  }
+#endif

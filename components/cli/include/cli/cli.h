@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * cli.h
  *
@@ -93,3 +96,6 @@ void cli_print_json(const char *json); //FIXME
 
 
 
+#ifdef __cplusplus
+  }
+#endif

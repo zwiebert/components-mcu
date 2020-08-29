@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * mqtt_imp.h
  *
@@ -11,3 +14,6 @@
 
 
 
+#ifdef __cplusplus
+  }
+#endif

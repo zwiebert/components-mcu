@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * http_client.h
  *
@@ -12,3 +15,6 @@
 bool httpClient_downloadFile(const char *srcUrl, const char *dstFile);
 
 
+#ifdef __cplusplus
+  }
+#endif

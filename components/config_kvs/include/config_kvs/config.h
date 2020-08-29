@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * config.h
  *
@@ -87,3 +90,6 @@ enum verbosity config_read_verbose();
 
 void config_setup_cliTcpServer();
 
+#ifdef __cplusplus
+  }
+#endif

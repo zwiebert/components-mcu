@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * ntp.h
  *
@@ -12,3 +15,6 @@ struct cfg_ntp { char server[64]; };
 void ntp_setup(struct cfg_ntp *cfg_ntp);
 
 
+#ifdef __cplusplus
+  }
+#endif

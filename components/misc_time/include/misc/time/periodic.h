@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * periodic.h
  *
@@ -15,3 +18,6 @@ bool periodic_ts(unsigned interval_ts, unsigned *state);
 bool periodic(unsigned interval, unsigned *state);
 
 
+#ifdef __cplusplus
+  }
+#endif

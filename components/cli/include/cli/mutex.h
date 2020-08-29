@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * mutex.h
  *
@@ -22,3 +25,6 @@ void mutex_setup();
 #define mutex_setup()
 #endif
 
+#ifdef __cplusplus
+  }
+#endif

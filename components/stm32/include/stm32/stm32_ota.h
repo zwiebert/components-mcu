@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * stm32_ota.h
  *
@@ -19,3 +22,6 @@ bool stm32Ota_firmwareDownload(const char *url, const char *file_name);
 
 bool stm32ota_doUpdate(const char *firmware_url);
 
+#ifdef __cplusplus
+  }
+#endif

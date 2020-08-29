@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * spiffs_posix.h
  *
@@ -43,3 +46,6 @@
 #include <stdint.h>
 #endif
 
+#ifdef __cplusplus
+  }
+#endif

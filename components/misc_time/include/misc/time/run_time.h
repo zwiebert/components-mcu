@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * run_time.h
  *
@@ -26,3 +29,6 @@ uint32_t run_time_s();
 #define get_now_time_ts run_time_ts
 #define get_now_time_s run_time_s
 
+#ifdef __cplusplus
+  }
+#endif

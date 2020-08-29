@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * config_defaults.h
  *
@@ -133,3 +136,6 @@
 #define MY_LAN_PWR_GPIO 5
 #endif
 
+#ifdef __cplusplus
+  }
+#endif

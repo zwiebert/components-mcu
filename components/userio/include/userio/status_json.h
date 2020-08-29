@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * status_json.h
  *
@@ -39,3 +42,6 @@ bool sj_realloc_buffer(size_t buf_size);
 char *sj_get_json();
 void sj_free_buffer();
 
+#ifdef __cplusplus
+  }
+#endif

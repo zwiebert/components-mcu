@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 #pragma once
 
 #ifndef MIN
@@ -31,3 +34,6 @@
 
 #define BIT(nr)  (1UL << (nr))
 
+#ifdef __cplusplus
+  }
+#endif
