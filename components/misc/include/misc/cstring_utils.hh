@@ -1,14 +1,6 @@
 #pragma once
-
 #include <cstring>
 
-char* csu_create(const char *src);
-bool csu_assign(char **dst, const char *src);
-void csu_delete(char *p);
-void csu_destroy(char **p);
-inline const char* csu_get(char *p) {
-  return p ? p : "";
-}
 
 struct HasRealloc {
    enum { hasRealloc = 1 };
@@ -21,7 +13,18 @@ struct HasNotRealloc {
 template<class Allocator, class HR = HasNotRealloc>
 class csut {
   char *mStr = 0;
-private:
+protected:
+
+  void csu_delete(char *p) {
+    Allocator().deallocate(p, 0);
+  }
+
+  void csu_destroy(char **p) {
+    csu_delete(*p);
+    *p = nullptr;
+  }
+
+
   bool csu_assign(char **dst, const char *src) {
     if (*dst && std::strcmp(*dst, src) == 0)
       return true;
@@ -48,16 +51,14 @@ private:
 
     return false;
   }
+public:
 
-  void csu_delete(char *p) {
-    Allocator().deallocate(p, 0);
+  bool operator==(csut &rhs) {
+    if (mStr == nullptr || rhs.mStr == nullptr)
+      return mStr == rhs.mStr;
+    else
+      return std::strcmp(mStr, rhs.mStr) == 0;
   }
-
-  void csu_destroy(char **p) {
-    csu_delete(*p);
-    *p = nullptr;
-  }
-
 
 public:
   csut() {
@@ -87,11 +88,9 @@ public:
     return *this;
   }
   operator const char *() const {
-    return csu_get(mStr);
+    return mStr ? mStr : "";
   }
-  bool operator==(csut &rhs) const {
-    return std::strcmp(*this, rhs) == 0;
-  }
+  //bool operator==(csut &rhs) const;
   bool operator!=(csut &rhs) const {
     return !(*this == rhs);
   }

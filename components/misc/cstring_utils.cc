@@ -1,6 +1,7 @@
-#include "misc/cstring_utils.hh"
+#include "misc/cstring_utils.h"
 #include <string.h>
 #include <malloc.h>
+#include <stdbool.h>
 
 
 char* csu_create(const char *src) {
@@ -11,10 +12,10 @@ char* csu_create(const char *src) {
 }
 
 bool csu_assign(char **dst, const char *src) {
-  if (*dst && std::strcmp(*dst, src) == 0)
+  if (*dst && strcmp(*dst, src) == 0)
     return true;
 
-  size_t src_size = std::strlen(src) + 1;
+  size_t src_size = strlen(src) + 1;
 
   if (src_size == 1) {
     free(*dst);
@@ -23,7 +24,7 @@ bool csu_assign(char **dst, const char *src) {
   }
 
   if (char *ptr = static_cast<char*>(realloc(*dst, src_size))) {
-    *dst = std::strcpy(ptr, src);
+    *dst = strcpy(ptr, src);
     return true;
   }
 
@@ -39,6 +40,5 @@ void csu_destroy(char **p) {
   csu_delete(*p);
   *p = nullptr;
 }
-
 
 
