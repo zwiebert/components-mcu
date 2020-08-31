@@ -50,17 +50,6 @@ bool cli_replyResult(bool success) {
   return success;
 }
 
-bool asc2u8(const char *s, u8 *n, u8 limit) {
-  if (s) {
-    int g = atoi(s);
-    if (0 <= g && g <= limit) {
-      *n = g;
-      return true;
-    }
-  }
-  return false;
-}
-
 void cli_loop(void) {
   char *cmdline;
   static bool ready;

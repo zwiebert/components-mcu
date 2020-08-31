@@ -87,6 +87,10 @@ public:
     }
     return *this;
   }
+  const char *ptr() const {
+    return mStr ? mStr : "";
+  }
+
   operator const char *() const {
     return mStr ? mStr : "";
   }
