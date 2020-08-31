@@ -175,7 +175,7 @@ int kvs_write(kvshT h, struct line_info *li, int pos) {
 
   if (pos >= 0) {
     if (lseek(h->fd, pos, SEEK_SET) != pos)
-      goto err;
+      return -1;
   } else {
     pos = lseek(h->fd, 0, SEEK_END);
   }
@@ -188,7 +188,6 @@ int kvs_write(kvshT h, struct line_info *li, int pos) {
   pos += size;
   return pos;
 
-  err: return -1;
 }
 
 static void kvs_deleteNode(kvshT h, int pos) {
