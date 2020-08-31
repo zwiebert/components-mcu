@@ -206,6 +206,7 @@ static void kvs_deleteNode(kvshT h, int pos) {
 }
 
 bool kvs_commit(kvshT handle) {
+  (void)handle;
   return true;
 }
 
@@ -393,7 +394,7 @@ SET_GET_DT_FUN(u16);
 SET_GET_DT_FUN(i32);
 SET_GET_DT_FUN(u32);
 
-static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, unsigned length, bool do_write, kvs_type_t kvs_type) {
+static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, size_t length, bool do_write, kvs_type_t kvs_type) {
 
 
   if (!do_write) {
@@ -420,7 +421,7 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, u
 
     int pos = find_key_blob_w(h, key, length, &end_pos);
     bool found_existing = (pos >= 0);
-    int size = found_existing ? (end_pos - pos - sizeof(struct line_info)) : length;
+    size_t size = found_existing ? (end_pos - pos - sizeof(struct line_info)) : length;
     if (found_existing) {
       if (size < length) {
         kvs_deleteNode(h, pos);
