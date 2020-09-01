@@ -1,4 +1,4 @@
-set(srcs stm32_bl.c  stm32.c  stm32_ota.c
+set(srcs esp32/stm32_bl.c  esp32/stm32.c  esp32/stm32_ota.c
 )
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
