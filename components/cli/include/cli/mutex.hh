@@ -6,5 +6,5 @@
 #ifdef USE_CLI_MUTEX
 extern RecMutex cli_mutex;
 #else
-extern DummyMutex cli_mutex;
+#define cli_mutex dummy_mutex
 #endif

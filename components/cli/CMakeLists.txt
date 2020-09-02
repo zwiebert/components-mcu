@@ -1,4 +1,4 @@
-set(srcs cli.c 
+set(srcs cli.cc
  cmdline_get.c  cmdline_parse.c  cmdline_set.c cmdline_process.c
  mutex.cc esp32/cli_task.c) 
 

@@ -15,11 +15,15 @@ private:
 
 class DummyMutex {
 public:
-  inline bool lock() { return true; }
-  inline bool tryLock() { return true; }
-  inline void unlock() {}
+  inline bool lock() {
+    return true;
+  }
+  inline bool tryLock() {
+    return true;
+  }
+  inline void unlock() {
+  }
 };
-
 
 template<class mutex>
 class MutexLocker {
@@ -30,8 +34,13 @@ public:
   }
   ~MutexLocker() {
     if (mMutex)
-    mMutex->unlock();
+      mMutex->unlock();
   }
+
+  MutexLocker(DummyMutex &lock) :
+      mMutex(0), mIsLocked(true) {
+  }
+
   MutexLocker(MutexLocker<mutex> &&other) {
     mMutex = other.mMutex;
     mIsLocked = other.mIsLocked;
@@ -44,7 +53,12 @@ public:
     other.mMutex = nullptr;
   }
 
-  operator bool() const { return mIsLocked; }
+  operator bool() const {
+    return mIsLocked;
+  }
+
+public:
+
 private:
   MutexLocker(MutexLocker<mutex> const &other) = delete;
   MutexLocker& operator =(MutexLocker<mutex> const &other) = delete;
@@ -53,6 +67,19 @@ private:
   bool mIsLocked;
 };
 
-template <class T> using mutLp =  locking_ptr<T, RecMutex>;
+template<>
+class MutexLocker<DummyMutex> {
+public:
+  MutexLocker(DummyMutex &lock) {
+  }
+  operator bool() const {
+    return true;
+  }
+};
 
-using ThreadLock =  MutexLocker<RecMutex>;
+extern DummyMutex dummy_mutex;
+
+template<class T> using mutLp = locking_ptr<T, RecMutex>;
+
+using ThreadLock = MutexLocker<RecMutex>;
+

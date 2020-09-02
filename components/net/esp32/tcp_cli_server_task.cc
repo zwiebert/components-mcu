@@ -1,6 +1,6 @@
 #include "app_config/proj_app_cfg.h"
 #include "cli/cli.h"
-#include "cli/mutex.h"
+#include "cli/mutex.hh"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_system.h"
@@ -224,13 +224,12 @@ void handle_input(int fd, void *args) {
   for (;;) {
     switch (cli_get_commandline(&buf, tcps_getc)) {
     case CMDL_DONE:
-      if (mutex_cliTake()) {
+      if (auto lock = ThreadLock(cli_mutex)) {
         if (buf.cli_buf[0] == '{') {
           cli_process_json(buf.cli_buf, SO_TGT_CLI);
         } else {
           cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
         }
-        mutex_cliGive();
       }
       break;
 

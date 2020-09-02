@@ -12,7 +12,6 @@
 #include "freertos/event_groups.h"
 
 #include "cli/cli.h"
-#include "cli/mutex.h"
 #include "txtio/inout.h"
 #include "misc/int_types.h"
 

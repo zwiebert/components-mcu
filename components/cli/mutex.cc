@@ -3,18 +3,20 @@
 
 RecMutex cli_mutex;
 
-void mutex_setup() {
+#ifdef USE_CLI_MUTEX
+void cli_mutex_setup() {
 }
 
-bool mutex_cliTake() {
+bool cli_mutexTake() {
   cli_mutex.lock();
   return true;
 }
 
-bool mutex_cliTakeTry() {
+bool cli_mutexTakeTry() {
   return cli_mutex.tryLock();
 }
 
-void mutex_cliGive() {
+void cli_mutexGive() {
   cli_mutex.unlock();
 }
+#endif

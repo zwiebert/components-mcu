@@ -5,6 +5,8 @@
 #include "debug/debug.h"
 #include "assert.h"
 
+DummyMutex dummy_mutex;
+
 RecMutex::RecMutex() {
   mHandle = xSemaphoreCreateRecursiveMutex();
   assert(mHandle);
