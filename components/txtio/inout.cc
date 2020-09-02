@@ -18,22 +18,19 @@ void txtio_setup(struct cfg_txtio *cfg_txtio) {
   cfg = *cfg_txtio;
   txtio_config = &cfg;
   txtio_mcu_setup();
+
 }
 
 int (*io_putc_fun)(char c);
 int (*io_getc_fun)(void);
 int (*con_printf_fun)(const char *fmt, ...);
 
-extern char *itoa(int val, char *s, int radix);
-extern char *ltoa(long val, char *s, int radix);
-
 int io_putc(char c) {
   int result = -1;
 
   if (io_putc_fun) {
-    if (txtio_mutex.lock()) {
+    if (auto lock = ThreadLock(txtio_mutex))  {
       result = io_putc_fun(c);
-      txtio_mutex.unlock();
     }
   }
   return result;
@@ -43,9 +40,8 @@ int io_getc(void) {
   int result = -1;
 
   if (io_getc_fun) {
-    if (txtio_mutex.lock()) {
+    if (auto lock = ThreadLock(txtio_mutex))  {
       result = io_getc_fun();
-      txtio_mutex.unlock();
     }
   }
   return result;
@@ -62,28 +58,26 @@ int  io_putlf(void) { return io_putc('\n'); }
 
 int io_puts(const char *s) {
   int result = 0;
-  if (txtio_mutex.lock()) {
+  if (auto lock = ThreadLock(txtio_mutex))  {
     for (; *s != '\0'; ++s) {
       if (io_putc(*s) == -1) {
         result = -1;
         break;
       }
     }
-    txtio_mutex.unlock();
   }
   return result;
 }
 
 int io_write(const char *s, unsigned len) {
   int result = len;
-  if (txtio_mutex.lock()) {
+  if (auto lock = ThreadLock(txtio_mutex))  {
     for (; len > 0; ++s, --len) {
       if (io_putc(*s) == -1) {
         result = -1;
         break;
       }
     }
-    txtio_mutex.unlock();
   }
   return result - len;
 }

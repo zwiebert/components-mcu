@@ -9,7 +9,7 @@
 #include "net/http/server/http_server.h"
 #include <string.h>
 #include "cli/cli.h"
-#include "cli/mutex.h"
+#include "cli/mutex.hh"
 #include "debug/debug.h"
 
 static bool isJson(const char *s, int s_len) {
@@ -25,25 +25,19 @@ static bool isJson(const char *s, int s_len) {
 ///////// public ///////////////////
 void hts_query0(hts_query_t qtype, char *qstr) {
   if (isJson(qstr, strlen(qstr))) {
-    if (mutex_cliTake()) {
+    if (auto lock = ThreadLock(cli_mutex)) {
       cli_process_json(qstr, SO_TGT_HTTP);
     }
-    mutex_cliGive();
   }
 }
-
+#include <misc/cstring_utils.hh>
 void hts_query(hts_query_t qtype, const char *qstr, int qstr_len) {
-  char *buf, *p;
-  if (mutex_cliTake()) {
+  if (auto lock = ThreadLock(cli_mutex)) {
     if (isJson(qstr, qstr_len)) {
-      if ((buf = malloc(qstr_len + 1))) {
-        memcpy(buf, qstr, qstr_len);
-        buf[qstr_len] = '\0';
+      if (auto buf = csu(qstr, qstr_len)) {
         cli_process_json(buf, SO_TGT_HTTP);
-        free(buf);
       }
     }
-    mutex_cliGive();
   }
 }
 

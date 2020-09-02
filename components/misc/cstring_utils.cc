@@ -1,8 +1,11 @@
 #include "misc/cstring_utils.h"
+#include "misc/cstring_utils.hh"
 #include <string.h>
 #include <malloc.h>
 #include <stdbool.h>
 
+
+ char csu_empty_[1];
 
 char* csu_create(const char *src) {
   char *dst = static_cast<char *>(malloc(strlen(src)+1));

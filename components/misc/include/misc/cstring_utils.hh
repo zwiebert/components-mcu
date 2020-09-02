@@ -10,8 +10,11 @@ struct HasNotRealloc {
    enum { hasRealloc = 0 };
 };
 
+extern char csu_empty_[1];
+
 template<class Allocator, class HR = HasNotRealloc>
 class csut {
+  static char mEmpty[1];
   char *mStr = 0;
 protected:
 
@@ -69,6 +72,12 @@ public:
   explicit csut(const char *s) {
     csu_assign(&mStr, s);
   }
+  explicit csut(const char *s, size_t src_len) {
+    mStr = Allocator().allocate(src_len + 1);
+    memcpy(mStr, s, src_len);
+    mStr[src_len] = '\0';
+  }
+
   csut(csut &other) {
     csu_assign(&mStr, other.mStr);
   }
@@ -87,12 +96,20 @@ public:
     }
     return *this;
   }
+
   const char *ptr() const {
     return mStr ? mStr : "";
   }
 
+  char *ptr() {
+    return mStr ? mStr : csu_empty_;
+  }
+
   operator const char *() const {
     return mStr ? mStr : "";
+  }
+  operator char *() {
+    return mStr ? mStr : csu_empty_;
   }
   //bool operator==(csut &rhs) const;
   bool operator!=(csut &rhs) const {

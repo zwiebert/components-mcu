@@ -9,8 +9,9 @@ RecMutex::RecMutex() {
   mHandle = xSemaphoreCreateRecursiveMutex();
   assert(mHandle);
 }
-
+#include <esp_log.h>
 bool RecMutex::lock() {
+  //ESP_LOGI("trace", "lock()");
   if (xSemaphoreTakeRecursive(mHandle, portMAX_DELAY))
     return true;
   assert(false);
@@ -22,6 +23,7 @@ bool RecMutex::tryLock() {
 }
 
 void RecMutex::unlock() {
+  //ESP_LOGI("trace", "unlock()");
   xSemaphoreGiveRecursive(mHandle);
 }
 
