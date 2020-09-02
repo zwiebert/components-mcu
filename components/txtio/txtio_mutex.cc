@@ -1,10 +1,7 @@
-#ifndef USE_TXTIO_MUTEX
-#include <txtio/mutex.h>
-#endif
-
+#include "txtio_mutex.h"
 #include <misc/mutex.hh>
 
-static RecMutex txtio_mutex;
+RecMutex txtio_mutex;
 
 void txtio_mutexSetup() {
 }

@@ -11,3 +11,10 @@ private:
   void *mHandle;
 };
 
+class DummyMutex {
+public:
+  inline void lock() {}
+  inline bool tryLock() { return true; }
+  inline void unlock() {}
+};
+

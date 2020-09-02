@@ -1,4 +1,4 @@
-set(srcs inout.c esp32/txtio_setup.c mutex.cc) 
+set(srcs inout.cc esp32/txtio_setup.c txtio_mutex.cc) 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
 

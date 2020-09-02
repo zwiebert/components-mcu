@@ -1,7 +1,7 @@
 #include <cli/mutex.h>
 #include <misc/mutex.hh>
 
-static RecMutex cli_mutex;
+RecMutex cli_mutex;
 
 void mutex_setup() {
 }

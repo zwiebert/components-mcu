@@ -117,7 +117,6 @@ void txtio_mcu_setup() {
 #ifdef USE_CLI_TASK
   initialize_console();
 #endif
-  txtio_mutexSetup();
   io_putc_fun = es_io_putc;
   io_getc_fun = es_io_getc;
   con_printf_fun = ets_printf;

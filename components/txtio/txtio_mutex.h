@@ -1,4 +1,7 @@
-/*
+#ifdef __cplusplus
+  extern "C" {
+#endif
+  /*
  * mutex.h
  *
  *  Created on: 14.04.2020
@@ -19,6 +22,11 @@ void txtio_mutexGive();
 #define txtio_mutexTake() true
 #define txtio_mutexTakeTry() true
 #define txtio_mutexGive()
+#endif
+
+
+#ifdef __cplusplus
+  }
 #endif
 
 

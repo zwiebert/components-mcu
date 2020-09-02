@@ -1,22 +1,23 @@
 #include "txtio/inout.h"
 #include "txtio_app_cfg.h"
+#include "txtio_imp.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "misc/int_macros.h"
+#include "misc/itoa.h"
 #include "txtio_mutex.h"
 
 
 struct cfg_txtio *txtio_config;
 
-void txtio_mcu_setup(void);
-
 void txtio_setup(struct cfg_txtio *cfg_txtio) {
   static struct cfg_txtio cfg;
   cfg = *cfg_txtio;
   txtio_config = &cfg;
+  txtio_mutexSetup();
   txtio_mcu_setup();
 }
 
