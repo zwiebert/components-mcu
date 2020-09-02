@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include <app_config/proj_app_cfg.h>
+
 #include "stdbool.h"
 
 #ifdef USE_CLI_MUTEX
@@ -17,7 +19,7 @@ bool mutex_cliTake();
 bool mutex_cliTakeTry();
 void mutex_cliGive();
 void mutex_setup();
-
+#error
 #else
 #define mutex_cliTake() true
 #define mutex_cliTryTake() true
