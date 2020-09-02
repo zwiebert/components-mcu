@@ -10,10 +10,11 @@ RecMutex::RecMutex() {
   assert(mHandle);
 }
 
-void RecMutex::lock() {
+bool RecMutex::lock() {
   if (xSemaphoreTakeRecursive(mHandle, portMAX_DELAY))
-    return;
+    return true;
   assert(false);
+  return false;
 }
 
 bool RecMutex::tryLock() {

@@ -7,7 +7,6 @@
 #include "app_config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 #include "txtio/inout.h"
-#include "txtio_mutex.h"
 #include <esp_system.h>
 #include <esp32/rom/ets_sys.h>
 #include "esp_log.h"

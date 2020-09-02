@@ -3,7 +3,7 @@
 class RecMutex {
 public:
   RecMutex();
-  void lock();
+  bool lock();
   bool tryLock();
   void unlock();
 
@@ -13,7 +13,7 @@ private:
 
 class DummyMutex {
 public:
-  inline void lock() {}
+  inline bool lock() { return true; }
   inline bool tryLock() { return true; }
   inline void unlock() {}
 };
