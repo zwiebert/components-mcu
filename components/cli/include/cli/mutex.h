@@ -19,7 +19,6 @@ bool mutex_cliTake();
 bool mutex_cliTakeTry();
 void mutex_cliGive();
 void mutex_setup();
-#error
 #else
 #define mutex_cliTake() true
 #define mutex_cliTryTake() true
