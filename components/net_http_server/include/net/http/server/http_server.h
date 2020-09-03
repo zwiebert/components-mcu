@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * http_server.h
  *
@@ -36,3 +39,6 @@ void hts_enable_http_server(struct cfg_http *config);
 
 void hts_setup(struct cfg_http *config);
 
+#ifdef __cplusplus
+  }
+#endif

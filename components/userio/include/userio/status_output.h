@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 
 #pragma once
 
@@ -28,4 +31,7 @@ extern uint8_t so_target;
 
 #ifdef USE_WS
 void ws_send_json(const char *json); //XXX:
+#endif
+#ifdef __cplusplus
+  }
 #endif

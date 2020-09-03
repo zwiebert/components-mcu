@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * wifiap.h
  *
@@ -9,3 +12,6 @@
 
 void wifiAp_setup(const char *ap_ssid, const char *ap_passwd);
 
+#ifdef __cplusplus
+  }
+#endif

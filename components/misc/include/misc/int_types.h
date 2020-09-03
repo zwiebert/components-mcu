@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * int_types.h
  *
@@ -19,3 +22,6 @@ typedef uint64_t u64;
 typedef int64_t i64;
 
 
+#ifdef __cplusplus
+  }
+#endif

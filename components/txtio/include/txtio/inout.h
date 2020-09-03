@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 #pragma once
 
 #include "stdbool.h"
@@ -73,3 +76,6 @@ void print_array_8_inv(const uint8_t *src, int len);
 
 
 
+#ifdef __cplusplus
+  }
+#endif

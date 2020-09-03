@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * wifistation.h
  *
@@ -18,3 +21,6 @@ typedef void (*wifistation_cb)(void);
 void wifistation_cbRegister_gotIpAddr(wifistation_cb cb);
 void wifistation_cbRegister_lostIpAddr(wifistation_cb cb);
 
+#ifdef __cplusplus
+  }
+#endif

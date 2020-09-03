@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * spiffs_config.h
  *
@@ -439,3 +442,6 @@ typedef u16_t spiffs_span_ix;
 
 
 
+#ifdef __cplusplus
+  }
+#endif

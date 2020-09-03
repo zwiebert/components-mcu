@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /**
  * \file base64.h
  *
@@ -123,3 +126,6 @@ int mbedtls_base64_self_test( int verbose );
 #endif
 
 #endif /* base64.h */
+#ifdef __cplusplus
+  }
+#endif

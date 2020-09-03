@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * spiffs_fs.h
  *
@@ -18,3 +21,6 @@ extern spiffs fs;
 bool spiffs_format_fs(spiffs *fs);  // unmout, format, mount. returns success
 
 #endif /* ENABLE_SPIFFS */
+#ifdef __cplusplus
+  }
+#endif

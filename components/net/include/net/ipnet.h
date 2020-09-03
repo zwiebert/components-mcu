@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * wifi.h
  *
@@ -28,3 +31,6 @@ void ipnet_cbRegister_lostIpAddr(ipnet_cb cb);
 
 extern ipnet_cb ipnet_gotIpAddr_cb, ipnet_lostIpAddr_cb;
 
+#ifdef __cplusplus
+  }
+#endif

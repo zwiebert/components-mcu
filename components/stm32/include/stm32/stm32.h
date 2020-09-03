@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * uart.h
  *
@@ -38,3 +41,6 @@ extern struct cfg_stm32 *stm32_cfg;
 
 void stm32_setup(const struct cfg_stm32 *cfg_stm32);
 
+#ifdef __cplusplus
+  }
+#endif
