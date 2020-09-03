@@ -21,8 +21,9 @@
 
 #define D(x) 
 
+extern const char * const config_keys[]; //XXX: defined in app
 
-const char *configKvs_keys[] = {
+extern const char * const configKvs_keys[] = {
   "C_VERBOSE",
 #ifdef USE_WLAN
   "C_WIFI_SSID", "C_WIFI_PASSWD",
@@ -41,8 +42,9 @@ const char *configKvs_keys[] = {
 #endif
 };
 
-extern const char *configKvs_keys[];
-extern const char *config_keys[];
+
+
+
 const char *config_get_kvs_key(uint8_t cb) {
   return (((int)cb < (int)CB_size) ? configKvs_keys[(cb)] : config_keys[(cb-CB_size)]);
 }

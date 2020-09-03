@@ -40,6 +40,9 @@ enum configItem {
 
 const char* config_get_kvs_key(uint8_t item);
 
+extern const char * const config_keys[]; //XXX: defined in app
+extern const char * const configKvs_keys[];
+
 bool config_save_item_s(enum configItem item, const char *val);
 bool config_save_item_b(enum configItem item, const void *val, unsigned size);
 bool config_save_item_u32(enum configItem item, const char *val);
