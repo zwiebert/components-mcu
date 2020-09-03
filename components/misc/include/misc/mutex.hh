@@ -1,7 +1,5 @@
 #pragma once
 
-#include "locking_ptr.hh"
-
 class RecMutex {
 public:
   RecMutex();
@@ -78,8 +76,5 @@ public:
 };
 
 extern DummyMutex dummy_mutex;
-
-template<class T> using mutLp = locking_ptr<T, RecMutex>;
-
 using ThreadLock = MutexLocker<RecMutex>;
 
