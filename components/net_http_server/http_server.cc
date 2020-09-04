@@ -12,6 +12,9 @@
 #include "cli/mutex.hh"
 #include "debug/debug.h"
 
+static ws_print_json_cbT ws_print_json_cb;
+hts_register_uri_handlers_cbT hts_register_uri_handlers_cb;
+
 static bool isJson(const char *s, int s_len) {
   int i;
   for (i=0; i < s_len; ++i) {
@@ -42,7 +45,19 @@ void hts_query(hts_query_t qtype, const char *qstr, int qstr_len) {
 }
 
 void hts_setup(struct cfg_http *config) {
-    hts_enable_http_server(config);
+  hts_enable_http_server(config);
 }
+
+void hts_set_register_uri_handlers_cb(hts_register_uri_handlers_cbT cb) {
+  hts_register_uri_handlers_cb = cb;
+}
+void hts_set_ws_print_json_cb(ws_print_json_cbT cb) {
+  ws_print_json_cb = cb;
+}
+void ws_print_json(const char *json) {
+  if (ws_print_json_cb)
+    ws_print_json_cb(json);
+}
+
 #endif
 

@@ -13,6 +13,10 @@
 
 static const char *TAG="APP";
 
+
+
+extern hts_register_uri_handlers_cbT hts_register_uri_handlers_cb;
+
 //////////////////////////Authorization//////////////////////
 static char *auth_user;
 static char *auth_password;
@@ -91,7 +95,7 @@ static httpd_handle_t start_webserver(struct cfg_http *c) {
     return NULL;
   }
 
-  hts_register_uri_handlers(server);
+  hts_register_uri_handlers_cb(server);
   return server;
 }
 

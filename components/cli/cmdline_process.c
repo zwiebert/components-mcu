@@ -10,6 +10,7 @@
 #include "cli/cli.h"
 #include "cli/cli_json.h"
 #include "userio/status_output.h"
+#include "net/http/server/http_server.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
 #include "userio/status_json.h"

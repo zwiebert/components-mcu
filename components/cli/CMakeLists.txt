@@ -11,5 +11,5 @@ endif()
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include"  
     REQUIRES userio 
-    PRIV_REQUIRES app_config  debug misc txtio userio jsmn
+    PRIV_REQUIRES app_config  debug misc txtio userio jsmn net_http_server
 )
