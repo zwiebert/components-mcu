@@ -1,12 +1,13 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#pragma once
 
 #include "userio/status_output.h"
 #include "cli_types.h"
 #include "cli_json.h"
 
-#pragma once
+
 
 // external dependencies
 extern const struct parm_handlers parm_handlers; // needs to be defined by app
@@ -29,11 +30,6 @@ int cli_replyFailure(void);
 void cli_loop(void);
 void cli_setup_task(bool enable);
 ///////////////////////////////////////////////////////////////////
-
-
-
-
-
 
 #ifdef __cplusplus
 }
