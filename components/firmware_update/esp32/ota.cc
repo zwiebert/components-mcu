@@ -18,7 +18,6 @@
 #include "misc/cstring_utils.hh"
 
 static const char *TAG = "esp32_ota";
-extern const char ca_cert_pem[];
 
 static ota_state_T state;
 
@@ -54,12 +53,13 @@ static esp_err_t http_event_handler(esp_http_client_event_t *evt)
 
 struct task_parm {
   csu url;
+  const char *cert;
 };
 
 static void simple_ota_example_task(void *pvParameter) {
   auto parm = static_cast<task_parm*>(pvParameter);
 
-  esp_http_client_config_t config = { .url = parm->url, .cert_pem = ca_cert_pem, .event_handler = http_event_handler, };
+  esp_http_client_config_t config = { .url = parm->url, .cert_pem = parm->cert, .event_handler = http_event_handler, };
 
   state = ota_RUN;
   esp_err_t ret = esp_https_ota(&config);
@@ -70,11 +70,12 @@ static void simple_ota_example_task(void *pvParameter) {
   vTaskDelete(NULL);
 }
 
-bool ota_doUpdate(const char *firmware_url) {
+bool ota_doUpdate(const char *firmware_url, const char *cert) {
   io_printf_v(vrb3, "OTA: url=<%s>\n", firmware_url);
 
   auto parm = new task_parm;
   parm->url = firmware_url;
+  parm->cert = cert;
 
   xTaskCreate(&simple_ota_example_task, "esp32_ota_update", 16384, parm, 5, NULL);
   return false;

@@ -2,7 +2,7 @@
 
 
 
-bool ota_doUpdate(const char *firmwareURL);
+bool ota_doUpdate(const char *firmwareURL, const char *cert);
 
 typedef enum { ota_NONE, ota_RUN, ota_FAIL, ota_DONE} ota_state_T;
 ota_state_T ota_getState(void);
