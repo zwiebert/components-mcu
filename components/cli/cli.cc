@@ -5,7 +5,7 @@
  *  Author: bertw
  */
 
-#include "cli_app_cfg.h"
+#include "cli_private.h"
 #include "misc/bcd.h"
 #include "cli/cli.h"
 #include "userio/status_output.h"
