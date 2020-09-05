@@ -8,7 +8,7 @@
 #include "app_config/proj_app_cfg.h"
 
 #include "storage/storage.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 #include "txtio/inout.h"
 
 #ifdef TEST_HOST

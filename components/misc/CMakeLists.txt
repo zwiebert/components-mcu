@@ -2,7 +2,8 @@ set(srcs bcd.c  stof.c  sun.c esp32/itoa.c ftoa.c cstring_utils.cc esp32/mutex.c
 
 
 idf_component_register(SRCS ${srcs} 
+    PRIV_REQUIRES debug
     INCLUDE_DIRS "./include" 
 )
 
-component_compile_options(-${component_compile_opts})
+component_compile_options(${component_compile_opts})

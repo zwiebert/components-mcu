@@ -14,7 +14,7 @@
 #include "esp_netif.h"
 #include "driver/gpio.h"
 #include "driver/periph_ctrl.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 #include "net/ipnet.h"
 #include "net/ethernet.h"
 

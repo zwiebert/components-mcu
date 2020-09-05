@@ -27,7 +27,7 @@
 #include "misc/int_macros.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 
 #define D(x) x
 #define DD(x)

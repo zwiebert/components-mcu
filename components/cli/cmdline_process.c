@@ -14,7 +14,7 @@
 #include "txtio/inout.h"
 #include "cli/mutex.h"
 #include "userio/status_json.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 #include "jsmn/jsmn.h"
 #include <string.h>
 

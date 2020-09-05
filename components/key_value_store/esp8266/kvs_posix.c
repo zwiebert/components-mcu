@@ -11,7 +11,7 @@
 #include "key_value_store/kvs_wrapper.h"
 #include "misc/int_types.h"
 #include "misc/int_macros.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 
 #ifdef HOST_TESTING
 #include <sys/types.h>

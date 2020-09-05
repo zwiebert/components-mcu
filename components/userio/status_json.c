@@ -11,7 +11,7 @@
 #include "userio/status_output.h"
 #include "misc/int_macros.h"
 #include "txtio/inout.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 
 #include <string.h>
 #include <stdlib.h>

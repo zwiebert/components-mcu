@@ -12,7 +12,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "net/http_client.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 #include <misc/cstring_utils.hh>
 
 #define STM32_WAIT_AFTER_BOOT_MS 2000

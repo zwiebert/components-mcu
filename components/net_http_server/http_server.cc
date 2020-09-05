@@ -10,7 +10,7 @@
 #include <string.h>
 #include "cli/cli.h"
 #include "cli/mutex.hh"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 
 static ws_print_json_cbT ws_print_json_cb;
 hts_register_uri_handlers_cbT hts_register_uri_handlers_cb;

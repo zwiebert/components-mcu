@@ -2,7 +2,7 @@
 
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 #include "assert.h"
 
 DummyMutex dummy_mutex;

@@ -30,7 +30,7 @@
 #include "esp_http_client.h"
 #include "net/http_client.h"
 
-#include "debug/debug.h"
+#include "debug/dbg.h"
 
 #define MAX_HTTP_RECV_BUFFER 512
 static const char *TAG = "HTTP_CLIENT";
