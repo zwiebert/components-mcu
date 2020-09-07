@@ -13,7 +13,7 @@
 #include "cli/mutex.hh"
 #include "userio/status_json.h"
 #include "debug/dbg.h"
-
+#include "misc/int_types.h"
 #include <string.h>
 
 u16 cli_msgid;
