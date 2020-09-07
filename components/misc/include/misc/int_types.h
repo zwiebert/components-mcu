@@ -12,6 +12,15 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+enum logiclevel { LOW, HIGH };
+#else
+#include <stdbool.h>
+typedef bool logicLevel;
+#define LOW false
+#define HIGH true
+#endif
+
 typedef uint8_t u8;
 typedef int8_t i8;
 typedef uint16_t u16;
