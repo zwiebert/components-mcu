@@ -29,6 +29,14 @@
 #endif
 #ifdef USE_MQTT
 
+void (*io_mqtt_connected_cb)();
+void (*io_mqtt_disconnected_cb)();
+void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len);
+void (*io_mqtt_unsubscribed_cb)(const char *topic, int topic_len);
+void (*io_mqtt_published_cb)(int msg_id);
+void (*io_mqtt_received_cb)(const char *topic, int topic_len, const char *data, int data_len);
+
+
 static const char *TAG = "MQTT_EXAMPLE";
 
 static bool is_connected;
@@ -44,36 +52,41 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
   case MQTT_EVENT_CONNECTED:
     is_connected = true;
     D(ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED"));
-    io_mqtt_connected();
+    if (io_mqtt_connected_cb)
+      io_mqtt_connected_cb();
     break;
-    
+
   case MQTT_EVENT_DISCONNECTED:
     D(ESP_LOGI(TAG, "MQTT_EVENT_DISCONNECTED"));
     is_connected = false;
-    io_mqtt_disconnected();
+    if (io_mqtt_disconnected_cb)
+      io_mqtt_disconnected_cb();
     break;
 
   case MQTT_EVENT_SUBSCRIBED:
     D(ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id));
-    io_mqtt_subscribed(event->topic, event->topic_len);
+    if (io_mqtt_subscribed_cb)
+      io_mqtt_subscribed_cb(event->topic, event->topic_len);
     break;
 
   case MQTT_EVENT_UNSUBSCRIBED:
     D(ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id));
-    io_mqtt_unsubscribed(event->topic, event->topic_len);
-    
+    if (io_mqtt_unsubscribed_cb)
+      io_mqtt_unsubscribed_cb(event->topic, event->topic_len);
+
     break;
   case MQTT_EVENT_PUBLISHED:
     D(ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id));
-    io_mqtt_published(event->msg_id);
+    if (io_mqtt_published_cb)
+      io_mqtt_published_cb(event->msg_id);
     break;
-    
+
   case MQTT_EVENT_DATA:
     D(ESP_LOGI(TAG, "MQTT_EVENT_DATA"));
     D(printf("TOPIC=%.*s\r\n", event->topic_len, event->topic));
     D(printf("DATA=%.*s\r\n", event->data_len, event->data));
-    
-    io_mqtt_received(event->topic, event->topic_len, event->data, event->data_len);
+    if (io_mqtt_received_cb)
+      io_mqtt_received_cb(event->topic, event->topic_len, event->data, event->data_len);
  
     break;
   case MQTT_EVENT_ERROR:
