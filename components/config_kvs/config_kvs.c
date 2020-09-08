@@ -7,9 +7,9 @@
 
 #include "app_config/proj_app_cfg.h"
 
-#include "include/config_kvs/config.h"
-#include "../config_kvs/config_kvs.h"
-#include "include/config_kvs/config_defaults.h"
+#include "config_kvs/config.h"
+#include "config_kvs.h"
+#include "config_kvs/config_defaults.h"
 
 #include "misc/int_macros.h"
 #include "key_value_store/kvs_wrapper.h"
@@ -21,9 +21,7 @@
 
 #define D(x) 
 
-extern const char * const config_keys[]; //XXX: defined in app
-
-extern const char * const configKvs_keys[] = {
+const char * const configKvs_keys[] = {
   "C_VERBOSE",
 #ifdef USE_WLAN
   "C_WIFI_SSID", "C_WIFI_PASSWD",
@@ -41,8 +39,6 @@ extern const char * const configKvs_keys[] = {
   "C_LAN_PHY", "C_LAN_PWR_GPIO",
 #endif
 };
-
-
 
 
 const char *config_get_kvs_key(uint8_t cb) {
