@@ -7,7 +7,5 @@
 
 #pragma once
 
-#define USE_CLI_MUTEX
-
 #include "app_config/proj_app_cfg.h"
 

@@ -8,7 +8,7 @@
 
 #include "stdbool.h"
 
-#ifdef USE_CLI_MUTEX
+#ifdef USE_MUTEX
 bool cli_mutexTake();
 bool cli_mutexTakeTry();
 void cli_mutexGive();

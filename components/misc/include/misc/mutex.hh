@@ -25,7 +25,7 @@ public:
 
 #include <mutex>
 
-#ifdef USE_FREERTOS
+#ifdef USE_MUTEX
 using RecMutex = RecursiveMutex;
 #else
 using RecMutex = DummyMutex;
