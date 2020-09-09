@@ -13,10 +13,6 @@
 
 static const char *TAG="APP";
 
-
-
-extern hts_register_uri_handlers_cbT hts_register_uri_handlers_cb;
-
 //////////////////////////Authorization//////////////////////
 static char *auth_user;
 static char *auth_password;

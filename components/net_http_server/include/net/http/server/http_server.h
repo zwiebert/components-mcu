@@ -15,10 +15,8 @@
 #include "stdbool.h"
 #include <stdint.h>
 
-
-typedef void (*ws_print_json_cbT)(const char *json);
-typedef void (*hts_register_uri_handlers_cbT)(void *server_handle);
-
+extern void (*ws_print_json_cb)(const char *json);
+extern void (*hts_register_uri_handlers_cb)(void *server_handle);
 
 struct cfg_http {
   char user[16];
@@ -42,9 +40,6 @@ void hts_enable_http_server(struct cfg_http *config);
 #define hts_enable_http_server(config)
 #endif
 
-void hts_set_register_uri_handlers_cb(hts_register_uri_handlers_cbT cb);
-
-void hts_set_ws_print_json_cb(ws_print_json_cbT cb);
 void ws_print_json(const char *json);
 
 void hts_setup(struct cfg_http *config);
