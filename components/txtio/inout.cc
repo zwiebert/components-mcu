@@ -29,7 +29,7 @@ int io_putc(char c) {
   int result = -1;
 
   if (io_putc_fun) {
-    if (auto lock = ThreadLock(txtio_mutex))  {
+    { LockGuard lock(txtio_mutex);
       result = io_putc_fun(c);
     }
   }
@@ -40,7 +40,7 @@ int io_getc(void) {
   int result = -1;
 
   if (io_getc_fun) {
-    if (auto lock = ThreadLock(txtio_mutex))  {
+    { LockGuard lock(txtio_mutex);
       result = io_getc_fun();
     }
   }
@@ -48,32 +48,41 @@ int io_getc(void) {
 }
 
 
-
+#if 0
 /* use io_putc()/io_getc(). Don't use the function pointers for
    putc/get directly. */
 #define io_putc_fun #error
 #define io_getc_fun #error
+#endif
 
 int  io_putlf(void) { return io_putc('\n'); }
 
+
 int io_puts(const char *s) {
   int result = 0;
-  if (auto lock = ThreadLock(txtio_mutex))  {
+  { LockGuard lock(txtio_mutex);
+    if (!io_putc_fun)
+      return -1;
+
     for (; *s != '\0'; ++s) {
-      if (io_putc(*s) == -1) {
-        result = -1;
-        break;
+      if (io_putc_fun(*s) == -1) {
+        return -1;
+        ++result;
       }
     }
   }
   return result;
 }
 
+
 int io_write(const char *s, unsigned len) {
   int result = len;
-  if (auto lock = ThreadLock(txtio_mutex))  {
+  { LockGuard lock(txtio_mutex);
+    if (!io_putc_fun)
+      return -1;
+
     for (; len > 0; ++s, --len) {
-      if (io_putc(*s) == -1) {
+      if (io_putc_fun(*s) == -1) {
         result = -1;
         break;
       }
@@ -215,24 +224,29 @@ io_putld(i32 n) {
   io_putl(n, 10);
 }
 
-int 
-io_getline(char *buf, unsigned buf_size) {
+int io_getline(char *buf, unsigned buf_size) {
   int i, c;
 
-  for (i=0; (i+1) < buf_size; ++i) {
-    c = io_getc();
-
-    if (c == -1)
+  { LockGuard lock(txtio_mutex);
+    if (!io_getc_fun)
       return -1;
 
-    if (c == ';')
-      break;
-    
-    buf[i] = (char)c;
-  }
+    for (i = 0; (i + 1) < buf_size; ++i) {
+      c = io_getc_fun();
 
-  buf[i] = '\0';
-  return i;
+      if (c == -1)
+        return -1;
+
+      if (c == ';')
+        break;
+
+      buf[i] = (char) c;
+    }
+
+    buf[i] = '\0';
+    return i;
+  }
+  return -1;
 }
 
 void 

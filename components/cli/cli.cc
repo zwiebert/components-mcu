@@ -54,7 +54,7 @@ void cli_loop(void) {
   char *cmdline;
   static bool ready;
   if ((cmdline = get_commandline())) {
-    if (auto lock = ThreadLock(cli_mutex)) {
+    { LockGuard lock(cli_mutex); 
       if (cmdline[0] == '{') {
         sj_write_set(io_write);
         cli_process_json(cmdline, SO_TGT_CLI);

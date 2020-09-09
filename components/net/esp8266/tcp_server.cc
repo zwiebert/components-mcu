@@ -347,7 +347,7 @@ void handle_input() {
   for (;;) {
     switch (cli_get_commandline(&buf, tcpSocket_io_getc)) {
     case CMDL_DONE:
-      if (auto lock = ThreadLock(cli_mutex)) {
+      { LockGuard lock(cli_mutex); 
         if (buf.cli_buf[0] == '{') {
           sj_write_set(tcps_write);
           cli_process_json(buf.cli_buf, SO_TGT_CLI);

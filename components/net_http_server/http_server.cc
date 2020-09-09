@@ -28,14 +28,14 @@ static bool isJson(const char *s, int s_len) {
 ///////// public ///////////////////
 void hts_query0(hts_query_t qtype, char *qstr) {
   if (isJson(qstr, strlen(qstr))) {
-    if (auto lock = ThreadLock(cli_mutex)) {
+    { LockGuard lock(cli_mutex); 
       cli_process_json(qstr, SO_TGT_HTTP);
     }
   }
 }
 #include <misc/cstring_utils.hh>
 void hts_query(hts_query_t qtype, const char *qstr, int qstr_len) {
-  if (auto lock = ThreadLock(cli_mutex)) {
+  { LockGuard lock(cli_mutex); 
     if (isJson(qstr, qstr_len)) {
       if (auto buf = csu(qstr, qstr_len)) {
         cli_process_json(buf, SO_TGT_HTTP);

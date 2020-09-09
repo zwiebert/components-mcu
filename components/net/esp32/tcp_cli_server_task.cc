@@ -224,7 +224,7 @@ void handle_input(int fd, void *args) {
   for (;;) {
     switch (cli_get_commandline(&buf, tcps_getc)) {
     case CMDL_DONE:
-      if (auto lock = ThreadLock(cli_mutex)) {
+      { LockGuard lock(cli_mutex); 
         if (buf.cli_buf[0] == '{') {
           cli_process_json(buf.cli_buf, SO_TGT_CLI);
         } else {

@@ -13,7 +13,7 @@ bool cli_mutexTake() {
 }
 
 bool cli_mutexTakeTry() {
-  return cli_mutex.tryLock();
+  return cli_mutex.try_lock();
 }
 
 void cli_mutexGive() {

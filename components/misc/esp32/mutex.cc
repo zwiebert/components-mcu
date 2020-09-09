@@ -4,27 +4,25 @@
 #include "freertos/semphr.h"
 #include "debug/dbg.h"
 #include "assert.h"
+#include <stdlib.h>
 
-DummyMutex dummy_mutex;
-
-RecMutex::RecMutex() {
+RecursiveMutex::RecursiveMutex() {
   mHandle = xSemaphoreCreateRecursiveMutex();
   assert(mHandle);
 }
 #include <esp_log.h>
-bool RecMutex::lock() {
+void RecursiveMutex::lock() {
   //ESP_LOGI("trace", "lock()");
   if (xSemaphoreTakeRecursive(mHandle, portMAX_DELAY))
-    return true;
-  assert(false);
-  return false;
+    return;
+  abort();
 }
 
-bool RecMutex::tryLock() {
+bool RecursiveMutex::try_lock() {
   return !!xSemaphoreTakeRecursive(mHandle, 0);
 }
 
-void RecMutex::unlock() {
+void RecursiveMutex::unlock() {
   //ESP_LOGI("trace", "unlock()");
   xSemaphoreGiveRecursive(mHandle);
 }

@@ -1,10 +1,11 @@
+#include <app_config/proj_app_cfg.h>
 #pragma once
 
-class RecMutex {
+class RecursiveMutex {
 public:
-  RecMutex();
-  bool lock();
-  bool tryLock();
+  RecursiveMutex();
+  void lock();
+  bool try_lock();
   void unlock();
 
 private:
@@ -13,68 +14,22 @@ private:
 
 class DummyMutex {
 public:
-  inline bool lock() {
-    return true;
+  inline void lock() {
   }
-  inline bool tryLock() {
+  inline bool try_lock() {
     return true;
   }
   inline void unlock() {
   }
 };
 
-template<class mutex>
-class MutexLocker {
-public:
-  MutexLocker(mutex &lock) :
-      mMutex(&lock) {
-    mIsLocked = mMutex->lock();
-  }
-  ~MutexLocker() {
-    if (mMutex)
-      mMutex->unlock();
-  }
+#include <mutex>
 
-  MutexLocker(DummyMutex &lock) :
-      mMutex(0), mIsLocked(true) {
-  }
+#ifdef USE_FREERTOS
+using RecMutex = RecursiveMutex;
+#else
+using RecMutex = DummyMutex;
+#endif
 
-  MutexLocker(MutexLocker<mutex> &&other) {
-    mMutex = other.mMutex;
-    mIsLocked = other.mIsLocked;
-    other.mMutex = nullptr;
-  }
-
-  MutexLocker& operator =(MutexLocker<mutex> const &&other) {
-    mMutex = other.mMutex;
-    mIsLocked = other.mIsLocked;
-    other.mMutex = nullptr;
-  }
-
-  operator bool() const {
-    return mIsLocked;
-  }
-
-public:
-
-private:
-  MutexLocker(MutexLocker<mutex> const &other) = delete;
-  MutexLocker& operator =(MutexLocker<mutex> const &other) = delete;
-private:
-  mutex *mMutex;
-  bool mIsLocked;
-};
-
-template<>
-class MutexLocker<DummyMutex> {
-public:
-  MutexLocker(DummyMutex &lock) {
-  }
-  operator bool() const {
-    return true;
-  }
-};
-
-extern DummyMutex dummy_mutex;
-using ThreadLock = MutexLocker<RecMutex>;
+using LockGuard = std::lock_guard<RecMutex>;
 
