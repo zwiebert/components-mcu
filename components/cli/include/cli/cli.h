@@ -3,7 +3,7 @@ extern "C" {
 #endif
 #pragma once
 
-#include "userio/status_output.h"
+#include "uout/status_output.h"
 #include "cli_types.h"
 #include "cli_json.h"
 

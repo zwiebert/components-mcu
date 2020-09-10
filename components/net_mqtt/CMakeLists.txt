@@ -10,6 +10,6 @@ idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS . "./include" 
     REQUIRES app_config
-    PRIV_REQUIRES cli userio txtio
+    PRIV_REQUIRES cli uout txtio
                   mqtt lwip
  )

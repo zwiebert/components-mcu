@@ -9,11 +9,11 @@
 #include "misc/bcd.h"
 #include "cli/cli.h"
 #include "cli/cli_json.h"
-#include "userio/status_output.h"
+#include "uout/status_output.h"
 #include "net/http/server/http_server.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
-#include "userio/status_json.h"
+#include "uout/status_json.h"
 #include "debug/dbg.h"
 #include "jsmn/jsmn.h"
 #include <string.h>

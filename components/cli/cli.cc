@@ -8,10 +8,10 @@
 #include "cli_private.h"
 #include "misc/bcd.h"
 #include "cli/cli.h"
-#include "userio/status_output.h"
+#include "uout/status_output.h"
 #include "txtio/inout.h"
 #include "cli/mutex.hh"
-#include "userio/status_json.h"
+#include "uout/status_json.h"
 #include "debug/dbg.h"
 #include "misc/int_types.h"
 #include <string.h>

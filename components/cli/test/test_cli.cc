@@ -14,7 +14,7 @@
 #include "misc/bcd.h"
 #include "../cli_private.h"
 #include "cli/cli.h"
-#include "userio/status_json.h"
+#include "uout/status_json.h"
 
 #if 0
 static void test_commandline() {

@@ -5,7 +5,7 @@ extern "C" {
 
 #include "cli_types.h"
 #include "cli/cli.h"
-#include "userio/status_output.h"
+#include "uout/status_output.h"
 
 extern bool (*cli_hook_process_json)(char *json);
 
