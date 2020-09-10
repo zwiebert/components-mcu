@@ -1,6 +1,6 @@
 #include "app_config/proj_app_cfg.h"
 #include "storage/storage.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 
 #ifndef TEST_HOST
 #include "esp_err.h"

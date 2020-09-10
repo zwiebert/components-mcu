@@ -10,7 +10,7 @@ endif()
 
 idf_component_register(SRC_DIRS "."
                        INCLUDE_DIRS "." ../include 
-                       REQUIRES fernotron app txtio
-                       PRIV_REQUIRES key_value_store
+                       REQUIRES app_misc txtio unity
+                       PRIV_REQUIRES key_value_store net
 )
 

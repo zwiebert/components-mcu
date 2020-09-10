@@ -21,7 +21,8 @@
 #include "freertos/task.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
+#include "misc/int_types.h"
 #include <stdio.h>
 #include <stdint.h>
 

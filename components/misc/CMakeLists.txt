@@ -1,9 +1,11 @@
-set(srcs bcd.c  stof.c  sun.c esp32/itoa.c ftoa.c cstring_utils.cc)
+set(srcs bcd.c  stof.c  sun.c esp32/itoa.c ftoa.c cstring_utils.cc esp32/mutex.cc)
 
-if(DEFINED ENV{DISTRO})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDISTRIBUTION")
-endif()
 
-idf_component_register(SRCS ${srcs} 
+idf_component_register(SRCS ${srcs}
+    REQUIRES app_config
+    PRIV_REQUIRES debug
     INCLUDE_DIRS "./include" 
 )
+
+component_compile_options(${comp_compile_opts})
+component_compile_features(${comp_compile_feats})

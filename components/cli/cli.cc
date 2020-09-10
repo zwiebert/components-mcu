@@ -5,15 +5,15 @@
  *  Author: bertw
  */
 
-#include "cli_app_cfg.h"
+#include "cli_private.h"
 #include "misc/bcd.h"
 #include "cli/cli.h"
 #include "userio/status_output.h"
 #include "txtio/inout.h"
-#include "cli/mutex.h"
+#include "cli/mutex.hh"
 #include "userio/status_json.h"
-#include "debug/debug.h"
-
+#include "debug/dbg.h"
+#include "misc/int_types.h"
 #include <string.h>
 
 u16 cli_msgid;
@@ -50,22 +50,11 @@ bool cli_replyResult(bool success) {
   return success;
 }
 
-bool asc2u8(const char *s, u8 *n, u8 limit) {
-  if (s) {
-    int g = atoi(s);
-    if (0 <= g && g <= limit) {
-      *n = g;
-      return true;
-    }
-  }
-  return false;
-}
-
 void cli_loop(void) {
   char *cmdline;
   static bool ready;
   if ((cmdline = get_commandline())) {
-    if (mutex_cliTake()) {
+    { LockGuard lock(cli_mutex); 
       if (cmdline[0] == '{') {
         sj_write_set(io_write);
         cli_process_json(cmdline, SO_TGT_CLI);
@@ -76,8 +65,6 @@ void cli_loop(void) {
         cli_process_cmdline(cmdline, SO_TGT_CLI);
         cli_msg_ready();
       }
-
-      mutex_cliGive();
     }
   } else if (!ready) {
     cli_msg_ready();

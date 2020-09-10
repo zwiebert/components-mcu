@@ -1,4 +1,4 @@
-#include "cli_app_cfg.h"
+#include "cli_private.h"
 
 #include "txtio/inout.h"
 #include "stdbool.h"

@@ -1,11 +1,6 @@
-set(srcs stm32_bl.c  stm32.c  stm32_ota.c
+set(srcs esp32/stm32_bl.c  esp32/stm32.c  esp32/stm32_ota.cc
 )
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
-
-if(DEFINED ENV{DISTRO})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDISTRIBUTION")
-endif()
 
 idf_component_register(
     SRCS ${srcs} 
@@ -14,3 +9,6 @@ idf_component_register(
     PRIV_REQUIRES app_config net debug
                   spiffs
 )
+
+component_compile_options(${comp_compile_opts})
+component_compile_features(${comp_compile_feats})

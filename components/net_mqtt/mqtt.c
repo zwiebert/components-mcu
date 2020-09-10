@@ -17,22 +17,6 @@
 #include "cli/mutex.h"
 #include "userio/status_json.h"
 
-// implementation interface
-void io_mqtt_disconnected () {
-  io_mqttApp_disconnected();
-}
-
-void io_mqtt_subscribed(const char *topic, int topic_len) {
-  io_mqttApp_subscribed(topic, topic_len);
-}
-
-void io_mqtt_unsubscribed(const char *topic, int topic_len) {
-  io_mqttApp_unsubscribed(topic, topic_len);
-}
-
-void io_mqtt_published(int msg_id) {
-  io_mqttApp_published(msg_id);
-}
 
 bool topic_startsWith(const char *topic, int topic_len, const char *s) {
   size_t s_len = strlen(s);

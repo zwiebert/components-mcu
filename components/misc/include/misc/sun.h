@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 #pragma once
 
 /*
@@ -12,3 +15,6 @@
 void sun_calculateDuskDawn(double *sunrise, double *sunset, double timezone, double day_of_year, double longitude_deg, double latitude_deg, double horizon);
 
 
+#ifdef __cplusplus
+  }
+#endif

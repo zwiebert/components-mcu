@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * stm32_bl.h
  *
@@ -50,3 +53,6 @@ bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, u32 addr);
 bool stm32Bl_eraseFlashByFileSize(u32 addr, unsigned size);
 
 
+#ifdef __cplusplus
+  }
+#endif

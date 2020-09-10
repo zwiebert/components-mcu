@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * config.h
  *
@@ -35,7 +38,11 @@ enum configItem {
   CB_size
 };
 
-const char* config_get_kvs_key(uint8_t item);
+
+extern const char * const config_keys[]; //XXX: defined in app
+extern const char * const configKvs_keys[];
+
+const char *config_get_kvs_key(uint8_t cb);
 
 bool config_save_item_s(enum configItem item, const char *val);
 bool config_save_item_b(enum configItem item, const void *val, unsigned size);
@@ -87,3 +94,6 @@ enum verbosity config_read_verbose();
 
 void config_setup_cliTcpServer();
 
+#ifdef __cplusplus
+  }
+#endif

@@ -9,7 +9,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFLAVOR_LAN")
 endif()
 
 idf_component_register(SRC_DIRS "."
-      INCLUDE_DIRS "." ../include 
-      PRIV_INCLUDE_DIRS ../ ../include/cli
-      PRIV_REQUIRES app_config cli userio unity)
+                       INCLUDE_DIRS "." ../include 
+                       PRIV_INCLUDE_DIRS ../ ../include/cli_app
+                       REQUIRES app_misc unity txtio)
                             

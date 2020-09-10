@@ -2,7 +2,7 @@
 #include "net/http/server/http_server.h"
 #include "userio/status_json.h"
 #include "net/http/server/esp32/register_uris.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 #include <esp_wifi.h>
 #include <esp_event.h>
 #include <esp_log.h>
@@ -91,7 +91,7 @@ static httpd_handle_t start_webserver(struct cfg_http *c) {
     return NULL;
   }
 
-  hts_register_uri_handlers(server);
+  hts_register_uri_handlers_cb(server);
   return server;
 }
 

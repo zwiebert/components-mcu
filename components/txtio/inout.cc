@@ -1,39 +1,36 @@
 #include "txtio/inout.h"
 #include "txtio_app_cfg.h"
+#include "txtio_imp.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "misc/int_macros.h"
-#include "txtio_mutex.h"
+#include "misc/itoa.h"
+#include "txtio_mutex.hh"
 
 
 struct cfg_txtio *txtio_config;
-
-void txtio_mcu_setup(void);
 
 void txtio_setup(struct cfg_txtio *cfg_txtio) {
   static struct cfg_txtio cfg;
   cfg = *cfg_txtio;
   txtio_config = &cfg;
   txtio_mcu_setup();
+
 }
 
 int (*io_putc_fun)(char c);
 int (*io_getc_fun)(void);
 int (*con_printf_fun)(const char *fmt, ...);
 
-extern char *itoa(int val, char *s, int radix);
-extern char *ltoa(long val, char *s, int radix);
-
 int io_putc(char c) {
   int result = -1;
 
   if (io_putc_fun) {
-    if (txtio_mutexTake()) {
+    { LockGuard lock(txtio_mutex);
       result = io_putc_fun(c);
-      txtio_mutexGive();
     }
   }
   return result;
@@ -43,47 +40,53 @@ int io_getc(void) {
   int result = -1;
 
   if (io_getc_fun) {
-    if (txtio_mutexTake()) {
+    { LockGuard lock(txtio_mutex);
       result = io_getc_fun();
-      txtio_mutexGive();
     }
   }
   return result;
 }
 
 
-
+#if 0
 /* use io_putc()/io_getc(). Don't use the function pointers for
    putc/get directly. */
 #define io_putc_fun #error
 #define io_getc_fun #error
+#endif
 
 int  io_putlf(void) { return io_putc('\n'); }
 
+
 int io_puts(const char *s) {
   int result = 0;
-  if (txtio_mutexTake()) {
+  { LockGuard lock(txtio_mutex);
+    if (!io_putc_fun)
+      return -1;
+
     for (; *s != '\0'; ++s) {
-      if (io_putc(*s) == -1) {
-        result = -1;
-        break;
+      if (io_putc_fun(*s) == -1) {
+        return -1;
+        ++result;
       }
     }
-    txtio_mutexGive();
   }
   return result;
 }
 
+
 int io_write(const char *s, unsigned len) {
   int result = len;
-  if (txtio_mutexTake()) {
+  { LockGuard lock(txtio_mutex);
+    if (!io_putc_fun)
+      return -1;
+
     for (; len > 0; ++s, --len) {
-      if (io_putc(*s) == -1) {
+      if (io_putc_fun(*s) == -1) {
         result = -1;
         break;
       }
     }
-    txtio_mutexGive();
   }
   return result - len;
 }
@@ -221,24 +224,29 @@ io_putld(i32 n) {
   io_putl(n, 10);
 }
 
-int 
-io_getline(char *buf, unsigned buf_size) {
+int io_getline(char *buf, unsigned buf_size) {
   int i, c;
 
-  for (i=0; (i+1) < buf_size; ++i) {
-    c = io_getc();
-
-    if (c == -1)
+  { LockGuard lock(txtio_mutex);
+    if (!io_getc_fun)
       return -1;
 
-    if (c == ';')
-      break;
-    
-    buf[i] = (char)c;
-  }
+    for (i = 0; (i + 1) < buf_size; ++i) {
+      c = io_getc_fun();
 
-  buf[i] = '\0';
-  return i;
+      if (c == -1)
+        return -1;
+
+      if (c == ';')
+        break;
+
+      buf[i] = (char) c;
+    }
+
+    buf[i] = '\0';
+    return i;
+  }
+  return -1;
 }
 
 void 

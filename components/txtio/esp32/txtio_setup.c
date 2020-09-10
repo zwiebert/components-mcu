@@ -7,11 +7,10 @@
 #include "app_config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 #include "txtio/inout.h"
-#include "txtio_mutex.h"
 #include <esp_system.h>
 #include <esp32/rom/ets_sys.h>
 #include "esp_log.h"
-
+#include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
 //#include "esp_console.h"
@@ -20,6 +19,7 @@
 
 
 #define UART_RX_RINGBUF_SIZE (1024 * 2)
+#define UART_TX_RINGBUF_SIZE (1024 * 1)
 
 static int  es_io_getc(void) {
 #ifdef USE_CLI_TASK
@@ -34,11 +34,13 @@ static int  es_io_getc(void) {
 }
 
 static int es_io_putc(char c) {
-  putchar(c);
-  return 1;
+
+#ifdef USE_CLI_TASK
+  return uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, &c, 1);
+#else
+  return putchar(c);
+#endif
 }
-
-
 
 
 static void initialize_console(void)
@@ -73,7 +75,7 @@ static void initialize_console(void)
            // .rx_flow_ctrl_thresh = 64,
     };
     /* Install UART driver for interrupt-driven reads and writes */
-    ESP_ERROR_CHECK( uart_driver_install(CONFIG_ESP_CONSOLE_UART_NUM, UART_RX_RINGBUF_SIZE, 0, 0, NULL, 0) );
+    ESP_ERROR_CHECK( uart_driver_install(CONFIG_ESP_CONSOLE_UART_NUM, UART_RX_RINGBUF_SIZE, UART_TX_RINGBUF_SIZE, 0, NULL, 0) );
     ESP_ERROR_CHECK( uart_param_config(CONFIG_ESP_CONSOLE_UART_NUM, &uart_config) );
 
     /* Tell VFS to use UART driver */
@@ -117,7 +119,6 @@ void txtio_mcu_setup() {
 #ifdef USE_CLI_TASK
   initialize_console();
 #endif
-  txtio_mutexSetup();
   io_putc_fun = es_io_putc;
   io_getc_fun = es_io_getc;
   con_printf_fun = ets_printf;

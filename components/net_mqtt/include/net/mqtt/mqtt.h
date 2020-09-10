@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * mqtt.h
  *
@@ -43,16 +46,13 @@ void io_mqttApp_published(int msg_id);
 
 
 
-
-// interface implemented in ./mqtt.c called by MQTT implementation (mcu specific)
-
-void io_mqtt_disconnected ();
-void io_mqtt_subscribed(const char *topic, int topic_len);
-void io_mqtt_unsubscribed(const char *topic, int topic_len);
-void io_mqtt_published(int msg_id);
-// ...app-specific:
-void io_mqtt_received(const char *topic, int topic_len, const char *data, int data_len);
-void io_mqtt_connected ();
+// implementation interface
+extern void (*io_mqtt_connected_cb) ();
+extern void (*io_mqtt_disconnected_cb) ();
+extern void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len);
+extern void (*io_mqtt_unsubscribed_cb)(const char *topic, int topic_len);
+extern void (*io_mqtt_published_cb)(int msg_id);
+extern void (*io_mqtt_received_cb)(const char *topic, int topic_len, const char *data, int data_len);
 
 // helper functions
 bool topic_startsWith(const char *topic, int topic_len, const char *s);
@@ -60,3 +60,6 @@ bool topic_endsWith(const char *topic, int topic_len, const char *s);
 
 
 
+#ifdef __cplusplus
+  }
+#endif

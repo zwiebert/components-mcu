@@ -9,8 +9,11 @@
 #include "net/http/server/http_server.h"
 #include <string.h>
 #include "cli/cli.h"
-#include "cli/mutex.h"
-#include "debug/debug.h"
+#include "cli/mutex.hh"
+#include "debug/dbg.h"
+
+void (*ws_print_json_cb)(const char *json);
+void (*hts_register_uri_handlers_cb)(void *server_handle);
 
 static bool isJson(const char *s, int s_len) {
   int i;
@@ -25,30 +28,30 @@ static bool isJson(const char *s, int s_len) {
 ///////// public ///////////////////
 void hts_query0(hts_query_t qtype, char *qstr) {
   if (isJson(qstr, strlen(qstr))) {
-    if (mutex_cliTake()) {
+    { LockGuard lock(cli_mutex); 
       cli_process_json(qstr, SO_TGT_HTTP);
     }
-    mutex_cliGive();
   }
 }
-
+#include <misc/cstring_utils.hh>
 void hts_query(hts_query_t qtype, const char *qstr, int qstr_len) {
-  char *buf, *p;
-  if (mutex_cliTake()) {
+  { LockGuard lock(cli_mutex); 
     if (isJson(qstr, qstr_len)) {
-      if ((buf = malloc(qstr_len + 1))) {
-        memcpy(buf, qstr, qstr_len);
-        buf[qstr_len] = '\0';
+      if (auto buf = csu(qstr, qstr_len)) {
         cli_process_json(buf, SO_TGT_HTTP);
-        free(buf);
       }
     }
-    mutex_cliGive();
   }
 }
 
 void hts_setup(struct cfg_http *config) {
-    hts_enable_http_server(config);
+  hts_enable_http_server(config);
 }
+
+void ws_print_json(const char *json) {
+  if (ws_print_json_cb)
+    ws_print_json_cb(json);
+}
+
 #endif
 

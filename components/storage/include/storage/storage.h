@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * storage.h
  *
@@ -16,3 +19,6 @@ bool stor_fileDelete(const char *path);
 
 void stor_setup(void);
 
+#ifdef __cplusplus
+  }
+#endif

@@ -14,7 +14,7 @@
 #include "app/rtc.h"
 #include "net/tcp_cli_server.h"
 #include "cli/cli.h"
-#include "cli/mutex.h"
+#include "cli/mutex.hh"
 #include "userio/status_json.h"
 
 #define TCP_HARD_TIMEOUT  (60 * 10)  // terminate connections to avoid dead connections piling up
@@ -347,7 +347,7 @@ void handle_input() {
   for (;;) {
     switch (cli_get_commandline(&buf, tcpSocket_io_getc)) {
     case CMDL_DONE:
-      if (mutex_cliTake()) {
+      { LockGuard lock(cli_mutex); 
         if (buf.cli_buf[0] == '{') {
           sj_write_set(tcps_write);
           cli_process_json(buf.cli_buf, SO_TGT_CLI);
@@ -355,7 +355,6 @@ void handle_input() {
         } else {
           cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
         }
-        mutex_cliGive();
       }
       break;
 

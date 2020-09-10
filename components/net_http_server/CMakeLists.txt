@@ -1,10 +1,4 @@
-set(srcs http_server.c  esp32/http_server.c) 
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
-
-if(DEFINED ENV{DISTRO})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDISTRIBUTION")
-endif()
+set(srcs http_server.cc  esp32/http_server.c) 
 
 idf_component_register(
     SRCS ${srcs} 
@@ -13,3 +7,6 @@ idf_component_register(
     PRIV_REQUIRES  cli debug userio http_server_content
                     mbedtls
  )
+ 
+component_compile_options(${comp_compile_opts})
+component_compile_features(${comp_compile_feats})

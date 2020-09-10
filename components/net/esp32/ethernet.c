@@ -14,9 +14,10 @@
 #include "esp_netif.h"
 #include "driver/gpio.h"
 #include "driver/periph_ctrl.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
 #include "net/ipnet.h"
 #include "net/ethernet.h"
+#include "misc/int_types.h"
 
 esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
 

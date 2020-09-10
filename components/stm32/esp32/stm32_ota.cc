@@ -12,7 +12,8 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "net/http_client.h"
-#include "debug/debug.h"
+#include "debug/dbg.h"
+#include <misc/cstring_utils.hh>
 
 #define STM32_WAIT_AFTER_BOOT_MS 2000
 
@@ -46,12 +47,15 @@ bool stm32Ota_firmwareDownload(const char *url, const char *file_name) {
   return httpClient_downloadFile(url, file_name);
 }
 
+struct task_parm {
+  csu url;
+};
+
 void stm32ota_doUpdate_task(void *pvParameter) {
-  const char *url = pvParameter;
-
   state = stm32ota_RUN;
+  auto parm = static_cast<task_parm *>(pvParameter);
 
-  if (stm32Ota_firmwareDownload(url, STM32_FW_FILE_NAME)) {
+  if (stm32Ota_firmwareDownload(parm->url, STM32_FW_FILE_NAME)) {
     if (stm32Ota_firmwareUpdate(STM32_FW_FILE_NAME)) {
       state = stm32ota_DONE;
       goto done;
@@ -61,7 +65,7 @@ void stm32ota_doUpdate_task(void *pvParameter) {
   state = stm32ota_FAIL;
 
   done:
-  free(pvParameter);
+  delete(parm);
   stm32_runFirmware();
   vTaskDelete(NULL);
 }
@@ -69,8 +73,10 @@ void stm32ota_doUpdate_task(void *pvParameter) {
 bool stm32ota_doUpdate(const char *firmware_url) {
   if (state == stm32ota_RUN)
     return false;
-  char *url = malloc(strlen(firmware_url)+1);
-  strcpy (url, firmware_url);
-  xTaskCreate(&stm32ota_doUpdate_task, "stm32ota_task", 16384, url, 5, NULL);
+
+  auto parm = new task_parm;
+  parm->url = firmware_url;
+
+  xTaskCreate(&stm32ota_doUpdate_task, "stm32ota_task", 16384, parm, 5, NULL);
   return false;
 }

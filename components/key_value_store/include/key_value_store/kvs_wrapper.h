@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * kvs_wrapper.h
  *
@@ -48,6 +51,7 @@ uint64_t kvs_get_u64(kvshT handle, const char *key, uint64_t default_val, bool *
 
 
 typedef enum {
+    KVS_TYPE_none  = 0x00,
     KVS_TYPE_u8    = 0x01,  /*!< Type uint8_t */
     KVS_TYPE_i8    = 0x11,  /*!< Type int8_t */
     KVS_TYPE_u16   = 0x02,  /*!< Type uint16_t */
@@ -72,4 +76,8 @@ int kvs_foreach(const char *name_space, kvs_type_t, const char*key_match, kvs_fo
 
 void kvs_setup(void);
 
+
+#ifdef __cplusplus
+  }
+#endif
 

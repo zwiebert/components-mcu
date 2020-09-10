@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * int_types.h
  *
@@ -9,6 +12,15 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+enum logiclevel { LOW, HIGH };
+#else
+#include <stdbool.h>
+typedef bool logicLevel;
+#define LOW false
+#define HIGH true
+#endif
+
 typedef uint8_t u8;
 typedef int8_t i8;
 typedef uint16_t u16;
@@ -19,3 +31,6 @@ typedef uint64_t u64;
 typedef int64_t i64;
 
 
+#ifdef __cplusplus
+  }
+#endif

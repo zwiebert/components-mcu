@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 /*
  * tcp_cli_server.h
  *
@@ -15,3 +18,6 @@ void tcpCli_setup(const struct cfg_tcps *cfg_tcps);
 
 void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps);
 
+#ifdef __cplusplus
+  }
+#endif

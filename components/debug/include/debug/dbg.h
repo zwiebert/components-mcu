@@ -1,3 +1,6 @@
+#ifdef __cplusplus
+  extern "C" {
+#endif
 #pragma once
 
 #include "app_config/proj_app_cfg.h"
@@ -60,3 +63,6 @@ void abort_postcond(const char *msg, int line);
 
 
 
+#ifdef __cplusplus
+  }
+#endif
