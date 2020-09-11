@@ -10,6 +10,7 @@
 #include "cli/cli.h"
 #include "cli/cli_json.h"
 #include "uout/status_output.h"
+#include "uout/callbacks.h"
 #include "net/http/server/http_server.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
@@ -64,7 +65,7 @@ void cli_process_json2(char *json, so_target_bits tgt, process_parm_cb proc_parm
 
 #ifdef USE_WS
   if (so_tgt_test(SO_TGT_WS)) {
-    ws_print_json(sj_get_json());
+    uoApp_event_wsJson(sj_get_json());
   }
 #endif
   so_tgt_default();
@@ -166,7 +167,7 @@ void cli_process_cmdline2(char *line, so_target_bits tgt, process_parm_cb proc_p
       sj_close_root_object();
 #ifdef USE_WS
       if (so_tgt_test(SO_TGT_WS)) {
-        ws_print_json(sj_get_json());
+        uoApp_event_wsJson(sj_get_json());
       }
 #endif
     }

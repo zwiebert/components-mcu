@@ -1,4 +1,4 @@
-set(srcs status_json.c) 
+set(srcs status_json.c callbacks.cc)  
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
 
