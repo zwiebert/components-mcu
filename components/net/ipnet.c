@@ -23,7 +23,7 @@ static bool Is_connected;
 
 void ipnet_connected(void) {
   Is_connected = true;
- //XXX so_output_message(SO_INET_PRINT_ADDRESS, 0);
+ //XXX soMsg_INET_PRINT_ADDRESS();
   main_setup_ip_dependent();
 }
 

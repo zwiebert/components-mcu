@@ -28,6 +28,10 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
   return false;
 }
 
+static void publish(uoCb_cbT cb, const char *str, uo_flagsT flags) {
+  uoCb_msgT  msg { .cv_ptr = str, .flags = flags };
+  cb(msg);
+}
 
 void uoApp_publish_wsJson(const char *json) {
   for (auto it : uoCb_cbs) {
@@ -36,11 +40,11 @@ void uoApp_publish_wsJson(const char *json) {
     if (!it.flags.tgt.websocket)
       continue;
 
-    uoCb_msgT  msg { .cv_ptr = json, .flags = { } };
-    msg.flags.fmt.json = true;
-    msg.flags.tgt.websocket = true;
+    uo_flagsT flags;
+    flags.fmt.json = true;
+    flags.tgt.websocket = true;
 
-    it.cb(msg);
+    publish(it.cb, json, flags);
+
   }
 }
-
