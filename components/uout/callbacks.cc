@@ -7,8 +7,8 @@
 uoCb_cbsT uoCb_cbs[cbs_size];
 
 bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags) {
-  for (auto it : uoCb_cbs) {
-    if (!it.cb)
+  for (auto &it : uoCb_cbs) {
+    if (it.cb)
       continue;
     it.cb = msg_cb;
     it.flags = flags;
@@ -18,7 +18,7 @@ bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags) {
 }
 
 bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
-  for (auto it : uoCb_cbs) {
+  for (auto &it : uoCb_cbs) {
     if (it.cb != msg_cb)
       continue;
     it.cb = nullptr;
@@ -34,7 +34,7 @@ static void publish(uoCb_cbT cb, const char *str, uo_flagsT flags) {
 }
 
 void uoApp_publish_wsJson(const char *json) {
-  for (auto it : uoCb_cbs) {
+  for (auto const &it : uoCb_cbs) {
     if (!it.cb)
       continue;
     if (!it.flags.tgt.websocket)

@@ -105,22 +105,21 @@ static void cli_process_json3(char *json, process_parm_cb proc_parm) {
   int i = 0;
 
   if (tok[i].type == JSMN_OBJECT) {
-    int roi = 0; // root object index
-
     for (i = 1; i < nt; ++i) {
 
       if (tok[i].type == JSMN_OBJECT) {
         int coi = i; // command object index
         int n_childs = tok[i].size;
 
-        char *cmd_obj = "";
+
+        char *cmd_obj = 0;
         if (tok[i - 1].type == JSMN_STRING) {
           cmd_obj = stringFromToken(json, &tok[i - 1]);
         }
 
-        D(db_printf("cmd_obj: %s\n", cmd_obj));
+        D(db_printf("cmd_obj: <%s>\n", cmd_obj ? cmd_obj : ""));
 
-        if (strcmp(cmd_obj, "json") == 0) {
+        if (cmd_obj && strcmp(cmd_obj, "json") == 0) {
           int n = handle_parm_json(json, tok, cmd_obj);
           i += n;
         } else {

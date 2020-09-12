@@ -3,14 +3,16 @@
 #include <uout/status_output.h>
 #include <type_traits>
 
-typedef struct __attribute__((packed)) uo_flagsT {
+typedef struct
+//__attribute__((packed))
+uo_flagsT {
   union {
     struct {
       bool json :1;
       bool obj :1;
       bool txt :1;
     } fmt;
-    uint8_t fmt_flags;
+    uint8_t fmt_flags = 0;
   };
 
   union {
@@ -18,8 +20,9 @@ typedef struct __attribute__((packed)) uo_flagsT {
       bool pin_change :1;
       bool pct_change :1;
       bool async_http_resp :1;
+      bool timer_change :1;
     } evt;
-    uint8_t evt_flags;
+    uint8_t evt_flags = 0;
   };
 
   union {
@@ -29,7 +32,7 @@ typedef struct __attribute__((packed)) uo_flagsT {
       bool tcp_term :1;
       bool mqtt :1;
     } tgt;
-    uint8_t tgt_flags;
+    uint8_t tgt_flags = 0;
   };
 
 } uo_flagsT;

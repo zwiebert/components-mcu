@@ -5,7 +5,7 @@
 
 typedef struct {
   char *key;
-  char *val;
+  const char *val;
 } clpar;
 
 struct parm_handler {
