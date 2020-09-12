@@ -6,7 +6,7 @@
 
 uoCb_cbsT uoCb_cbs[cbs_size];
 
-bool uoCb_register_callback(uoCb_cbT msg_cb, uoCb_flagT flags) {
+bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags) {
   for (auto it : uoCb_cbs) {
     if (!it.cb)
       continue;
@@ -17,24 +17,30 @@ bool uoCb_register_callback(uoCb_cbT msg_cb, uoCb_flagT flags) {
   return false;
 }
 
-bool uoCb_unregister_callback(uoCb_cbT msg_cb) {
+bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
   for (auto it : uoCb_cbs) {
     if (it.cb != msg_cb)
       continue;
     it.cb = nullptr;
-    it.flags = 0;
+    it.flags.evt_flags = it.flags.fmt_flags = it.flags.tgt_flags = 0;
     return true;
   }
   return false;
 }
 
 
-void uoApp_event_wsJson(const char *json) {
+void uoApp_publish_wsJson(const char *json) {
   for (auto it : uoCb_cbs) {
-    if (it.cb && (it.flags & BIT(UOCB_MFB(ws)))) {
-      uoCb_msgT msg { .cv_ptr = json, .msg_type = UOCB_MT(json) };
-      it.cb(&msg);
-    }
+    if (!it.cb)
+      continue;
+    if (!it.flags.tgt.websocket)
+      continue;
+
+    uoCb_msgT  msg { .cv_ptr = json, .flags = { } };
+    msg.flags.fmt.json = true;
+    msg.flags.tgt.websocket = true;
+
+    it.cb(msg);
   }
 }
 

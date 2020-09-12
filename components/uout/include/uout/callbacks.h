@@ -3,41 +3,76 @@
 #include <uout/status_output.h>
 #include <type_traits>
 
-typedef uint8_t uoCb_msgTypeT;
-typedef uint16_t uoCb_flagT;
+typedef struct __attribute__((packed)) uo_flagsT {
+  union {
+    struct {
+      bool json :1;
+      bool obj :1;
+      bool txt :1;
+    } fmt;
+    uint8_t fmt_flags;
+  };
 
-enum class uoCb_msgTypes : uoCb_msgTypeT { NONE, str, json, END };
-enum class uoCB_msgFlagBits : uoCb_flagT { ws, END };
+  union {
+    struct {
+      bool pin_change :1;
+      bool pct_change :1;
+      bool async_http_resp :1;
+    } evt;
+    uint8_t evt_flags;
+  };
 
-#define UOCB_MT(v) static_cast<std::underlying_type<uoCb_msgTypes>::type>(uoCb_msgTypes:: v)
-#define UOCB_MFB(v) static_cast<std::underlying_type<uoCB_msgFlagBits>::type>(uoCB_msgFlagBits:: v)
+  union {
+    struct {
+      bool websocket :1;
+      bool usart :1;
+      bool tcp_term :1;
+      bool mqtt :1;
+    } tgt;
+    uint8_t tgt_flags;
+  };
 
+} uo_flagsT;
 
-inline bool operator==(uoCb_msgTypes lhs, uoCb_msgTypeT rhs) {
-  return static_cast<uoCb_msgTypeT>(lhs) == rhs;
-}
+static_assert(sizeof (uo_flagsT::evt) == 1);
+static_assert(sizeof (uo_flagsT) == 3);
 
 struct uoCb_msgT {
   union {
     const void *cv_ptr;
     //void *v_ptr;
   };
-  uoCb_msgTypeT msg_type;
+  uo_flagsT flags;
+#ifdef __cplusplus
+  bool is_type_string() const {
+    return (flags.fmt.txt || flags.fmt.json);
+  }
+
+  const char* get_string() const {
+    if (is_type_string())
+      return static_cast<const char*>(cv_ptr);
+    return nullptr;
+  }
+#endif
 };
 
-inline bool uoCb_isStr(const uoCb_msgT *msg) { return UOCB_MT(str) == msg->msg_type; }
-inline bool uoCb_isJson(const uoCb_msgT *msg) { return UOCB_MT(json) == msg->msg_type; }
+// subscribing
 
-typedef void (*uoCb_cbT)(const uoCb_msgT *msg);
+typedef void (*uoCb_cbT)(const uoCb_msgT msg);
 
-bool uoCb_register_callback(uoCb_cbT msg_cb, uoCb_flagT flags);
-bool uoCb_unregister_callback(uoCb_cbT msg_cb);
+bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags);
+bool uoCb_unsubscribe(uoCb_cbT msg_cb);
 
-void uoApp_event_wsJson(const char *json);
 
-inline const char *uoCb_jsonFromMsg(const uoCb_msgT *msg) {
-  if (uoCb_msgTypes::json == msg->msg_type)
-    return static_cast<const char *>(msg->cv_ptr);
+// publishing
+void uoApp_publish_wsJson(const char *json);
+
+
+
+// accessing message
+inline const char *uoCb_jsonFromMsg(const uoCb_msgT msg) {
+  if (msg.flags.fmt.json)
+    return static_cast<const char *>(msg.cv_ptr);
   return nullptr;
 }
 
@@ -48,9 +83,10 @@ constexpr int cbs_size = 6;
 
 struct uoCb_cbsT {
   uoCb_cbT cb;
-  uoCb_flagT flags;
+  uo_flagsT flags;
 };
 
 extern uoCb_cbsT uoCb_cbs[cbs_size];
+
 
 #endif

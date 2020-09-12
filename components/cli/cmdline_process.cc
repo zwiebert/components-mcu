@@ -65,7 +65,7 @@ void cli_process_json2(char *json, so_target_bits tgt, process_parm_cb proc_parm
 
 #ifdef USE_WS
   if (so_tgt_test(SO_TGT_WS)) {
-    uoApp_event_wsJson(sj_get_json());
+    uoApp_publish_wsJson(sj_get_json());
   }
 #endif
   so_tgt_default();
@@ -167,7 +167,7 @@ void cli_process_cmdline2(char *line, so_target_bits tgt, process_parm_cb proc_p
       sj_close_root_object();
 #ifdef USE_WS
       if (so_tgt_test(SO_TGT_WS)) {
-        uoApp_event_wsJson(sj_get_json());
+        uoApp_publish_wsJson(sj_get_json());
       }
 #endif
     }
