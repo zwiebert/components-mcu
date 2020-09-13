@@ -11,6 +11,7 @@
 #include "cli/cli_json.h"
 #include "uout/status_output.h"
 #include "uout/callbacks.h"
+#include "uout/cli_out.h"
 #include "net/http/server/http_server.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
