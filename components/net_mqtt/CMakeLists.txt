@@ -11,5 +11,5 @@ idf_component_register(
     INCLUDE_DIRS . "./include" 
     REQUIRES app_config
     PRIV_REQUIRES cli uout txtio
-                  mqtt lwip
+                  mqtt lwip #PRIV_ESP_IDF
  )

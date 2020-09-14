@@ -9,5 +9,5 @@ endif()
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS . "./include" 
     PRIV_REQUIRES app_config 
-                  nvs_flash
+                  nvs_flash #PRIV_ESP_IDF
 )

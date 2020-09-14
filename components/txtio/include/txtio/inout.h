@@ -11,7 +11,10 @@ enum verbosity {
 };
 
 
-struct cfg_txtio { enum verbosity verbose; };
+struct cfg_txtio {
+  enum verbosity verbose;
+  int baud;
+};
 extern struct cfg_txtio *txtio_config;
 #define TXTIO_IS_VERBOSE(lvl) (txtio_config->verbose >= (lvl))
 

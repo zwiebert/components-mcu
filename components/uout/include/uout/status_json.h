@@ -1,12 +1,8 @@
 #ifdef __cplusplus
+#include "so_mutex.hh"
+
   extern "C" {
 #endif
-/*
- * status_json.h
- *
- *  Created on: 19.03.2019
- *      Author: bertw
- */
 
 #pragma once
 
@@ -22,7 +18,7 @@ extern int (*sj_write)(const char *src, unsigned len);
 #endif
 
 bool sj_open_root_object(const char *id);
-bool sj_add_object(const char *key);
+int sj_add_object(const char *key);
 bool sj_add_key_value_pair_s(const char *key, const char *val);
 bool sj_add_key_value_pair_d(const char *key, int val);
 bool sj_add_key_value_pair_f(const char *key, float val);

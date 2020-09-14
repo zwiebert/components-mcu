@@ -2,7 +2,7 @@
 #include <app_config/proj_app_cfg.h>
 
 #ifdef USE_MUTEX
-RecMutex txtio_mutex;
+RecMutex so_mutex;
 #else
-DummyMutex txtio_mutex;
+DummyMutex so_mutex;
 #endif

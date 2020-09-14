@@ -130,16 +130,17 @@ bool sj_open_root_object(const char *id) {
   return true;
 }
 
-bool sj_add_object(const char *key) {
+int sj_add_object(const char *key) {
+  int result = json_idx;
   D(db_printf("%s(%s)\n", __func__, key));
   precond(sj_write || json_idx > 0);
   if (sj_not_enough_buffer(key, 0))
-    return false;
+    return -1;
 
   strcat(strcat(strcpy(BUF + json_idx, "\""), key), "\":{");
   json_idx += strlen(BUF + json_idx);
   sj_write_out_buf();
-  return true;
+  return result;
 }
 
 

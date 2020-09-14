@@ -1,4 +1,4 @@
-set(srcs status_json.c callbacks.cc cli_out.cc)  
+set(srcs status_json.c callbacks.cc cli_out.cc so_mutex.cc)  
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
 

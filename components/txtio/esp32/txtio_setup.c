@@ -5,7 +5,6 @@
  *      Author: bertw
  */
 #include "app_config/proj_app_cfg.h"
-#include "config_kvs/config.h"
 #include "txtio/inout.h"
 #include <esp_system.h>
 #include <esp32/rom/ets_sys.h>
@@ -66,7 +65,7 @@ static void initialize_console(void)
      * correct while APB frequency is changing in light sleep mode.
      */
     const uart_config_t uart_config = {
-            .baud_rate = MY_MCU_UART_BAUD_RATE,
+            .baud_rate = txtio_config->baud,
             .data_bits = UART_DATA_8_BITS,
             .parity = UART_PARITY_DISABLE,
             .stop_bits = UART_STOP_BITS_1,
