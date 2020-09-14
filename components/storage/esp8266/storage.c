@@ -10,7 +10,7 @@
 
 
 
-#include "config/app/config.h"
+#include "app/settings/config.h"
 #include "storage/storage.h"
 #include "debug/dbg.h"
 #include "txtio/inout.h"
