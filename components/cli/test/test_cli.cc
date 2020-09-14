@@ -10,7 +10,7 @@
 
 #include "app_config/proj_app_cfg.h"
 #include <string.h>
-#include "config/config.h"
+#include "config/app/config.h"
 #include "misc/bcd.h"
 #include "../cli_private.h"
 #include "cli/cli.h"

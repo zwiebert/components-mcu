@@ -13,7 +13,7 @@
  *      Author: bertw
  */
 #include "app_config/proj_app_cfg.h"
-#include "config/config.h"
+#include "config/app/config.h"
 #include "config_defaults.h"
 
 #define D(x) 

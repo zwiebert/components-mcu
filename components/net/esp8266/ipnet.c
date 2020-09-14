@@ -3,7 +3,7 @@
 #include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
 #include "uout_app/status_output.h"
-#include "config/config.h"
+#include "config/app/config.h"
 #endif
 #include "ip_addr.h"
 
