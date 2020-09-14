@@ -1,4 +1,4 @@
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #ifdef USE_OTA
 #include "firmware_update/ota.h"
 #include "freertos/FreeRTOS.h"

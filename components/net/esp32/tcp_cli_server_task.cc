@@ -1,4 +1,4 @@
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "cli/cli.h"
 #include "cli/mutex.hh"
 #include "esp_event.h"

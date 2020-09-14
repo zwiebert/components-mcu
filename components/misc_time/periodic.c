@@ -1,4 +1,4 @@
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "misc/time/periodic.h"
 #include "misc/int_types.h"
 #include "misc/time/run_time.h"

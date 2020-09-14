@@ -6,7 +6,7 @@
  */
 
 #ifndef TEST_HOST
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #endif
 #include "key_value_store/kvs_wrapper.h"
 #include "misc/int_types.h"

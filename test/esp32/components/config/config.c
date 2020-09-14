@@ -12,7 +12,7 @@
  *  Created on: 16.09.2017
  *      Author: bertw
  */
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "app/settings/config.h"
 #include "config_defaults.h"
 

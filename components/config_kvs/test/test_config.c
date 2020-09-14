@@ -1,6 +1,6 @@
 #include "unity.h"
 
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "../include/config_kvs/config.h"
 #include "misc/int_types.h"
 #include "misc/itoa.h"

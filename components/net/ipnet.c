@@ -5,7 +5,7 @@
  *      Author: bertw
  */
 
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "net/ipnet.h"
 #include "net/http/server/http_server.h"
 #include "misc/int_types.h"
