@@ -8,7 +8,7 @@
 
 #include "misc/int_macros.h"
 #include "misc/itoa.h"
-#include "txtio_mutex.hh"
+#include "txtio/txtio_mutex.hh"
 
 
 struct cfg_txtio *txtio_config;
