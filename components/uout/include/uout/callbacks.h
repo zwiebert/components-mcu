@@ -3,9 +3,7 @@
 #include <uout/status_output.h>
 #include <type_traits>
 
-typedef struct
-//__attribute__((packed))
-uo_flagsT {
+typedef struct uo_flagsT {
   union {
     struct {
       bool json :1;
@@ -81,8 +79,13 @@ inline const char *uoCb_jsonFromMsg(const uoCb_msgT msg) {
   return nullptr;
 }
 
+inline const char *uoCb_txtFromMsg(const uoCb_msgT msg) {
+  if (msg.flags.fmt.txt)
+    return static_cast<const char *>(msg.cv_ptr);
+  return nullptr;
+}
 
-#ifdef UOUT_PROTECTED
+#if 1//def UOUT_PROTECTED
 
 constexpr int cbs_size = 6;
 
