@@ -4,7 +4,7 @@
  *  Created on: 21.04.2020
  *      Author: bertw
  */
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 #include "config_kvs.h"
 
@@ -36,7 +36,7 @@ struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   return c;
 }
 void config_setup_txtio() {
-  struct cfg_txtio c = { .verbose = MY_VERBOSE };
+  struct cfg_txtio c = { .verbose = MY_VERBOSE, .baud = MY_MCU_UART_BAUD_RATE };
   config_read_txtio(&c);
   txtio_setup(&c);
 }

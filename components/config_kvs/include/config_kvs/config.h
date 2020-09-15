@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "config_kvs/config_defaults.h"
 #include "txtio/inout.h"
 #include "net/ethernet.h"

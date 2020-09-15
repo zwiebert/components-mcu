@@ -1,4 +1,4 @@
-set(srcs inout.cc esp32/txtio_setup.c txtio_mutex.cc) 
+set(srcs inout.cc esp32/txtio_setup.cc txtio_mutex.cc) 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
 
@@ -9,5 +9,5 @@ endif()
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS . "./include" 
     PRIV_INCLUDE_DIRS "./include/txtio" 
-    PRIV_REQUIRES misc app_config config_kvs
+    PRIV_REQUIRES misc app_config uout
 )

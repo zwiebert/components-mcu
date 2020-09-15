@@ -17,5 +17,5 @@ idf_component_register(
     INCLUDE_DIRS . "./include" 
     REQUIRES ""
     PRIV_REQUIRES app_config misc net_http_server txtio cli debug
-                  esp_netif esp_wifi esp_eth esp_http_client
+                  esp_netif esp_wifi esp_eth esp_http_client #PRIV_ESP_IDF
  )

@@ -1,4 +1,4 @@
-set(srcs status_json.c) 
+set(srcs status_json.c callbacks.cc cli_out.cc so_mutex.cc)  
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
 
@@ -8,6 +8,6 @@ endif()
 
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS . "./include" 
-    PRIV_INCLUDE_DIRS "./include/userio" 
+    PRIV_INCLUDE_DIRS "./include/uout" 
     PRIV_REQUIRES app_config debug misc txtio
 )

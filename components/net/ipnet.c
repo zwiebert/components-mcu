@@ -5,9 +5,8 @@
  *      Author: bertw
  */
 
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "net/ipnet.h"
-//XXX #include "userio_app/status_output.h"
 #include "net/http/server/http_server.h"
 #include "misc/int_types.h"
 
@@ -23,7 +22,7 @@ static bool Is_connected;
 
 void ipnet_connected(void) {
   Is_connected = true;
- //XXX so_output_message(SO_INET_PRINT_ADDRESS, 0);
+ //XXX soMsg_INET_PRINT_ADDRESS();
   main_setup_ip_dependent();
 }
 

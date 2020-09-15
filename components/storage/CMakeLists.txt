@@ -11,5 +11,5 @@ idf_component_register(
     INCLUDE_DIRS . "./include" 
     PRIV_INCLUDE_DIRS "./include/storage" 
     PRIV_REQUIRES app_config debug txtio
-                  spiffs
+                  spiffs #PRIV_ESP_IDF
  )

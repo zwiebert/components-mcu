@@ -13,9 +13,9 @@
 #include <gpio.h>
 #include <mem.h>
 
-#include "config/config.h"
+#include "app/settings/config.h"
 #include "app/rtc.h"
-#include "config/config.h"
+#include "app/settings/config.h"
 #include <sntp.h>
 #include "net/ntp.h"
 #include "txtio/inout.h"

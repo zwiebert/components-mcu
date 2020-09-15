@@ -1,5 +1,5 @@
 set(srcs cli.cc
- cmdline_get.c  cmdline_parse.c  cmdline_set.c cmdline_process.c
+ cmdline_get.c  cmdline_parse.c  cmdline_set.c cmdline_process.cc
  mutex.cc esp32/cli_task.c) 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
@@ -10,6 +10,6 @@ endif()
 
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include"  
-    REQUIRES userio 
-    PRIV_REQUIRES app_config  debug misc txtio userio jsmn net_http_server
+    REQUIRES uout 
+    PRIV_REQUIRES app_config  debug misc txtio uout jsmn net_http_server
 )

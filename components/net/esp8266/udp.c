@@ -7,7 +7,7 @@
 #include <espconn.h>
 #include <mem.h>
 
-#include "config/config.h"
+#include "app/settings/config.h"
 #include "time.h"
 
 #include "txtio/inout.h"

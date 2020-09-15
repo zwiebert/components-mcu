@@ -1,4 +1,4 @@
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #include "cli/cli.h"
 #include "cli/mutex.hh"
 #include "esp_event.h"
@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/select.h>
+#include <uout/callbacks.h>
 
 #define TAG "tcps"
 
@@ -47,6 +48,8 @@
 typedef void (*fd_funT)(int fd, void *args);
 int foreach_fd(fd_set *fdsp, int count, fd_funT fd_fun, void *args);
 static void modify_io_fun(bool add_connection);
+static void callback_subscribe();
+static void callback_unsubscribe();
 
 static int sockfd = -1;
 fd_set wait_fds;
@@ -167,11 +170,13 @@ static void modify_io_fun(bool add_connection) {
     old_io_putc_fun = io_putc_fun;
    // io_getc_fun = tcp_io_getc;
     io_putc_fun = tcp_io_putc;
+    callback_subscribe();
   } else if (cconn_count == 0) {
     // last connection closed
     D(printf("modify io to serial\n"));
  //   io_getc_fun = old_io_getc_fun;
     io_putc_fun = old_io_putc_fun;
+    callback_unsubscribe();
   }
 }
 
@@ -300,6 +305,33 @@ static void tcps_task(void *pvParameters) {
     wait_for_fd();
   }
 }
+
+static void pctChange_cb(const uoCb_msgT msg) {
+  if (auto txt = uoCb_txtFromMsg(msg)) {
+    for (; *txt; ++txt)
+      tcpst_putc_all(*txt);
+  }
+  if (auto json = uoCb_jsonFromMsg(msg)) {
+    for (; *json; ++json)
+      tcpst_putc_all(*json);
+    tcpst_putc_all(';');
+    tcpst_putc_all('\n');
+  }
+}
+
+static void callback_subscribe() {
+  uo_flagsT flags;
+  flags.evt.pin_change = true;
+  flags.evt.pct_change = true;
+  flags.fmt.json = true;
+  flags.fmt.txt = true;
+  uoCb_subscribe(pctChange_cb, flags);
+}
+static void callback_unsubscribe() {
+  uoCb_unsubscribe(pctChange_cb);
+}
+
+
 
 static TaskHandle_t xHandle = NULL;
 #define STACK_SIZE  3000

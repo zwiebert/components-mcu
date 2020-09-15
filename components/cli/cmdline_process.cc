@@ -9,11 +9,13 @@
 #include "misc/bcd.h"
 #include "cli/cli.h"
 #include "cli/cli_json.h"
-#include "userio/status_output.h"
+#include "uout/status_output.h"
+#include "uout/callbacks.h"
+#include "uout/cli_out.h"
 #include "net/http/server/http_server.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
-#include "userio/status_json.h"
+#include "uout/status_json.h"
 #include "debug/dbg.h"
 #include "jsmn/jsmn.h"
 #include <string.h>
@@ -64,7 +66,7 @@ void cli_process_json2(char *json, so_target_bits tgt, process_parm_cb proc_parm
 
 #ifdef USE_WS
   if (so_tgt_test(SO_TGT_WS)) {
-    ws_print_json(sj_get_json());
+    uoApp_publish_wsJson(sj_get_json());
   }
 #endif
   so_tgt_default();
@@ -104,22 +106,21 @@ static void cli_process_json3(char *json, process_parm_cb proc_parm) {
   int i = 0;
 
   if (tok[i].type == JSMN_OBJECT) {
-    int roi = 0; // root object index
-
     for (i = 1; i < nt; ++i) {
 
       if (tok[i].type == JSMN_OBJECT) {
         int coi = i; // command object index
         int n_childs = tok[i].size;
 
-        char *cmd_obj = "";
+
+        char *cmd_obj = 0;
         if (tok[i - 1].type == JSMN_STRING) {
           cmd_obj = stringFromToken(json, &tok[i - 1]);
         }
 
-        D(db_printf("cmd_obj: %s\n", cmd_obj));
+        D(db_printf("cmd_obj: <%s>\n", cmd_obj ? cmd_obj : ""));
 
-        if (strcmp(cmd_obj, "json") == 0) {
+        if (cmd_obj && strcmp(cmd_obj, "json") == 0) {
           int n = handle_parm_json(json, tok, cmd_obj);
           i += n;
         } else {
@@ -166,7 +167,7 @@ void cli_process_cmdline2(char *line, so_target_bits tgt, process_parm_cb proc_p
       sj_close_root_object();
 #ifdef USE_WS
       if (so_tgt_test(SO_TGT_WS)) {
-        ws_print_json(sj_get_json());
+        uoApp_publish_wsJson(sj_get_json());
       }
 #endif
     }

@@ -5,7 +5,7 @@
  *      Author: bertw
  */
 
-#include "app_config/proj_app_cfg.h"
+#include "app/config/proj_app_cfg.h"
 #ifdef USE_MQTT
 
 #include "net/mqtt/mqtt.h"
@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include "cli/cli.h"
 #include "cli/mutex.h"
-#include "userio/status_json.h"
+#include "uout/status_json.h"
 
 
 bool topic_startsWith(const char *topic, int topic_len, const char *s) {
