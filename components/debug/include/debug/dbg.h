@@ -16,7 +16,14 @@ extern int unit_testing;
 #include <assert.h>
 #endif
 
+#if defined MCU_ESP32 && defined DEBUG
+#define db_check_heap()   assert(heap_caps_check_integrity_all(true))
+#else
+#define db_check_heap()
+#endif
+
 #ifdef MCU_ESP32
+#include <esp_heap_caps.h>
 #include <esp32/rom/ets_sys.h>
 #define db_puts(s) ets_printf("%s\n",s)
 #define db_printf ets_printf

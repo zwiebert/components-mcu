@@ -140,6 +140,8 @@ int sj_add_object(const char *key) {
   strcat(strcat(strcpy(BUF + json_idx, "\""), key), "\":{");
   json_idx += strlen(BUF + json_idx);
   sj_write_out_buf();
+
+  postcond(json_buf_size > json_idx);
   return result;
 }
 
@@ -153,6 +155,7 @@ void sj_close_object() {
   }
   strcpy(BUF + json_idx, "},");
   json_idx += strlen(BUF + json_idx);
+  postcond(json_buf_size > json_idx);
 }
 
 bool sj_add_array(const char *key) {
@@ -164,6 +167,7 @@ bool sj_add_array(const char *key) {
 
   strcat(strcat(strcpy(BUF + json_idx, "\""), key), "\":[");
   json_idx += strlen(BUF + json_idx);
+  postcond(json_buf_size > json_idx);
   return true;
 }
 
@@ -176,6 +180,7 @@ void sj_close_array() {
   }
   strcpy(BUF + json_idx, "],");
   json_idx += strlen(BUF + json_idx);
+  postcond(json_buf_size > json_idx);
 }
 
 void sj_close_root_object() {
@@ -205,7 +210,7 @@ bool sj_add_value_d(int val) {
 
   json_idx += strlen(BUF + json_idx);
   D(db_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
-
+  postcond(json_buf_size > json_idx);
   return true;
 }
 
@@ -223,7 +228,7 @@ bool sj_add_key_value_pair_f(const char *key, float val) {
 
   json_idx += strlen(BUF + json_idx);
   D(ets_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
-
+  postcond(json_buf_size > json_idx);
   return true;
 }
 
@@ -241,7 +246,7 @@ bool sj_add_key_value_pair_d(const char *key, int val) {
 
   json_idx += strlen(BUF + json_idx);
   D(db_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
-
+  postcond(json_buf_size > json_idx);
   return true;
 }
 
@@ -257,7 +262,7 @@ bool sj_add_key_value_pair_s(const char *key, const char *val) {
 
   json_idx += strlen(BUF + json_idx);
   D(ets_printf("json_idx: %u, buf: %s\n", json_idx, BUF));
-
+  postcond(json_buf_size > json_idx);
   return true;
 }
 
