@@ -314,11 +314,12 @@ static void pctChange_cb(const uoCb_msgT msg) {
   if (auto json = uoCb_jsonFromMsg(msg)) {
     for (; *json; ++json)
       tcpst_putc_all(*json);
+    tcpst_putc_all(';');
+    tcpst_putc_all('\n');
   }
 }
 
 static void callback_subscribe() {
-  ws_print_json_cb = ws_send_json;
   uo_flagsT flags;
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;

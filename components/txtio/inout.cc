@@ -13,13 +13,7 @@
 
 struct cfg_txtio *txtio_config;
 
-void txtio_setup(struct cfg_txtio *cfg_txtio) {
-  static struct cfg_txtio cfg;
-  cfg = *cfg_txtio;
-  txtio_config = &cfg;
-  txtio_mcu_setup();
 
-}
 
 int (*io_putc_fun)(char c);
 int (*io_getc_fun)(void);
@@ -276,3 +270,11 @@ print_array_8_inv(const u8 *src, int len) {
   io_putlf();
 }
 
+
+
+void txtio_setup(struct cfg_txtio *cfg_txtio) {
+  static struct cfg_txtio cfg;
+  cfg = *cfg_txtio;
+  txtio_config = &cfg;
+  txtio_mcu_setup();
+}

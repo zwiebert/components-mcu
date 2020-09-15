@@ -12,9 +12,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <uout/callbacks.h>
 //#include "esp_console.h"
 #include "esp_vfs_dev.h"
 #include "driver/uart.h"
+
 
 
 #define UART_RX_RINGBUF_SIZE (1024 * 2)
@@ -113,6 +115,38 @@ static void initialize_console(void)
 #endif
 }
 
+static void pctChange_cb(const uoCb_msgT msg) {
+  if (auto txt = uoCb_txtFromMsg(msg)) {
+#ifdef USE_CLI_TASK
+  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, txt, strlen(txt));
+#else
+#error "not implemented"
+#endif
+  }
+  if (auto json = uoCb_jsonFromMsg(msg)) {
+#ifdef USE_CLI_TASK
+  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, json, strlen(json));
+  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, ";\n", 2);
+#else
+#error "not implemented"
+#endif
+  }
+}
+
+static void callback_subscribe() {
+  uo_flagsT flags;
+  flags.evt.pin_change = true;
+  flags.evt.pct_change = true;
+  flags.fmt.json = true;
+  flags.fmt.txt = true;
+  uoCb_subscribe(pctChange_cb, flags);
+}
+static void callback_unsubscribe() {
+  uoCb_unsubscribe(pctChange_cb);
+}
+
+
+extern "C" void txtio_mcu_setup();
 
 void txtio_mcu_setup() {
 #ifdef USE_CLI_TASK
@@ -122,7 +156,7 @@ void txtio_mcu_setup() {
   io_getc_fun = es_io_getc;
   con_printf_fun = ets_printf;
 
-  esp_log_level_set("*", txtio_config->verbose);
+  esp_log_level_set("*", static_cast<esp_log_level_t>(txtio_config->verbose));
 #if 0
   if (TXTIO_IS_VERBOSE(6)) {
     esp_log_level_set("*", ESP_LOG_INFO);
@@ -133,4 +167,6 @@ void txtio_mcu_setup() {
     esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
   }
 #endif
+
+  callback_subscribe();
 }
