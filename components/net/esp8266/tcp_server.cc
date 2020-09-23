@@ -15,7 +15,7 @@
 #include "net/tcp_cli_server.h"
 #include "cli/cli.h"
 #include "cli/mutex.hh"
-#include "uout/status_json.h"
+#include "uout/status_json.hh"
 
 #define TCP_HARD_TIMEOUT  (60 * 10)  // terminate connections to avoid dead connections piling up
 #define PUTC_LINE_BUFFER 1
@@ -349,9 +349,9 @@ void handle_input() {
     case CMDL_DONE:
       { LockGuard lock(cli_mutex); 
         if (buf.cli_buf[0] == '{') {
-          sj_write_set(tcps_write);
+          td.sj().write_set(tcps_write);
           cli_process_json(buf.cli_buf, SO_TGT_CLI);
-          sj_write_set(0);
+          td.sj().write_set(0);
         } else {
           cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
         }

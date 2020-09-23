@@ -10,7 +10,7 @@
 #include "net/http/server/http_server.h"
 #include "misc/int_types.h"
 
-void main_setup_ip_dependent(void);
+extern "C++" void main_setup_ip_dependent(void);
 u32 ip4_address, ip4_gateway_address, ip4_netmask;
 
 u32 get_ip4addr_local();

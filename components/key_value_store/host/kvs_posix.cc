@@ -369,8 +369,8 @@ static int find_key_blob_w(kvshT h, const char *key, unsigned req_size, int *end
 #define SET_DT_FUN(VAL_T) bool kvs_set_##VAL_T(kvshT h, const char *key, VAL_T val) { \
   struct line_info li = { COOKIE }; \
   int pos = find_key_int_w(h, &li, key); \
-  li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_##VAL_T, .nval.val_##VAL_T = val, }; \
-  strncpy(li.key, key, MAX_KEY_LEN); \
+  li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_##VAL_T, .nval = { .val_##VAL_T = val }, }; \
+  STRLCPY(li.key, key, MAX_KEY_LEN); \
   int res = kvs_write(h, &li, pos); \
   return res > 0; \
 }
@@ -429,8 +429,8 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, s
         found_existing = false;
       }
     }
-    struct line_info li = { .magic = COOKIE, .kvs_type = kvs_type, .nval.len.blob_len = length, .nval.len.blob_size = size };
-    strncpy(li.key, key, MAX_KEY_LEN);
+    struct line_info li = { .magic = COOKIE, .kvs_type = kvs_type, .nval = { .len = { .blob_len = length, .blob_size = size }} };
+    STRLCPY(li.key, key, MAX_KEY_LEN);
 
     int res = kvs_write(h, &li, pos);
     write(h->fd, src, length);

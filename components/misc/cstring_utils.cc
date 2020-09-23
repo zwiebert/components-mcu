@@ -1,6 +1,7 @@
 #include "misc/cstring_utils.h"
 #include "misc/cstring_utils.hh"
 #include <string.h>
+#include <stdlib.h>
 #include <malloc.h>
 #include <stdbool.h>
 
@@ -44,4 +45,6 @@ void csu_destroy(char **p) {
   *p = nullptr;
 }
 
+
+void (*strcpy_error_handler)() = abort;
 

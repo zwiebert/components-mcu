@@ -17,7 +17,7 @@ bool cliBuf_enlarge(struct cli_buf *buf) {
   if (!p)
     return false;
 
-  buf->cli_buf = p;
+  buf->cli_buf = static_cast<char *>(p);
   buf->size = new_size;
   return true;
 }

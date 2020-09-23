@@ -2,6 +2,84 @@
 #include <cstring>
 
 
+#pragma GCC push_options
+#pragma GCC optimize ("O0")
+//////////////////////// safe copy ////////////////////////////////////////////////
+extern "C++" {
+#include <type_traits>
+extern void (*strcpy_error_handler)();
+
+template<typename T>
+inline typename std::enable_if<std::is_convertible<T, char*>::value, char*>::type csu_copy(T const &dst, const char *src) {
+  return std::strcpy(dst, src);
+}
+
+template<typename T>
+inline typename std::enable_if<std::is_convertible<T, char*>::value, char*>::type csu_copy(T const&dst, const char *src, const size_t dst_len) {
+  const size_t src_len = std::strlen(src);
+  if (src_len > dst_len)
+    strcpy_error_handler();
+  std::memcpy(dst, src, src_len + 1);
+  return dst;
+}
+
+template<int dst_size>
+inline char* csu_copy(char (&dst)[dst_size], const char *src) {
+  char *dst_ptr = dst;
+  return csu_copy(dst_ptr, src, dst_size - 1);
+}
+
+template<int dst_size>
+inline char* csu_copy(char (&dst)[dst_size], const char *src, size_t /*len*/) {
+  char *dst_ptr = dst;
+  return csu_copy(dst_ptr, src, dst_size - 1);
+}
+
+
+
+/////////////////////// copy_cat ///////////////////////
+
+
+inline int csu_copy_cat_unsafe(char *const &dst, const char *src1) {
+  const size_t src1_len = strlen(src1);
+  memcpy(dst, src1, src1_len + 1);
+  return src1_len;
+}
+template<typename ... cchar_ptrT>
+inline int csu_copy_cat_unsafe(char *const &dst_ptr, const char *src1, cchar_ptrT ...args) {
+  int src1_len = csu_copy_cat_unsafe(dst_ptr, src1);
+  return src1_len + csu_copy_cat_unsafe(dst_ptr + src1_len, args...);
+}
+
+inline int csu_copy_cat(char * const &dst, const size_t dst_len, const char *src1) {
+  const size_t src1_len = strlen(src1);
+
+  if (src1_len  > dst_len)
+    strcpy_error_handler();
+
+  memcpy(dst, src1, src1_len + 1);
+  return src1_len;
+}
+
+typedef const char *cchar_ptrT;
+
+template<typename ... cchar_ptrT>
+inline int csu_copy_cat(char * const &dst_ptr, const size_t dst_len, const char *src1, cchar_ptrT ...args) {
+  int src1_len = csu_copy_cat(dst_ptr, dst_len, src1);
+  return src1_len + csu_copy_cat(dst_ptr + src1_len, dst_len - src1_len, args...);
+}
+
+template<const size_t dst_size,  typename ... cchar_ptrT>
+inline int csu_copy_cat(char (&dst)[dst_size], const char *src1, cchar_ptrT ...args) {
+  char *dst_ptr = dst;
+  const size_t dst_len = dst_size - 1;
+
+  return csu_copy_cat(dst_ptr, dst_len, src1, args...);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+#pragma GCC pop_options
+
 struct HasRealloc {
    enum { hasRealloc = 1 };
 };
@@ -117,9 +195,12 @@ public:
   }
 };
 
+
 #include "allocator_malloc.hh"
 using csu = csut<AllocatorMalloc<char>, HasRealloc>;
 static_assert(sizeof(csu) == sizeof(char *));
+
+}
 
 
 

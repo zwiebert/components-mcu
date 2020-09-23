@@ -56,8 +56,8 @@ void wifiAp_setup(const char *ap_ssid, const char *ap_passwd)
             .authmode = WIFI_AUTH_WPA_WPA2_PSK
         },
     };
-    strncpy ((char *)wifi_config.ap.ssid, ap_ssid, sizeof wifi_config.ap.ssid);
-    strncpy ((char *)wifi_config.ap.password, ap_passwd, sizeof wifi_config.ap.password);
+    STRLCPY ((char *)wifi_config.ap.ssid, ap_ssid, sizeof wifi_config.ap.ssid);
+    STRLCPY ((char *)wifi_config.ap.password, ap_passwd, sizeof wifi_config.ap.password -1);
 
     if (strlen(ap_passwd) == 0) {
         wifi_config.ap.authmode = WIFI_AUTH_OPEN;

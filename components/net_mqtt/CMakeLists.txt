@@ -1,10 +1,4 @@
-set(srcs  mqtt.c esp32/mqtt.c) 
-
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
-
-if(DEFINED ENV{DISTRO})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDISTRIBUTION")
-endif()
+set(srcs  mqtt.cc esp32/mqtt.cc) 
 
 idf_component_register(
     SRCS ${srcs} 
@@ -13,3 +7,6 @@ idf_component_register(
     PRIV_REQUIRES cli uout txtio
                   mqtt lwip #PRIV_ESP_IDF
  )
+ 
+component_compile_options(${comp_compile_opts})
+component_compile_features(${comp_compile_feats})

@@ -1,5 +1,5 @@
 #ifdef __cplusplus
-  extern "C" {
+  extern "C++" {
 #endif
 /*
  * spiffs_posix.h

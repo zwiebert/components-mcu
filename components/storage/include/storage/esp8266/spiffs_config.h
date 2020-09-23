@@ -1,5 +1,5 @@
 #ifdef __cplusplus
-  extern "C" {
+  extern "C++" {
 #endif
 /*
  * spiffs_config.h
@@ -28,10 +28,10 @@ typedef u32 u32_t;
 
 #define memcpy ets_memcpy
 #define memset ets_memset
-#define strncpy ets_strncpy
+#define STRLCPY ets_strncpy
 #define spiffs_printf(...) io_printf(__VA_ARGS__)
 #define strlen ets_strlen
-#define strcpy ets_strcpy
+#define STRCPY ets_strcpy
 #define offsetof(TYPE, MEMBER) __builtin_offsetof (TYPE, MEMBER)
 #define printf io_printf
 

@@ -7,7 +7,7 @@
 
 int unit_testing;
 
-extern "C" void unity_suiteSetUp() {
+extern "C++" void unity_suiteSetUp() {
 
   unit_testing = 1;
 

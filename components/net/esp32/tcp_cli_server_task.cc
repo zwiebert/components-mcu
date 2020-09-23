@@ -1,5 +1,6 @@
 #include "app/config/proj_app_cfg.h"
 #include "cli/cli.h"
+#include "cli/cli_json.h"
 #include "cli/mutex.hh"
 #include "esp_event.h"
 #include "esp_log.h"
@@ -37,6 +38,7 @@
 #define D(x)
 #endif
 
+#define MIO(x)
 
 
 #ifndef TCPS_TASK_PORT
@@ -55,7 +57,7 @@ static int sockfd = -1;
 fd_set wait_fds;
 int nfds;
 static int cconn_count;
-static int (*old_io_putc_fun)(char c);
+MIO(static int (*old_io_putc_fun)(char c));
 //static int (*old_io_getc_fun)(void);
 
 static struct cli_buf buf;
@@ -158,24 +160,25 @@ static void tcpst_putc_all(char c) {
 static int  tcp_io_putc(char c) {
   if (cconn_count > 0)
     tcpst_putc_all(c);
-  (*old_io_putc_fun)(c);
+  MIO((*old_io_putc_fun)(c));
   return 1;
 }
+
 
 static void modify_io_fun(bool add_connection) {
   if (add_connection && cconn_count == 1) {
     // fist connection opened
     D(printf("modify io to tcp\n"));
   //  old_io_getc_fun = io_getc_fun;
-    old_io_putc_fun = io_putc_fun;
+    MIO(old_io_putc_fun = io_putc_fun);
    // io_getc_fun = tcp_io_getc;
-    io_putc_fun = tcp_io_putc;
+    MIO(io_putc_fun = tcp_io_putc);
     callback_subscribe();
   } else if (cconn_count == 0) {
     // last connection closed
     D(printf("modify io to serial\n"));
  //   io_getc_fun = old_io_getc_fun;
-    io_putc_fun = old_io_putc_fun;
+    MIO(io_putc_fun = old_io_putc_fun);
     callback_unsubscribe();
   }
 }
@@ -231,9 +234,9 @@ void handle_input(int fd, void *args) {
     case CMDL_DONE:
       { LockGuard lock(cli_mutex); 
         if (buf.cli_buf[0] == '{') {
-          cli_process_json(buf.cli_buf, SO_TGT_CLI);
+          cli_process_json(buf.cli_buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_JSON)});
         } else {
-          cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
+          cli_process_cmdline(buf.cli_buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_TXT) });
         }
       }
       break;

@@ -45,15 +45,15 @@ const char *config_get_kvs_key(uint8_t cb) {
   return (((int)cb < (int)CB_size) ? configKvs_keys[(cb)] : config_keys[(cb-CB_size)]);
 }
 
-unsigned nvsStr(void *handle, const char *key, void *dst, size_t dst_len, bool save) {
+unsigned nvsStr(kvshT handle, const char *key, void *dst, size_t dst_len, bool save) {
   if (save) {
-    return kvs_rw_str(handle, key, dst, dst_len, true);
+    return kvs_rw_str(handle, key, static_cast<char*>(dst), dst_len, true);
   } else {
-    return kvs_rw_str(handle, key, dst, dst_len, false);
+    return kvs_rw_str(handle, key, static_cast<char*>(dst), dst_len, false);
   }
 }
 
-unsigned nvsBlob(void *handle, const char *key, void *dst, size_t dst_len, bool save) {
+unsigned nvsBlob(kvshT handle, const char *key, void *dst, size_t dst_len, bool save) {
     if (save) {
       return kvs_rw_blob(handle, key, dst, dst_len, true);
     } else {

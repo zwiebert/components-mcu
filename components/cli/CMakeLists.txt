@@ -1,6 +1,6 @@
 set(srcs cli.cc
- cmdline_get.c  cmdline_parse.c  cmdline_set.c cmdline_process.cc
- mutex.cc esp32/cli_task.c) 
+ cmdline_get.cc  cmdline_parse.cc  cmdline_set.cc cmdline_process.cc
+ mutex.cc esp32/cli_task.cc) 
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
 

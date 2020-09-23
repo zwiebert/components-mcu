@@ -33,7 +33,7 @@
 bool
 stor_fileWrite(const char *path, const void *src, size_t len) {
    char complete_path[strlen(BASE_PATH) + 1 + strlen(path) + 1];
-   strcpy(complete_path, BASE_PATH "/");
+   STRCPY(complete_path, BASE_PATH "/");
    strcat(complete_path, path);
 
 
@@ -54,7 +54,7 @@ stor_fileWrite(const char *path, const void *src, size_t len) {
 bool
 stor_fileRead(const char *path, void *dst, size_t len) {
   char complete_path[strlen(BASE_PATH) + 1 + strlen(path) + 1];
-  strcpy(complete_path, BASE_PATH "/");
+  STRCPY(complete_path, BASE_PATH "/");
   strcat(complete_path, path);
 
   FILE* f = fopen(complete_path, "r");
@@ -72,7 +72,7 @@ stor_fileRead(const char *path, void *dst, size_t len) {
 bool
 stor_fileDelete(const char *path) {
   char complete_path[strlen(BASE_PATH) + 1 + strlen(path) + 1];
-  strcpy(complete_path, BASE_PATH "/");
+  STRCPY(complete_path, BASE_PATH "/");
   strcat(complete_path, path);
 
   unlink(complete_path);

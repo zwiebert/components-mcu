@@ -8,16 +8,19 @@
 #include "cli_private.h"
 #include "misc/bcd.h"
 #include "cli/cli.h"
+#include "cli/cli_json.h"
 #include "uout/status_output.h"
 #include "txtio/inout.h"
 #include "cli/mutex.hh"
-#include "uout/status_json.h"
+#include "uout/status_json.hh"
 #include "uout/cli_out.h"
 #include "debug/dbg.h"
 #include "misc/int_types.h"
 #include <string.h>
 
 u16 cli_msgid;
+const struct parm_handlers *cli_parm_handlers;
+const parm_handler* (*cli_parmHandler_find_cb)(const char *key);
 
 int asc2bool(const char *s) {
   if (!s)
@@ -35,23 +38,25 @@ int asc2bool(const char *s) {
 }
 
 void cli_loop(void) {
+
   char *cmdline;
   static bool ready;
   if ((cmdline = get_commandline())) {
-    { LockGuard lock(cli_mutex); 
+    {
+      LockGuard lock(cli_mutex);
       if (cmdline[0] == '{') {
-        sj_write_set(io_write);
-        cli_process_json(cmdline, SO_TGT_CLI);
-        sj_write_set(0);
+         TargetDescCon td { so_target_bits(SO_TGT_CLI | SO_TGT_FLAG_JSON)};
+        cli_process_json(cmdline, td);
       } else {
-
+         TargetDescCon td { so_target_bits(SO_TGT_CLI | SO_TGT_FLAG_TXT) };
         io_putlf();
-        cli_process_cmdline(cmdline, SO_TGT_CLI);
-        cli_msg_ready();
+        cli_process_cmdline(cmdline, td);
+        cli_msg_ready(td);
       }
     }
   } else if (!ready) {
-    cli_msg_ready();
+    const TargetDescCon td { so_target_bits(SO_TGT_CLI | SO_TGT_FLAG_TXT)};
+    cli_msg_ready(td);
     ready = true;
   }
 }

@@ -1,5 +1,5 @@
 #ifdef __cplusplus
-  extern "C" {
+  extern "C++" {
 #endif
 /*
  * http_server.h
@@ -24,12 +24,6 @@ struct cfg_http {
   int8_t enable;
 };
 
-typedef enum { HQT_NONE, } hts_query_t;
-
-void hts_query(hts_query_t qtype, const char *qstr, int qstr_len);
-void hts_query0(hts_query_t qtype, char *qstr);
-//void hts_query_json(char *qstr);
-
 struct httpd_req;
 bool check_access_allowed(struct httpd_req *req); // XXX: esp32 specific types should be moved to esp32 folder
 
@@ -39,8 +33,6 @@ void hts_enable_http_server(struct cfg_http *config);
 #else
 #define hts_enable_http_server(config)
 #endif
-
-void ws_print_json(const char *json);
 
 void hts_setup(struct cfg_http *config);
 

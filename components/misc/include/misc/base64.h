@@ -66,7 +66,7 @@
 #define MBEDTLS_ERR_BASE64_INVALID_CHARACTER              -0x002C  /**< Invalid character in input. */
 
 #ifdef __cplusplus
-extern "C" {
+extern "C++" {
 #endif
 
 /**

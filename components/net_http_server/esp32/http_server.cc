@@ -1,6 +1,6 @@
 #include "app/config/proj_app_cfg.h"
 #include "net/http/server/http_server.h"
-#include "uout/status_json.h"
+#include "uout/status_json.hh"
 #include "net/http/server/esp32/register_uris.h"
 #include "debug/dbg.h"
 #include <esp_wifi.h>
@@ -10,16 +10,21 @@
 #include <sys/param.h>
 #include <mbedtls/base64.h>
 #include <esp_http_server.h>
+#include <misc/cstring_utils.hh>
 
 static const char *TAG="APP";
 
+
+
 //////////////////////////Authorization//////////////////////
-static char *auth_user;
-static char *auth_password;
-#define HTTP_USER (auth_user ? auth_user : "")
-#define HTTP_USER_LEN (auth_user ? strlen(auth_user) : 0)
-#define HTTP_PW (auth_password ? auth_password : "")
-#define HTTP_PW_LEN  (auth_password ? strlen(auth_password) : 0)
+#define MAX_LOGIN_LEN 256
+
+static csu auth_user, auth_password;
+
+#define HTTP_USER (auth_user)
+#define HTTP_USER_LEN (strlen(auth_user))
+#define HTTP_PW (auth_password)
+#define HTTP_PW_LEN  (strlen(auth_password))
 
 static bool verify_userName_and_passWord(const char *up, size_t up_len) {
 
@@ -30,23 +35,25 @@ static bool verify_userName_and_passWord(const char *up, size_t up_len) {
 }
 
 static bool verify_authorization(httpd_req_t *req) {
-  bool login_ok = false;
-  char *login = 0;
 
   size_t login_len = httpd_req_get_hdr_value_len(req, "Authorization");
-  if (login_len && (login = malloc(login_len + 1))) {
-    esp_err_t err = httpd_req_get_hdr_value_str(req, "Authorization", login, login_len + 1);
-    if (err == ESP_OK) {
-      unsigned char dst[128];
-      size_t olen = 0;
-      if (0 == mbedtls_base64_decode(dst, sizeof dst, &olen, (unsigned char*) login + 6, login_len - 6))
-        login_ok = verify_userName_and_passWord((char*)dst, olen);
-    }
 
-    free(login);
+  if (login_len == 0)
+    return false;
+
+  if (login_len > MAX_LOGIN_LEN)
+    return false;
+
+  char login[login_len + 1];
+  esp_err_t err = httpd_req_get_hdr_value_str(req, "Authorization", login, login_len + 1);
+  if (err == ESP_OK) {
+    unsigned char dst[128];
+    size_t olen = 0;
+    if (0 == mbedtls_base64_decode(dst, sizeof dst, &olen, (unsigned char*) login + 6, login_len - 6))
+      return verify_userName_and_passWord((char*) dst, olen);
   }
 
-  return login_ok;
+  return false;
 }
 
 static bool is_access_allowed(httpd_req_t *req) {
@@ -69,16 +76,8 @@ bool check_access_allowed(httpd_req_t *req) {
 }
 
 static httpd_handle_t start_webserver(struct cfg_http *c) {
-  if (strcmp(HTTP_USER, c->user) != 0) {
-    free(auth_user);
-    if ((auth_user = malloc(strlen(c->user)+1)))
-      strcpy(auth_user, c->user);
-  }
-  if (strcmp(HTTP_PW, c->password) != 0) {
-    free(auth_password);
-    if ((auth_password = malloc(strlen(c->password)+1)))
-      strcpy(auth_password, c->password);
-  }
+  auth_user = c->user;
+  auth_password = c->password;
 
   httpd_handle_t server = NULL;
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();

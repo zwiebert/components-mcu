@@ -19,6 +19,7 @@ typedef struct uo_flagsT {
       bool pct_change :1;
       bool async_http_resp :1;
       bool timer_change :1;
+      bool ip_address_change :1;
     } evt;
     uint8_t evt_flags = 0;
   };
@@ -67,8 +68,8 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb);
 
 // publishing
 void uoApp_publish_wsJson(const char *json);
-
-
+void uoApp_publish_pinChange(const so_arg_pch_t args);
+void uoCb_publish_ipAddress(const char *ip_addr);
 
 
 
@@ -84,6 +85,7 @@ inline const char *uoCb_txtFromMsg(const uoCb_msgT msg) {
     return static_cast<const char *>(msg.cv_ptr);
   return nullptr;
 }
+
 
 #if 1//def UOUT_PROTECTED
 

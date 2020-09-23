@@ -35,8 +35,13 @@ user_set_station_config(struct cfg_wlan *cwl) {
 
   wifi_config_t sta_config = { };
 
-  strncpy((char*) sta_config.sta.ssid, cwl->SSID, sizeof sta_config.sta.ssid - 1);
-  strncpy((char*) sta_config.sta.password, cwl->password, sizeof sta_config.sta.password - 1);
+  if (strlen(cwl->SSID) > (sizeof sta_config.sta.ssid - 1))
+    return;
+  if (strlen(cwl->password) > (sizeof sta_config.sta.password - 1))
+    return;
+
+  STRCPY((char*) sta_config.sta.ssid, cwl->SSID);
+  STRCPY((char*) sta_config.sta.password, cwl->password);
   sta_config.sta.bssid_set = false;
   ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &sta_config));
   ESP_ERROR_CHECK(esp_wifi_start());

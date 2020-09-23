@@ -14,7 +14,7 @@
 #include "misc/bcd.h"
 #include "../cli_private.h"
 #include "cli/cli.h"
-#include "uout/status_json.h"
+#include "uout/status_json.hh"
 
 #if 0
 static void test_commandline() {
@@ -23,9 +23,9 @@ static void test_commandline() {
   TEST_ASSERT_EQUAL(3, n);
 
   if (n > 0)
-    if (sj_open_root_object("tfmcu")) {
+    if (td.sj().open_root_object("tfmcu")) {
       cli_processParameters(cli_par, n);
-      sj_close_root_object();
+      td.sj().close_root_object();
     }
 
 }

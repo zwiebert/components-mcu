@@ -15,70 +15,22 @@
 #include "net/http/server/http_server.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
-#include "uout/status_json.h"
+#include "uout/status_json.hh"
 #include "debug/dbg.h"
 #include "jsmn/jsmn.h"
 #include <string.h>
 
 #define D(x)
 
-bool (*cli_hook_checkPassword)(clpar p[], int len, so_target_bits tgt);
-
-
-int cli_processParameters(clpar p[], int len) {
-  int i;
-  int result = -1;
-  precond (len > 0);
-
-
-  for (i = 0; i < parm_handlers.count; ++i) {
-    if (strcmp(p[0].key, parm_handlers.handlers[i].parm) == 0) {
-      result = parm_handlers.handlers[i].process_parmX(p, len);
-      break;
-    }
-  }
-  return result;
-}
-
+bool (*cli_hook_checkPassword)(clpar p[], int len, const struct TargetDesc &td);
 bool (*cli_hook_process_json)(char *json);
 
-void cli_process_json(char *json, so_target_bits tgt) {
-  if (cli_hook_process_json && cli_hook_process_json(json))
-    return;
-  cli_process_json2(json, tgt, cli_processParameters);
-}
+/////////////////////////////////private/////////////////////////////////////////////////////////
+static int handle_parm_json(char *json, jsmntok_t *tok, const char *name);
+static void parse_and_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm);
+static char* stringFromToken(char *json, const jsmntok_t *tok);
 
-static void cli_process_json3(char *json, process_parm_cb proc_parm);
-
-void cli_process_json2(char *json, so_target_bits tgt, process_parm_cb proc_parm) {
-  so_tgt_set(tgt|SO_TGT_FLAG_JSON);
-  dbg_vpf(db_printf("process_json: %s\n", json));
-
-
-  if (sj_open_root_object("tfmcu")) {
-    cli_process_json3(json, proc_parm);
-    sj_close_root_object();
-  }
-
-  if (so_tgt_test(SO_TGT_CLI) && !sj_write) {
-    cli_print_json(sj_get_json());
-  }
-
-#ifdef USE_WS
-  if (so_tgt_test(SO_TGT_WS)) {
-    uoApp_publish_wsJson(sj_get_json());
-  }
-#endif
-  so_tgt_default();
-}
-
-static char *stringFromToken(char *json, const jsmntok_t *tok) {
-  json[tok->end] = '\0';
-  return json + tok->start;
-}
-
-
-int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
+static int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
   const int oc = tok[0].size;
   ++tok;
   for (int i = 0; i < oc; ++i) {
@@ -91,9 +43,11 @@ int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
   return 0;
 }
 
-
-
-static void cli_process_json3(char *json, process_parm_cb proc_parm) {
+static char* stringFromToken(char *json, const jsmntok_t *tok) {
+  json[tok->end] = '\0';
+  return json + tok->start;
+}
+static void parse_and_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm) {
   dbg_vpf(db_printf("process_json: %s\n", json));
 
   jsmn_parser jsp;
@@ -111,7 +65,6 @@ static void cli_process_json3(char *json, process_parm_cb proc_parm) {
       if (tok[i].type == JSMN_OBJECT) {
         int coi = i; // command object index
         int n_childs = tok[i].size;
-
 
         char *cmd_obj = 0;
         if (tok[i - 1].type == JSMN_STRING) {
@@ -135,42 +88,70 @@ static void cli_process_json3(char *json, process_parm_cb proc_parm) {
             par[pi].val = stringFromToken(json, &tok[i]);
             ++pi;
             --n_childs;
-          }
-          D(db_printf("proc_parm: %s\n", par->key));
-          proc_parm(par, pi);
+          }D(db_printf("proc_parm: %s\n", par->key));
+          proc_parm(par, pi, td);
         }
       }
     }
   }
 }
 
-void cli_process_cmdline(char *line, so_target_bits tgt) {
-  cli_process_cmdline2(line, tgt, cli_processParameters);
+//////////////////////////////public//////////////////////////////////////////////////////
+
+int cli_processParameters(clpar p[], int len, const struct TargetDesc &td) {
+  precond(len > 0);
+
+  if (!cli_parmHandler_find_cb)
+    return -1;
+
+  const char *parm = p[0].key;
+  if (auto handler = cli_parmHandler_find_cb(parm)) {
+    return handler->process_parmX(p, len, td);
+  }
+
+  return -1;
 }
 
-void cli_process_cmdline2(char *line, so_target_bits tgt, process_parm_cb proc_parm) {
+void cli_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm) {
+  dbg_vpf(db_printf("process_json: %s\n", json));
+
+  if (cli_hook_process_json && cli_hook_process_json(json))
+    return;
+
+  if (td.sj().open_root_object("tfmcu")) {
+    parse_and_process_json(json, td, proc_parm);
+    td.sj().close_root_object();
+  }
+
+  if (so_tgt_test(SO_TGT_CLI)) {
+    td.sj().writeln_json();
+  }
+  if (so_tgt_test(SO_TGT_WS)) {
+    td.sj().write_json();
+  }
+}
+
+void cli_process_cmdline(char *line, const struct TargetDesc &td, process_parm_cb proc_parm) {
   dbg_vpf(db_printf("process_cmdline: %s\n", line));
-  so_tgt_set(tgt | SO_TGT_FLAG_TXT);
   clpar par[20] = { };
   struct cli_parm clp = { .par = par, .size = 20 };
 
   int n = cli_parseCommandline(line, &clp);
   if (n < 0) {
-    cli_replyFailure();
+    cli_replyFailure(td);
   } else if (n > 0) {
 
-    if (cli_hook_checkPassword && !cli_hook_checkPassword(clp.par, n, tgt))
+    if (cli_hook_checkPassword && !cli_hook_checkPassword(clp.par, n, td))
       return;
 
-    if (sj_open_root_object("tfmcu")) {
-      proc_parm(clp.par, n);
-      sj_close_root_object();
+    if (td.so().root_open("tfmcu")) {
+      proc_parm(clp.par, n, td);
+      td.so().root_close();
 #ifdef USE_WS
       if (so_tgt_test(SO_TGT_WS)) {
-        uoApp_publish_wsJson(sj_get_json());
+        uoApp_publish_wsJson(td.sj().get_json());
       }
 #endif
     }
   }
-  so_tgt_default();
 }

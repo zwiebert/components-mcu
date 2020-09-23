@@ -16,7 +16,7 @@
 #if defined USE_TCPS_TASK || defined USE_TCPS
 #include "net/tcp_cli_server.h"
 void config_setup_cliTcpServer() {
-  struct cfg_tcps c = { .enable = true };
+  struct cfg_tcps c { .enable = true };
 #ifdef USE_TCPS
  tcpCli_setup(&c);
 #elif defined USE_TCPS_TASK
@@ -30,18 +30,20 @@ void config_setup_cliTcpServer() {
 struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsR(i8, CB_VERBOSE, c->verbose);
+    i8 verb = c->verbose;
+    kvsR(i8, CB_VERBOSE, verb);
+    c->verbose = static_cast<verbosity>(verb);
     kvs_close(h);
   }
   return c;
 }
 void config_setup_txtio() {
-  struct cfg_txtio c = { .verbose = MY_VERBOSE, .baud = MY_MCU_UART_BAUD_RATE };
+  struct cfg_txtio c { .baud = MY_MCU_UART_BAUD_RATE };
   config_read_txtio(&c);
   txtio_setup(&c);
 }
 enum verbosity config_read_verbose() {
-  return config_read_item_i8(CB_VERBOSE, MY_VERBOSE);
+  return static_cast<verbosity>(config_read_item_i8(CB_VERBOSE, 0));
 }
 #endif
 
@@ -50,7 +52,7 @@ enum verbosity config_read_verbose() {
 struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsR(i8, CB_LAN_PHY, c->phy);
+    kvsRead(i8, lanPhy, CB_LAN_PHY, c->phy);
     kvsR(i8, CB_LAN_PWR_GPIO, c->pwr_gpio);
     kvs_close(h);
   }
@@ -80,7 +82,7 @@ struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   return c;
 }
 void config_setup_ntpClient() {
-  struct cfg_ntp c = { .server = MY_NTP_SERVER };
+  struct cfg_ntp c { {.server = MY_NTP_SERVER} };
   config_read_ntpClient(&c);
   ntp_setup(&c);
 }
@@ -101,7 +103,7 @@ struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   return c;
 }
 void config_setup_wifiStation() {
-  struct cfg_wlan c = { .SSID = MY_WIFI_SSID, .password = MY_WIFI_PASSWORD, };
+  struct cfg_wlan c { {.SSID = MY_WIFI_SSID}, {.password = MY_WIFI_PASSWORD}, };
   config_read_wifiStation(&c);
   wifistation_setup(&c);
 }
@@ -128,8 +130,8 @@ struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   return c;
 }
 void config_setup_mqttClient() {
-  struct cfg_mqtt c = { .url = MY_MQTT_URL, .user = MY_MQTT_USER, .password = MY_MQTT_PASSWORD, .client_id = MY_MQTT_CLIENT_ID, .enable =
-  MY_MQTT_ENABLE };
+  struct cfg_mqtt c { {.url = MY_MQTT_URL}, {.user = MY_MQTT_USER}, {.password = MY_MQTT_PASSWORD}, { .client_id = MY_MQTT_CLIENT_ID},
+    MY_MQTT_ENABLE };
   config_read_mqttClient(&c);
   io_mqtt_setup(&c);
 }
@@ -164,7 +166,7 @@ struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   return c;
 }
 void config_setup_httpServer() {
-  struct cfg_http c = { .user = MY_HTTP_USER, .password = MY_HTTP_PASSWORD, .enable = MY_HTTP_ENABLE };
+  struct cfg_http c { {.user = MY_HTTP_USER}, {.password = MY_HTTP_PASSWORD }, MY_HTTP_ENABLE };
   config_read_httpServer(&c);
   hts_setup(&c);
 }

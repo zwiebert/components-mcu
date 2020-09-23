@@ -1,4 +1,6 @@
 #ifdef __cplusplus
+#include "cstring_utils.hh"
+
   extern "C" {
 #endif
 #pragma once

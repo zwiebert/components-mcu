@@ -119,8 +119,6 @@ void io_mqtt_unsubscribe(const char *topic) {
 void io_mqtt_publish(const char *topic, const char *data) {
   if (!client || !is_connected)
     return;
-  if (!so_tgt_test(SO_TGT_MQTT))
-    return;
 
   D(ESP_LOGI(TAG, "MQTT_PUBLISH, topic=%s, data=%s", topic, data));
   /*int msg_id = */ esp_mqtt_client_publish(client, topic, data, 0, 1, 0);
@@ -128,13 +126,14 @@ void io_mqtt_publish(const char *topic, const char *data) {
 
 static void io_mqtt_create_client(struct cfg_mqtt *cmc) {
   esp_mqtt_client_config_t mqtt_cfg = {
+      .event_handle = mqtt_event_handler,
       .uri = cmc->url,
+      .client_id = cmc->client_id,
   //  .host = CONFIG_MQTT_HOST,
   //  .port = CONFIG_MQTT_PORT,
-      .event_handle = mqtt_event_handler,
       .username = cmc->user,
       .password = cmc->password,
-      .client_id = cmc->client_id,
+
   // .user_context = (void *)your_context
       };
 

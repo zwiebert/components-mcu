@@ -1,7 +1,8 @@
 #pragma once
-
 #include "stdint.h"
 #include "stdbool.h"
+
+struct TargetDesc;
 
 typedef struct {
   char *key;
@@ -10,12 +11,12 @@ typedef struct {
 
 struct parm_handler {
   const char *parm;
-  int (*process_parmX)(clpar p[], int len);
+  int (*process_parmX)(clpar p[], int len, const struct TargetDesc &td);
   const char *help;
 };
 
 struct parm_handlers {
-  struct parm_handler *handlers;
+  const struct parm_handler *handlers;
   int count;
 };
 
@@ -34,11 +35,11 @@ typedef int (*getc_funT)(void);
 enum cli_get_commline_retT {
   CMDL_DONE, CMDL_ERROR, CMDL_INCOMPLETE, CMDL_LINE_BUF_FULL
 };
-typedef int (*process_parm_cb)(clpar parm[], int parm_len);
+typedef int (*process_parm_cb)(clpar parm[], int parm_len, const struct TargetDesc &td);
 
 
 #ifdef __cplusplus
-extern "C" {
+extern "C++" {
 #endif
 
 #ifdef __cplusplus

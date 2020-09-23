@@ -1,5 +1,5 @@
 #ifdef __cplusplus
-extern "C" {
+extern "C++" {
 #endif
 #pragma once
 
@@ -9,8 +9,10 @@ extern "C" {
 
 extern bool (*cli_hook_process_json)(char *json);
 
-void cli_process_json2(char *json, so_target_bits tgt, process_parm_cb proc_parm);
-void cli_process_json(char *json, so_target_bits tgt);
+void cli_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm = cli_processParameters);
+
+
+
 char* json_get_command_object(char *s, char **ret_name, char **next);
 int parse_json(char *name, char *s, struct cli_parm *clp);
 

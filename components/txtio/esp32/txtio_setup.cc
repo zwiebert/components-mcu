@@ -120,7 +120,7 @@ static void pctChange_cb(const uoCb_msgT msg) {
 #ifdef USE_CLI_TASK
   uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, txt, strlen(txt));
 #else
-#error "not implemented"
+  ::write(1, txt, strlen(txt));
 #endif
   }
   if (auto json = uoCb_jsonFromMsg(msg)) {
@@ -128,7 +128,7 @@ static void pctChange_cb(const uoCb_msgT msg) {
   uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, json, strlen(json));
   uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, ";\n", 2);
 #else
-#error "not implemented"
+  ::write(1, json, strlen(json));
 #endif
   }
 }
@@ -137,6 +137,7 @@ static void callback_subscribe() {
   uo_flagsT flags;
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;
+  flags.evt.ip_address_change = true;
   flags.fmt.json = true;
   flags.fmt.txt = true;
   uoCb_subscribe(pctChange_cb, flags);
@@ -146,7 +147,7 @@ static void callback_unsubscribe() {
 }
 
 
-extern "C" void txtio_mcu_setup();
+extern "C++" void txtio_mcu_setup();
 
 void txtio_mcu_setup() {
 #ifdef USE_CLI_TASK
