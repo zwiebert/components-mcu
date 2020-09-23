@@ -38,8 +38,6 @@
 #define D(x)
 #endif
 
-#define MIO(x)
-
 
 #ifndef TCPS_TASK_PORT
 #define TCPS_TASK_PORT   7777
@@ -49,7 +47,6 @@
 
 typedef void (*fd_funT)(int fd, void *args);
 int foreach_fd(fd_set *fdsp, int count, fd_funT fd_fun, void *args);
-static void modify_io_fun(bool add_connection);
 static void callback_subscribe();
 static void callback_unsubscribe();
 
@@ -57,8 +54,6 @@ static int sockfd = -1;
 fd_set wait_fds;
 int nfds;
 static int cconn_count;
-MIO(static int (*old_io_putc_fun)(char c));
-//static int (*old_io_getc_fun)(void);
 
 static struct cli_buf buf;
 
@@ -73,8 +68,8 @@ static void add_fd(int fd) {
   FD_SET(fd, &wait_fds);
   if (fd + 1 > nfds)
     nfds = fd + 1;
-  ++cconn_count;
-  modify_io_fun(true);
+  if (0 == cconn_count++)
+    callback_subscribe();
 }
 
 static void rm_fd(int fd) {
@@ -86,9 +81,10 @@ static void rm_fd(int fd) {
   if (fd - 1 == nfds)
     --nfds;
 
-  if (--cconn_count < 0)
+  if (--cconn_count <= 0) {
     cconn_count = 0;
-  modify_io_fun(false);
+   callback_unsubscribe();
+  }
 }
 
 static void tcps_close_cconn(int fd) {
@@ -155,32 +151,6 @@ static void tcpst_putc(int fd, void *c) {
 
 static void tcpst_putc_all(char c) {
   foreach_fd(&wait_fds, nfds, tcpst_putc, &c);
-}
-
-static int  tcp_io_putc(char c) {
-  if (cconn_count > 0)
-    tcpst_putc_all(c);
-  MIO((*old_io_putc_fun)(c));
-  return 1;
-}
-
-
-static void modify_io_fun(bool add_connection) {
-  if (add_connection && cconn_count == 1) {
-    // fist connection opened
-    D(printf("modify io to tcp\n"));
-  //  old_io_getc_fun = io_getc_fun;
-    MIO(old_io_putc_fun = io_putc_fun);
-   // io_getc_fun = tcp_io_getc;
-    MIO(io_putc_fun = tcp_io_putc);
-    callback_subscribe();
-  } else if (cconn_count == 0) {
-    // last connection closed
-    D(printf("modify io to serial\n"));
- //   io_getc_fun = old_io_getc_fun;
-    MIO(io_putc_fun = old_io_putc_fun);
-    callback_unsubscribe();
-  }
 }
 
 static int selected_fd;
@@ -322,6 +292,8 @@ static void pctChange_cb(const uoCb_msgT msg) {
   }
 }
 
+
+/// output callbacks
 static void callback_subscribe() {
   uo_flagsT flags;
   flags.evt.pin_change = true;
@@ -333,8 +305,6 @@ static void callback_subscribe() {
 static void callback_unsubscribe() {
   uoCb_unsubscribe(pctChange_cb);
 }
-
-
 
 static TaskHandle_t xHandle = NULL;
 #define STACK_SIZE  3000

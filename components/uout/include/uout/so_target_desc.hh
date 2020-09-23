@@ -9,6 +9,8 @@
 #include <assert.h>
 #include <misc/itoa.h>
 
+#include <utility>
+
 struct TargetDesc {
 public:
   TargetDesc(so_target_bits tgt = SO_TGT_NONE) :
@@ -24,6 +26,7 @@ public:
     if (len < 0) {
       len = strlen(s);
     }
+
     return priv_write(s, len, final);
   }
 
@@ -32,8 +35,8 @@ public:
       len = strlen(s);
     }
 
-    if (ssize_t n = priv_write(s, len, final); n == len)
-      if (write('\n') == 1)
+    if (ssize_t n = priv_write(s, len, false); n == len)
+      if (write("\n",1,final) == 1)
         return n + 1;
     return -1;
   }
@@ -73,6 +76,18 @@ public:
     lhs.write(buf);
     return lhs;
   }
+  struct mod {
+    bool fin:1 = false;
+    bool lf:1 = false;
+  };
+
+  friend const TargetDesc& operator<<(const TargetDesc &lhs, const std::pair<TargetDesc::mod, const char*> &mod_s) {
+    if (mod_s.first.lf)
+      lhs.writeln(mod_s.second, -1, mod_s.first.fin);
+    else
+      lhs.write(mod_s.second, -1, mod_s.first.fin);
+    return lhs;
+  }
 
 private:
   virtual int priv_write(const char *s, ssize_t len, bool final) const {
@@ -88,7 +103,7 @@ protected:
 };
 
 
-struct TargetDescCon: public TargetDesc {
+struct TargetDescCon final: public TargetDesc {
   typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
 public:
   TargetDescCon(so_target_bits tgt = SO_TGT_NONE) :
@@ -111,14 +126,14 @@ private:
     return ::write(myFd, s, size);
   }
 private:
-  int myFd = 1;
+  int myFd = STDOUT_FILENO;
   void *myReq = nullptr;
   writeReq_fnT myWriteReqFn = nullptr;
 };
 
 
 
-struct TargetDescWs: public TargetDesc {
+struct TargetDescWs final: public TargetDesc {
   typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
 public:
   TargetDescWs(void *req, so_target_bits tgt, writeReq_fnT writeReq_fn) :
