@@ -1,11 +1,8 @@
 set(srcs periodic.c)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMCU_ESP32")
-if(DEFINED ENV{DISTRO})
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DDISTRIBUTION")
-endif()
-
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     PRIV_REQUIRES app_config misc
 )
+component_compile_options(${comp_compile_opts})
+component_compile_features(${comp_compile_feats})

@@ -4,7 +4,7 @@ idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     REQUIRES  app_config esp_http_server
-    PRIV_REQUIRES  cli debug uout
+    PRIV_REQUIRES  cli dbg uout
                     mbedtls #PRIV_ESP_IDF
  )
  

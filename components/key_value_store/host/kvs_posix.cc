@@ -27,7 +27,6 @@
 #define io_printf printf
 #endif
 
-#include "storage/esp8266/spiffs_posix.h"
 
 
 
@@ -47,7 +46,7 @@ struct kvs_handle {
 
 struct line_info {
   u16 magic;
-  u8 kvs_type;
+  u8 kvs_type : 8;
   u8 xx;
   union {
     u8 val_u8;
@@ -253,7 +252,7 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
       }
 
       if (cb) {
-        switch (cb(li.key, li.kvs_type, args)) {
+        switch (cb(li.key, (kvs_type_t)li.kvs_type, args)) {
         case kvsCb_match:
           ++count;
           break;
@@ -399,7 +398,7 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, s
 
   if (!do_write) {
     struct line_info li = { COOKIE };
-    char *dst = src_or_dst;
+    char *dst = static_cast<char*>(src_or_dst);
     int pos = kvs_find_next(h, &li, 0, key, kvs_type);
 
     if (pos < 0)
@@ -416,7 +415,7 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, s
   }
 
   if (do_write) {
-    const char *src = src_or_dst;
+    const char *src = static_cast<char*>(src_or_dst);
     int end_pos;
 
     int pos = find_key_blob_w(h, key, length, &end_pos);

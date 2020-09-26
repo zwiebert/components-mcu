@@ -6,7 +6,7 @@ idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     REQUIRES ""  
-    PRIV_REQUIRES app_config net debug
+    PRIV_REQUIRES app_config net dbg
                   spiffs #PRIV_ESP_IDF
 )
 
