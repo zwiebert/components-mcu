@@ -15,9 +15,24 @@ inline typename std::enable_if<std::is_convertible<T, char*>::value, char*>::typ
 }
 
 template<typename T>
-inline typename std::enable_if<std::is_convertible<T, char*>::value, char*>::type csu_copy(T const&dst, const char *src, const size_t dst_len) {
+inline typename std::enable_if<std::is_convertible<T, char*>::value, char*>::type
+csu_copy(T const &dst, const size_t dst_size, const char *src, const size_t src_len) {
+  if (src_len >= dst_size)
+    strcpy_error_handler();
+
+  if (src_len >= strlen(src))
+    std::strcpy(dst, src);
+  else {
+    std::memcpy(dst, src, src_len);
+    dst[src_len] = '\0';
+  }
+  return dst;
+}
+
+template<typename T>
+inline typename std::enable_if<std::is_convertible<T, char*>::value, char*>::type csu_copy(T const&dst, const size_t dst_size, const char *src) {
   const size_t src_len = std::strlen(src);
-  if (src_len > dst_len)
+  if (src_len >= dst_size)
     strcpy_error_handler();
   std::memcpy(dst, src, src_len + 1);
   return dst;
@@ -26,13 +41,19 @@ inline typename std::enable_if<std::is_convertible<T, char*>::value, char*>::typ
 template<int dst_size>
 inline char* csu_copy(char (&dst)[dst_size], const char *src) {
   char *dst_ptr = dst;
-  return csu_copy(dst_ptr, src, dst_size - 1);
+  return csu_copy(dst_ptr, dst_size, src);
 }
 
 template<int dst_size>
-inline char* csu_copy(char (&dst)[dst_size], const char *src, size_t /*len*/) {
+inline char* csu_copy(char (&dst)[dst_size], size_t /*dst_size*/, const char *src) {
   char *dst_ptr = dst;
-  return csu_copy(dst_ptr, src, dst_size - 1);
+  return csu_copy(dst_ptr, dst_size, src);
+}
+
+template<int dst_size>
+inline char* csu_copy(char (&dst)[dst_size], size_t /*dst_size*/, const char *src, const size_t src_len) {
+  char *dst_ptr = dst;
+  return csu_copy(dst_ptr, dst_size, src, src_len);
 }
 
 

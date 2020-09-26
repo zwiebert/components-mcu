@@ -370,7 +370,7 @@ static int find_key_blob_w(kvshT h, const char *key, unsigned req_size, int *end
   struct line_info li = { COOKIE }; \
   int pos = find_key_int_w(h, &li, key); \
   li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_##VAL_T, .nval = { .val_##VAL_T = val }, }; \
-  STRLCPY(li.key, key, MAX_KEY_LEN); \
+  STRLCPY(li.key, key, MAX_KEY_LEN+1); \
   int res = kvs_write(h, &li, pos); \
   return res > 0; \
 }
@@ -430,7 +430,7 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, s
       }
     }
     struct line_info li = { .magic = COOKIE, .kvs_type = kvs_type, .nval = { .len = { .blob_len = length, .blob_size = size }} };
-    STRLCPY(li.key, key, MAX_KEY_LEN);
+    STRLCPY(li.key, key, MAX_KEY_LEN+1);
 
     int res = kvs_write(h, &li, pos);
     write(h->fd, src, length);

@@ -162,7 +162,7 @@ void io_mqtt_setup(struct cfg_mqtt *c)
     io_mqtt_port = atoi(port_start);
   if (host_start) {
     io_mqtt_host = alloca(host_len+1);
-    STRLCPY(io_mqtt_host, host_start, host_len);
+    STRLCPY(io_mqtt_host, host_start, host_len+1);
     io_mqtt_host[host_len] = '\0';
   }
 

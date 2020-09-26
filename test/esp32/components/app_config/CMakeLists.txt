@@ -8,6 +8,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFLAVOR_LAN")
 endif()
 
 idf_component_register(
-    INCLUDE_DIRS . "./include"
+    INCLUDE_DIRS "./include"
     REQUIRES misc txtio
 )

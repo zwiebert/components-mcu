@@ -28,7 +28,7 @@ typedef u32 u32_t;
 
 #define memcpy ets_memcpy
 #define memset ets_memset
-#define STRLCPY ets_strncpy
+#define strncpy ets_strncpy
 #define spiffs_printf(...) io_printf(__VA_ARGS__)
 #define strlen ets_strlen
 #define STRCPY ets_strcpy

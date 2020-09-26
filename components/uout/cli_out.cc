@@ -97,7 +97,7 @@ void  reply_id_message(const struct TargetDesc &td, u16 id, const char *tag, con
 
 ///////////////////////////////////////////////////////////////////
 
-#define SET_OBJ_TAG(tag) STRLCPY(Obj_tag, (tag), sizeof Obj_tag -1)
+#define SET_OBJ_TAG(tag) STRLCPY(Obj_tag, (tag), sizeof Obj_tag)
 #define OBJ_TAG (Obj_tag+0)
 
 extern u16 cli_msgid;

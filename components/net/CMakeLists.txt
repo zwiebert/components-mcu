@@ -4,7 +4,7 @@ esp32/ipnet.c  esp32/ntp.c  esp32/tcp_server.c  esp32/tcp_cli_server_task.cc esp
 
 idf_component_register(
     SRCS ${srcs} 
-    INCLUDE_DIRS . "./include" 
+    INCLUDE_DIRS "./include" 
     REQUIRES ""
     PRIV_REQUIRES app_config misc net_http_server txtio cli debug
                   esp_netif esp_wifi esp_eth esp_http_client #PRIV_ESP_IDF
