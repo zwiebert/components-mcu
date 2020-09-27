@@ -5,11 +5,7 @@
 
 #include "stdbool.h"
 #include "stdint.h"
-
-enum verbosity {
-  vrbNone, vrb1, vrb2, vrb3, vrb4, vrbDebug
-};
-
+#include <misc/int_types.h>
 
 struct cfg_txtio {
   enum verbosity verbose;
@@ -24,7 +20,6 @@ void txtio_setup(struct cfg_txtio *cfg_txtio);
 extern int (*io_putc_fun)(char c);
 extern int (*io_getc_fun)(void);
 extern int (*con_printf_fun)(const char *fmt, ...);
-extern int (*io_puts_fun)(const char *s);
 
 int io_putc(char c);
 int io_getc(void);

@@ -158,4 +158,3 @@ TEST_CASE("kvs", "[kvs]") {
   test_for_foreach_bug();
   test_set_get_default();
 }
-

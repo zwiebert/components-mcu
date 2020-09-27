@@ -1,3 +1,4 @@
+#include "app/config/proj_app_cfg.h"
 #ifdef __cplusplus
   extern "C++" {
 #endif

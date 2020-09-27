@@ -31,6 +31,12 @@ typedef uint64_t u64;
 typedef int64_t i64;
 
 
+
+enum verbosity {
+  vrbNone, vrb1, vrb2, vrb3, vrb4, vrbDebug
+};
+
+
 #ifdef __cplusplus
   }
 #endif

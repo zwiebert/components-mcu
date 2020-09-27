@@ -9,5 +9,5 @@ endif()
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     PRIV_INCLUDE_DIRS "./include/txtio" 
-    PRIV_REQUIRES misc app_config 
+    PRIV_REQUIRES utils_misc app_config 
 )

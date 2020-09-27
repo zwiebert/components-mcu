@@ -9,5 +9,5 @@ endif()
 
 idf_component_register(
     INCLUDE_DIRS "./include"
-    REQUIRES misc txtio
+    REQUIRES utils_misc txtio
 )
