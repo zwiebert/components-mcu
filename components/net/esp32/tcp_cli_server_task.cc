@@ -20,6 +20,7 @@
 #include <string.h>
 #include <sys/select.h>
 #include <uout/callbacks.h>
+#include <fernotron/trx/fer_trx_api.hh>
 
 #define TAG "tcps"
 
@@ -292,12 +293,12 @@ static void pctChange_cb(const uoCb_msgT msg) {
   }
 }
 
-
 /// output callbacks
 static void callback_subscribe() {
   uo_flagsT flags;
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;
+  flags.evt.rf_msg_received = true;
   flags.fmt.json = true;
   flags.fmt.txt = true;
   uoCb_subscribe(pctChange_cb, flags);

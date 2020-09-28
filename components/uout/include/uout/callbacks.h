@@ -20,6 +20,7 @@ typedef struct uo_flagsT {
       bool async_http_resp :1;
       bool timer_change :1;
       bool ip_address_change :1;
+      bool rf_msg_received :1;
     } evt;
     uint8_t evt_flags = 0;
   };

@@ -138,6 +138,7 @@ static void callback_subscribe() {
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;
   flags.evt.ip_address_change = true;
+  flags.evt.rf_msg_received = true;
   flags.fmt.json = true;
   flags.fmt.txt = true;
   uoCb_subscribe(pctChange_cb, flags);
