@@ -1,4 +1,7 @@
-#include "unity.h"
+#include <unity.h>
+#ifdef TEST_HOST
+#include <test_runner.h>
+#endif
 #include "../include/txtio/inout.h"
 
 char buf[512] = "42";

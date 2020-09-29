@@ -1,11 +1,7 @@
-/*
- * test_kvs.c
- *
- *  Created on: 27.02.2020
- *      Author: bertw
- */
-
-#include "unity.h"
+#include <unity.h>
+#ifdef TEST_HOST
+#include <test_runner.h>
+#endif
 #include "key_value_store/kvs_wrapper.h"
 #include <string.h>
 

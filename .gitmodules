@@ -10,3 +10,6 @@
 [submodule "components/nanopb/nanopb"]
 	path = components/nanopb/nanopb
 	url = https://github.com/nanopb/nanopb.git
+[submodule "components/test_host/unity"]
+	path = components/test_host/unity
+	url = https://github.com/ThrowTheSwitch/Unity.git
