@@ -17,6 +17,7 @@
 #include "lwip/sockets.h"
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
+#include <net/mqtt/mqtt.hh>
 
 #include <stddef.h>
 #include <string.h>
@@ -54,6 +55,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
     D(ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED"));
     if (io_mqtt_connected_cb)
       io_mqtt_connected_cb();
+    Net_Mqtt::get_this().mqtt_connected();
     break;
 
   case MQTT_EVENT_DISCONNECTED:
@@ -61,24 +63,27 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
     is_connected = false;
     if (io_mqtt_disconnected_cb)
       io_mqtt_disconnected_cb();
+    Net_Mqtt::get_this().mqtt_disconnected();
     break;
 
   case MQTT_EVENT_SUBSCRIBED:
     D(ESP_LOGI(TAG, "MQTT_EVENT_SUBSCRIBED, msg_id=%d", event->msg_id));
     if (io_mqtt_subscribed_cb)
       io_mqtt_subscribed_cb(event->topic, event->topic_len);
+    Net_Mqtt::get_this().mqtt_subscribed(event->topic, event->topic_len);
     break;
 
   case MQTT_EVENT_UNSUBSCRIBED:
     D(ESP_LOGI(TAG, "MQTT_EVENT_UNSUBSCRIBED, msg_id=%d", event->msg_id));
     if (io_mqtt_unsubscribed_cb)
       io_mqtt_unsubscribed_cb(event->topic, event->topic_len);
-
+    Net_Mqtt::get_this().mqtt_unsubscribed(event->topic, event->topic_len);
     break;
   case MQTT_EVENT_PUBLISHED:
     D(ESP_LOGI(TAG, "MQTT_EVENT_PUBLISHED, msg_id=%d", event->msg_id));
     if (io_mqtt_published_cb)
       io_mqtt_published_cb(event->msg_id);
+    Net_Mqtt::get_this().mqtt_published(event->msg_id);
     break;
 
   case MQTT_EVENT_DATA:
@@ -87,6 +92,7 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
     D(printf("DATA=%.*s\r\n", event->data_len, event->data));
     if (io_mqtt_received_cb)
       io_mqtt_received_cb(event->topic, event->topic_len, event->data, event->data_len);
+    Net_Mqtt::get_this().mqtt_received(event->topic, event->topic_len, event->data, event->data_len);
  
     break;
   case MQTT_EVENT_ERROR:

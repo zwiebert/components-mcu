@@ -7,7 +7,7 @@
 
 #include "unity.h"
 
-
+#if 0
 #include "app/config/proj_app_cfg.h"
 #include <string.h>
 #include "app/settings/config.h"
@@ -16,7 +16,7 @@
 #include "cli/cli.h"
 #include "uout/status_json.hh"
 
-#if 0
+
 static void test_commandline() {
   char cl[] = "config verbose=? cu=?;";  //"timer g=2 m=2 weekly=08222000++++10552134+";
   int n = cli_parseCommandline(cl);
