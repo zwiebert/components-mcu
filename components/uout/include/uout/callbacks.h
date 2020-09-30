@@ -6,23 +6,24 @@
 typedef struct uo_flagsT {
   union {
     struct {
-      bool json :1;
-      bool obj :1;
-      bool txt :1;
-    } fmt;
-    uint8_t fmt_flags = 0;
-  };
-
-  union {
-    struct {
       bool pin_change :1;
       bool pct_change :1;
       bool async_http_resp :1;
       bool timer_change :1;
       bool ip_address_change :1;
       bool rf_msg_received :1;
+      bool stm32_update :1;
     } evt;
-    uint8_t evt_flags = 0;
+    uint16_t evt_flags = 0;
+  };
+
+  union {
+    struct {
+      bool json :1;
+      bool obj :1;
+      bool txt :1;
+    } fmt;
+    uint8_t fmt_flags = 0;
   };
 
   union {
@@ -37,8 +38,9 @@ typedef struct uo_flagsT {
 
 } uo_flagsT;
 
+static_assert(sizeof (uo_flagsT) == 4);
 static_assert(sizeof (uo_flagsT::evt) == 1);
-static_assert(sizeof (uo_flagsT) == 3);
+
 
 struct uoCb_msgT {
   union {

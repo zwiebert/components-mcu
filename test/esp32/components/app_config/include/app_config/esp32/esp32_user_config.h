@@ -22,7 +22,7 @@
 #undef CONFIG_BLOB
 //#undef ACCESS_GPIO
 #define CONFIG_GPIO_SIZE 40
-//#undef POSIX_TIME
+//#undef USE_POSIX_TIME
 #undef MDR_TIME
 //#undef USE_PAIRINGS
 

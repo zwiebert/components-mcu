@@ -38,7 +38,7 @@ config C = {
 #ifdef USE_NTP
   .ntp_server = MY_NTP_SERVER,
 #endif
-#ifdef POSIX_TIME
+#ifdef USE_POSIX_TIME
   .geo_tz = MY_GEO_TZ,
 #endif
   .stm32_inv_bootpin = MY_STM32_INV_BOOTPIN,
