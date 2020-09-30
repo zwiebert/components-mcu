@@ -2,7 +2,7 @@ idf_component_register(
     SRC_DIRS "."
     INCLUDE_DIRS "." ../include 
  #   PRIV_INCLUDE_DIRS ../include/key_value_store
-    REQUIRES unity
+    REQUIRES unity key_value_store
 )
                   
 component_compile_options(${comp_compile_opts})

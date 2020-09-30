@@ -39,14 +39,7 @@ void io_mqtt_setup(struct cfg_mqtt *cfg_mqt);
 #endif
 
 
-void io_mqttApp_disconnected();
-void io_mqttApp_subscribed(const char *topic, int topic_len);
-void io_mqttApp_unsubscribed(const char *topic, int topic_len);
-void io_mqttApp_published(int msg_id);
-
-
-
-// implementation interface
+// callbacks (in C++ derive from Net_Mqtt class instead)
 extern void (*io_mqtt_connected_cb) ();
 extern void (*io_mqtt_disconnected_cb) ();
 extern void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len);
