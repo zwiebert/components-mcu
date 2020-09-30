@@ -21,7 +21,7 @@
 #define cli_isInteractive() (so_tgt_test(SO_TGT_CLI) &&  so_tgt_test(SO_TGT_FLAG_TXT))
 
 #ifdef USE_WS
-void ws_send_json(const char *json, size_t len = 0); //XXX:
+void ws_send_json(const char *json, ssize_t len = -1); //XXX:
 #endif
 
 typedef struct {

@@ -1,12 +1,4 @@
-/*
- * mqtt.c
- *
- *  Created on: 19.03.2019
- *      Author: bertw
- */
-
 #include "app/config/proj_app_cfg.h"
-#ifdef USE_MQTT
 
 #include "net/mqtt/mqtt.h"
 #include "net/mqtt/mqtt_imp.h"
@@ -17,7 +9,6 @@
 #include "cli/mutex.h"
 #include "uout/status_json.hh"
 #include <net/mqtt/mqtt.hh>
-
 
 bool topic_startsWith(const char *topic, int topic_len, const char *s) {
   size_t s_len = strlen(s);
@@ -42,7 +33,4 @@ void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len);
 void (*io_mqtt_unsubscribed_cb)(const char *topic, int topic_len);
 void (*io_mqtt_published_cb)(int msg_id);
 void (*io_mqtt_received_cb)(const char *topic, int topic_len, const char *data, int data_len);
-
-
-#endif // USE_MQTT
 

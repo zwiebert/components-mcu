@@ -71,11 +71,25 @@ macro(add_libs)
   else()
      #message("PUBLIC LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     set(COMP_ACC PUBLIC)
+
+    set(my_srcs ${__SRCS})
+    list(TRANSFORM my_srcs PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+    set(COMPONENT_LIBS_SRCS
+    "${COMPONENT_LIBS_SRCS}" "${my_srcs}"
+    CACHE INTERNAL "${COMPONENT_LIBS_SRCS}")    
   endif()
+
+  set(COMPONENT_LIBS_INC_DIRS
+  "${COMPONENT_LIBS_INC_DIRS}" ${INC_PATHS} # ${PRIV_INC_PATHS}
+  CACHE INTERNAL "${COMPONENT_LIBS_INC_DIRS}")    
 
   set(COMPONENT_LIBS
       "${COMPONENT_LIBS}" "${COMPONENT_LIB}"
       CACHE INTERNAL "${COMPONENT_LIBS}")
+
+  set(COMPONENT_LIBS_DIRS
+      "${COMPONENT_LIBS_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}"
+      CACHE INTERNAL "${COMPONENT_LIBS_DIRS}")
 
   foreach(comp_dir ${COMPONENT_DIRECTORIES})
     foreach(req ${__REQUIRES} ${__PRIV_REQUIRES})
