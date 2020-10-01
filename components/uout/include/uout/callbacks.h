@@ -12,7 +12,7 @@ typedef struct uo_flagsT {
       bool timer_change :1;
       bool ip_address_change :1;
       bool rf_msg_received :1;
-      bool stm32_update :1;
+      bool valve_change :1;
     } evt;
     uint16_t evt_flags = 0;
   };

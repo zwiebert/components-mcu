@@ -7,6 +7,16 @@ set(UNIT_TESTING true)
 
 include(CTest)
 
+
+macro(srcs_filter_by_mcu)
+  list(FILTER __SRCS EXCLUDE REGEX "^(esp32|esp8266|atmega*)/.*")
+  set(host_dir ${CMAKE_CURRENT_LIST_DIR}/host)
+  file(GLOB host_files "${host_dir}/*.cc" "${host_dir}/*.cpp" "${host_dir}/*.c")
+  set(__SRCS ${__SRCS} ${host_files})
+endmacro()
+
+
+
 macro(add_tests)
   list(APPEND __PRIV_REQUIRES test_host)
 
@@ -60,10 +70,18 @@ macro(filter_valid_comps)
   endforeach()
 endmacro()
 
+
 macro(add_libs)
   if (NOT ${COMPONENT_LIB} STREQUAL "test_host")
     list(APPEND __PRIV_REQUIRES test_host)
   endif()
+
+  list(TRANSFORM __SRCS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/" OUTPUT_VARIABLE my_srcs)
+  set(COMPONENT_LIBS_SRCS "${COMPONENT_LIBS_SRCS}" "${my_srcs}"  CACHE INTERNAL "${COMPONENT_LIBS_SRCS}")    
+
+
+  srcs_filter_by_mcu()
+
 
   if("${__SRCS}" STREQUAL "")
     #message("INTERFACE LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
@@ -71,25 +89,15 @@ macro(add_libs)
   else()
      #message("PUBLIC LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     set(COMP_ACC PUBLIC)
-
-    set(my_srcs ${__SRCS})
-    list(TRANSFORM my_srcs PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
-    set(COMPONENT_LIBS_SRCS
-    "${COMPONENT_LIBS_SRCS}" "${my_srcs}"
-    CACHE INTERNAL "${COMPONENT_LIBS_SRCS}")    
   endif()
 
-  set(COMPONENT_LIBS_INC_DIRS
-  "${COMPONENT_LIBS_INC_DIRS}" ${INC_PATHS} # ${PRIV_INC_PATHS}
+
+  set(COMPONENT_LIBS_INC_DIRS "${COMPONENT_LIBS_INC_DIRS}" ${INC_PATHS} # ${PRIV_INC_PATHS}
   CACHE INTERNAL "${COMPONENT_LIBS_INC_DIRS}")    
 
-  set(COMPONENT_LIBS
-      "${COMPONENT_LIBS}" "${COMPONENT_LIB}"
-      CACHE INTERNAL "${COMPONENT_LIBS}")
+  set(COMPONENT_LIBS "${COMPONENT_LIBS}" "${COMPONENT_LIB}"  CACHE INTERNAL "${COMPONENT_LIBS}")
 
-  set(COMPONENT_LIBS_DIRS
-      "${COMPONENT_LIBS_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}"
-      CACHE INTERNAL "${COMPONENT_LIBS_DIRS}")
+  set(COMPONENT_LIBS_DIRS "${COMPONENT_LIBS_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}"  CACHE INTERNAL "${COMPONENT_LIBS_DIRS}")
 
   foreach(comp_dir ${COMPONENT_DIRECTORIES})
     foreach(req ${__REQUIRES} ${__PRIV_REQUIRES})
@@ -136,13 +144,6 @@ macro(idf_component_register)
   cmake_parse_arguments(_ "${options}" "${single_value}" "${multi_value}" "${ARGN}")
   set(__component_registered 1)
 
-  list(FILTER __SRCS EXCLUDE REGEX "^(esp32|esp8266|atmega*)/.*")
-  #list(TRANSFORM __SRCS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
-
-  set(host_dir ${CMAKE_CURRENT_LIST_DIR}/host)
-  file(GLOB host_files "${host_dir}/*.cc" "${host_dir}/*.cpp" "${host_dir}/*.c")
-  set(__SRCS ${__SRCS} ${host_files})
-  # message("###############host_files: ${host_files}") message("host_sources: ${__SRCS}")
 
   list(TRANSFORM __INCLUDE_DIRS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/" OUTPUT_VARIABLE INC_PATHS)
   list(TRANSFORM _PRIV_INCLUDE_DIRS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/" OUTPUT_VARIABLE PRIV_INC_PATHS)
@@ -175,3 +176,34 @@ function(component_compile_options)
   endif()
 endfunction()
 
+
+
+
+macro(doxy_create_input)
+#message("all_libs_inc_Dirs: ${COMPONENT_LIBS_INC_DIRS}")
+file(WRITE "${CMAKE_BINARY_DIR}/all_libs_dirs.txt" ${COMPONENT_LIBS_DIRS})
+
+set(doxy_input_file "${CMAKE_BINARY_DIR}/doxy_input_file.txt")
+file(WRITE ${doxy_input_file} "")
+foreach(src ${COMPONENT_LIBS_SRCS})
+  file(APPEND ${doxy_input_file} "INPUT += ${src}\n")
+endforeach()
+
+foreach(dir ${COMPONENT_LIBS_INC_DIRS})
+  foreach(suffix .h .hh .hpp)
+    file(GLOB_RECURSE hdr_files "${dir}/*${suffix}")
+    foreach(hdr_file ${hdr_files})
+      file(APPEND ${doxy_input_file} "INPUT += ${hdr_file}\n")
+    endforeach()
+  endforeach()
+endforeach()
+
+foreach(dir ${COMPONENT_LIBS_DIRS})
+  foreach(suffix .h .hh .hpp)
+    file(GLOB hdr_files "${dir}/*${suffix}")
+    foreach(hdr_file ${hdr_files})
+      file(APPEND ${doxy_input_file} "INPUT += ${hdr_file}\n")
+    endforeach()
+  endforeach()
+endforeach()
+endmacro()
