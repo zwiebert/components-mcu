@@ -9,7 +9,7 @@
  */
 
 #pragma once
-
+#include "app/config/proj_app_cfg.h"
 #include <stdint.h>
 
 #ifndef USE_ESP_GET_TIME

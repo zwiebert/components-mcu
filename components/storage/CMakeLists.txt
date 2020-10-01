@@ -7,3 +7,7 @@ idf_component_register(
     PRIV_REQUIRES app_config utils_debug txtio
                   spiffs #PRIV_ESP_IDF
  )
+
+component_compile_options(${comp_compile_opts})
+component_compile_features(${comp_compile_feats})
+ 

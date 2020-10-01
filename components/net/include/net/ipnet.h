@@ -15,6 +15,9 @@
 void ipnet_addr_as_string(char *buf, unsigned buf_len);
 
 // interface called by mcu specific code
+
+extern void (*ipnet_CONNECTED_cb)();
+
 void ipnet_connected(void);
 void ipnet_disconnected(void);
 bool ipnet_isConnected(void);

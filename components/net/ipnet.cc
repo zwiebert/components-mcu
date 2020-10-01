@@ -17,13 +17,16 @@ u32 get_ip4addr_local();
 u32 get_ip4addr_gateway();
 u32 get_ip4netmask();
 
+void (*ipnet_CONNECTED_cb)();
+
 
 static bool Is_connected;
 
 void ipnet_connected(void) {
   Is_connected = true;
  //XXX soMsg_INET_PRINT_ADDRESS();
-  main_setup_ip_dependent();
+if(ipnet_CONNECTED_cb)
+  ipnet_CONNECTED_cb();
 }
 
 void ipnet_disconnected(void) {
