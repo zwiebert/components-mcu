@@ -8,7 +8,6 @@
 #include "cli_private.h"
 #include "misc/bcd.h"
 #include "cli/cli.h"
-#include "cli/cli_json.h"
 #include "uout/status_output.h"
 #include "uout/callbacks.h"
 #include "uout/cli_out.h"

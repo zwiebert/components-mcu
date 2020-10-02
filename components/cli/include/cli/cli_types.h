@@ -1,4 +1,10 @@
 #pragma once
+
+/**
+ * \file cli/cli_types.h
+ * \brief cli framework:  vocabulary types
+ */
+
 #include "stdint.h"
 #include "stdbool.h"
 
@@ -21,9 +27,10 @@ struct parm_handlers {
 };
 
 struct cli_buf {
-  char *cli_buf;
-  unsigned size;
-  int cli_buf_idx, quote_count;
+  char *buf;
+  unsigned buf_size;
+  int buf_idx;
+  int quote_count;
 };
 
 struct cli_parm {
@@ -32,17 +39,15 @@ struct cli_parm {
 };
 
 typedef int (*getc_funT)(void);
+
+/// \brief status of get command line
 enum cli_get_commline_retT {
-  CMDL_DONE, CMDL_ERROR, CMDL_INCOMPLETE, CMDL_LINE_BUF_FULL
+  CMDL_DONE, ///< line complete
+  CMDL_ERROR, ///< error occurec
+  CMDL_INCOMPLETE, ///< line is still incomplete
+  CMDL_LINE_BUF_FULL ///< buffer full, call /link cliBuf_enlarge /endlink
 };
+
 typedef int (*process_parm_cb)(clpar parm[], int parm_len, const struct TargetDesc &td);
 
-
-#ifdef __cplusplus
-extern "C++" {
-#endif
-
-#ifdef __cplusplus
-}
-#endif
 
