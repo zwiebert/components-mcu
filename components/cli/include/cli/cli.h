@@ -106,7 +106,7 @@ int asc2bool(const char *val);
 
 /**
  * \brief worker function of cli framework. Call it if input is available.
- *  If the provided get-character for /link cli_get_commandline /endlink function does block, then it should be called from a loop inside a dedicated task
+ *  If the provided get-character for \link cli_get_commandline \endlink function does block, then it should be called from a loop inside a dedicated task
  */
 void cli_loop(void);
 

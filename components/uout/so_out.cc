@@ -11,7 +11,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "cli_out.h"
 
 #define D(x)
 
