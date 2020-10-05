@@ -1,3 +1,8 @@
+/**
+ * \file           misc/time/periodic.h
+ * \brief          provide time since MCU startup
+ */
+
 #ifdef __cplusplus
   extern "C" {
 #endif
@@ -26,7 +31,11 @@ uint32_t run_time_s();
 #define run_time_ts() (esp_timer_get_time() / 100000)
 #endif
 
+
+/// \brief get s/10 since MCU startup
 #define get_now_time_ts() run_time_ts()
+
+/// \brief get seconds since MCU startup
 #define get_now_time_s() run_time_s()
 
 #ifdef __cplusplus

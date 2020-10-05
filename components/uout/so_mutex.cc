@@ -4,5 +4,5 @@
 #ifdef USE_MUTEX
 RecMutex so_mutex;
 #else
-DummyMutex so_mutex;
+MutexDummy so_mutex;
 #endif

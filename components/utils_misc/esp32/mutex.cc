@@ -6,23 +6,23 @@
 #include "assert.h"
 #include <stdlib.h>
 
-RecursiveMutex::RecursiveMutex() {
+MutexRecursive::MutexRecursive() {
   mHandle = xSemaphoreCreateRecursiveMutex();
   assert(mHandle);
 }
 #include <esp_log.h>
-void RecursiveMutex::lock() {
+void MutexRecursive::lock() {
   //ESP_LOGI("trace", "lock()");
   if (xSemaphoreTakeRecursive(mHandle, portMAX_DELAY))
     return;
   abort();
 }
 
-bool RecursiveMutex::try_lock() {
+bool MutexRecursive::try_lock() {
   return !!xSemaphoreTakeRecursive(mHandle, 0);
 }
 
-void RecursiveMutex::unlock() {
+void MutexRecursive::unlock() {
   //ESP_LOGI("trace", "unlock()");
   xSemaphoreGiveRecursive(mHandle);
 }

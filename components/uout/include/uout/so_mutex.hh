@@ -6,7 +6,7 @@
 #ifdef USE_MUTEX
 extern RecMutex so_mutex;
 #else
-extern DummyMutex so_mutex;
+extern MutexDummy so_mutex;
 #endif
 
 

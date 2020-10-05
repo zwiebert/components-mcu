@@ -1,9 +1,9 @@
 #include <app/config/proj_app_cfg.h>
 #pragma once
 
-class RecursiveMutex {
+class MutexRecursive {
 public:
-  RecursiveMutex();
+  MutexRecursive();
   void lock();
   bool try_lock();
   void unlock();
@@ -12,7 +12,7 @@ private:
   void *mHandle;
 };
 
-class DummyMutex {
+class MutexDummy {
 public:
   inline void lock() {
   }
@@ -26,9 +26,9 @@ public:
 #include <mutex>
 
 #ifdef USE_MUTEX
-using RecMutex = RecursiveMutex;
+using RecMutex = MutexRecursive;
 #else
-using RecMutex = DummyMutex;
+using RecMutex = MutexDummy;
 #endif
 
 using LockGuard = std::lock_guard<RecMutex>;
