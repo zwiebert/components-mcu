@@ -1,3 +1,8 @@
+/**
+ * \file misc/int_macros.h
+ * \brief Basic helper macros for integers
+ */
+
 #ifdef __cplusplus
   extern "C" {
 #endif

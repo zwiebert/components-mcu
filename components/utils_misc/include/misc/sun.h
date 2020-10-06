@@ -1,3 +1,8 @@
+/**
+ * \file   misc/sun.h
+ * \brief  sun related calculations
+ */
+
 #ifdef __cplusplus
   extern "C" {
 #endif
@@ -11,13 +16,13 @@
 
 /**
  * \brief               calculate dusk and dawn time
- * \param sunrise       pointer to out parameter to store result for sunrise/dawn or NULL
- * \param sunset        pointer to out parameter to store result for sunset/dusk or NULL
- * \param timezone      timezone in hours
- * \param day_of_year   number of day (1..366)
- * \param longitude_deg longitude in degree
- * \param latitude_deg  latitude in degree
- * \param horizon       location of the sun in RAD, relative to the horizon at the time we want to calculate
+ * \param[out] sunrise       pointer to out parameter to store result for sunrise/dawn or NULL
+ * \param[out] sunset        pointer to out parameter to store result for sunset/dusk or NULL
+ * \param[in] timezone      timezone in hours
+ * \param[in] day_of_year   number of day (1..366)
+ * \param[in] longitude_deg longitude in degree
+ * \param[in] latitude_deg  latitude in degree
+ * \param[in] horizon       location of the sun in RAD, relative to the horizon at the time we want to calculate
  *
  */
 void sun_calculateDuskDawn(double *sunrise, double *sunset, double timezone, double day_of_year, double longitude_deg, double latitude_deg, double horizon);
