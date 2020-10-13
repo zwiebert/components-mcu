@@ -158,3 +158,5 @@ private:
   void *myReq = nullptr;
   writeReq_fnT myWriteReqFn = nullptr;
 };
+
+//#include "so_target_desc_inline.hh"

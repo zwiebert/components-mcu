@@ -12,13 +12,13 @@
 #include <stdlib.h>
 
 bool cliBuf_enlarge(struct cli_buf *buf) {
-  unsigned new_size = buf->size ? buf->size + 32 : 64;
-  void *p = realloc(buf->cli_buf, new_size);
+  unsigned new_size = buf->buf_size ? buf->buf_size + 32 : 64;
+  void *p = realloc(buf->buf, new_size);
   if (!p)
     return false;
 
-  buf->cli_buf = static_cast<char *>(p);
-  buf->size = new_size;
+  buf->buf = static_cast<char *>(p);
+  buf->buf_size = new_size;
   return true;
 }
 
@@ -26,13 +26,13 @@ bool cliBuf_enlarge(struct cli_buf *buf) {
 char* get_commandline() {
   static struct cli_buf buf;
 
-  if (!buf.cli_buf)
+  if (!buf.buf)
     if (!cliBuf_enlarge(&buf))
       return 0;
   for (;;) {
     switch (cli_get_commandline(&buf, io_getc_fun)) {
     case CMDL_DONE:
-      return buf.cli_buf;
+      return buf.buf;
       break;
 
     case CMDL_INCOMPLETE:

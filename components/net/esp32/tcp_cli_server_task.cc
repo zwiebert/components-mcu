@@ -1,6 +1,5 @@
 #include "app/config/proj_app_cfg.h"
 #include "cli/cli.h"
-#include "cli/cli_json.h"
 #include "cli/mutex.hh"
 #include "esp_event.h"
 #include "esp_log.h"
@@ -204,10 +203,10 @@ void handle_input(int fd, void *args) {
     switch (cli_get_commandline(&buf, tcps_getc)) {
     case CMDL_DONE:
       { LockGuard lock(cli_mutex); 
-        if (buf.cli_buf[0] == '{') {
-          cli_process_json(buf.cli_buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_JSON)});
+        if (buf.buf[0] == '{') {
+          cli_process_json(buf.buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_JSON)});
         } else {
-          cli_process_cmdline(buf.cli_buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_TXT) });
+          cli_process_cmdline(buf.buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_TXT) });
         }
       }
       break;
@@ -316,8 +315,8 @@ void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
     if (xHandle) {
       vTaskDelete(xHandle);
       xHandle = NULL;
-      free(buf.cli_buf);
-      buf.cli_buf = 0;
+      free(buf.buf);
+      buf.buf = 0;
     }
     return;
   }

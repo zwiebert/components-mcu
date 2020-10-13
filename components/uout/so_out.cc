@@ -1,5 +1,6 @@
 #include "app/config/proj_app_cfg.h"
 #include "uout/so_out.h"
+#include <uout/so_target_desc.hh>
 #include <app/config/options.hh>
 #include "txtio/inout.h"
 #include "uout/status_json.hh"
@@ -10,7 +11,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "cli_out.h"
 
 #define D(x)
 

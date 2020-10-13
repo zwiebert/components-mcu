@@ -99,7 +99,7 @@ void stm32Bl_get(void) {
   stm32Bl_sendCommand(STM32_GET);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
   if (n) {
-    D(db_printf("stm32Bl_getId(): %d bytes received\n", n));
+    D(db_printf("stm32Bl_get(): %d bytes received\n", n));
     for (int i=0; i < n; ++i) {
       db_printf("%d: 0x%x\n", i, (unsigned)buf[i]);
     }

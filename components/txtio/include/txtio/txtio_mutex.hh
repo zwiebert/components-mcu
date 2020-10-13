@@ -6,7 +6,7 @@
 #ifdef USE_MUTEX
 extern RecMutex txtio_mutex;
 #else
-extern DummyMutex txtio_mutex;
+extern MutexDummy txtio_mutex;
 #endif
 
 

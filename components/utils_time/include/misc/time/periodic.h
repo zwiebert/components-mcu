@@ -1,20 +1,34 @@
 #ifdef __cplusplus
   extern "C" {
 #endif
-/*
- * periodic.h
+
+/**
+ * \file     misc/time/periodic.h
+ * \brief    functions to poll for periodic intervals
  *
- *  Created on: 24.03.2020
- *      Author: bertw
  */
+
 
 #pragma once
 
 #include "stdbool.h"
 
-// periodic timers return true if time elapsed
-// *state should contain zero at first call
+/**
+ * \brief                returns periodically true after interval
+ * \note                 state is reset when returning true and next interval starts from then
+ * \param interval_ts    interval in s/10
+ * \param state          pointer to a static variable to store state. Should contain 0 at first call
+ * \return               returns true after interval_ts has elapsed
+ */
 bool periodic_ts(unsigned interval_ts, unsigned *state);
+
+/**
+ * \brief                returns periodically true after interval
+ * \note                 state is reset when returning true and next interval starts from then
+ * \param interval       interval in s
+ * \param state          pointer to a static variable to store state. Should contain 0 at first call
+ * \return               returns true after interval_ts has elapsed
+ */
 bool periodic(unsigned interval, unsigned *state);
 
 

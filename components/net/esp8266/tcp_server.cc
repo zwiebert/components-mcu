@@ -348,12 +348,12 @@ void handle_input() {
     switch (cli_get_commandline(&buf, tcpSocket_io_getc)) {
     case CMDL_DONE:
       { LockGuard lock(cli_mutex); 
-        if (buf.cli_buf[0] == '{') {
+        if (buf.buf[0] == '{') {
           td.sj().write_set(tcps_write);
-          cli_process_json(buf.cli_buf, SO_TGT_CLI);
+          cli_process_json(buf.buf, SO_TGT_CLI);
           td.sj().write_set(0);
         } else {
-          cli_process_cmdline(buf.cli_buf, SO_TGT_CLI);
+          cli_process_cmdline(buf.buf, SO_TGT_CLI);
         }
       }
       break;

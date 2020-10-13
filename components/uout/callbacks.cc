@@ -32,7 +32,7 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
 
 static void publish(uoCb_cbT cb, const void *ptr, uo_flagsT flags) {
   std::scoped_lock lock { cli_mutex, txtio_mutex };
-  uoCb_msgT  msg { .cv_ptr = ptr, .flags = flags };
+  uoCb_msgT  msg { .cptr = ptr, .flags = flags };
   cb(msg);
 }
 
@@ -59,9 +59,9 @@ void uoApp_publish_pinChange(const so_arg_pch_t args) {
     if (!it.flags.evt.pin_change)
       continue;
 
-    if (it.flags.fmt.obj) {
+    if (it.flags.fmt.raw) {
       uo_flagsT flags;
-      flags.fmt.obj = true;
+      flags.fmt.raw = true;
       flags.evt.pin_change = true;
 
       publish(it.cb, &args, flags);

@@ -4,5 +4,5 @@
 #ifdef USE_MUTEX
 RecMutex txtio_mutex;
 #else
-DummyMutex txtio_mutex;
+MutexDummy txtio_mutex;
 #endif
