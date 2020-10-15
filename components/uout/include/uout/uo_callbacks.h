@@ -1,12 +1,12 @@
-#pragma once
-
 /**
- * \file uout/callbacks.h
+ * \file uout/uo_callbacks.h
  * \brief pub/sub interface to publish asynchronously to MQTT servers, HTTP-client web-sockets, USB-console, TCP-sockets/consoles
  */
+#pragma once
+
 
 #include <stdint.h>
-#include <uout/status_output.h>
+#include <uout/uo_types.h>
 #include <type_traits>
 
 /**

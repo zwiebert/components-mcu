@@ -6,7 +6,7 @@
  * \author bertw
  */
 
-#include "uout/status_output.h"
+#include "uout/uo_types.h"
 #include "cli_types.h"
 
 

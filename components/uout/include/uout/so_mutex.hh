@@ -1,3 +1,7 @@
+/**
+ * \file uout/so_mutex.hh
+ * \brief Currently(?) unused (XXX!).  Mutex for uout.
+ */
 #pragma once
 
 #include <app/config/proj_app_cfg.h>

@@ -1,3 +1,8 @@
+/**
+ * \file    uout/so_target_bits.h
+ * \brief   flags to select output formats and targets
+ */
+
 #pragma once
 
 // to select target for output messages
@@ -14,3 +19,7 @@ typedef enum {
   SO_TGT_STM32 = (1<<7),
   SO_TGT_ANY = (SO_TGT_CLI|SO_TGT_HTTP|SO_TGT_MQTT|SO_TGT_WS)
 } so_target_bits;
+
+
+#define so_tgt_test(bitmask) (td.tgt() & (bitmask))
+#define cli_isInteractive() (so_tgt_test(SO_TGT_CLI) &&  so_tgt_test(SO_TGT_FLAG_TXT))

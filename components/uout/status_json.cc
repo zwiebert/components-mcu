@@ -7,7 +7,7 @@
 
 #include "uout/status_json.hh"
 
-#include "uout/status_output.h"
+#include "uout/uo_types.h"
 #include "misc/int_macros.h"
 #include "txtio/inout.h"
 #include "debug/dbg.h"

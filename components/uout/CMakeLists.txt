@@ -1,4 +1,6 @@
-set(srcs status_json.cc callbacks.cc cli_out.cc so_mutex.cc so_out.cc so_target_desc.cc)  
+set(srcs status_json.cc callbacks.cc cli_out.cc  so_out.cc so_target_desc.cc
+#so_mutex.cc
+)  
 
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include" 

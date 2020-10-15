@@ -1,5 +1,5 @@
 #include "misc/bcd.h"
-#include "uout/status_output.h"
+#include "uout/uo_types.h"
 #include "txtio/inout.h"
 #include "uout/status_json.hh"
 #include "uout/cli_out.h"

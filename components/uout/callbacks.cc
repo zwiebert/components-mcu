@@ -4,7 +4,7 @@
 #include <mutex>
 
 #define UOUT_PROTECTED
-#include <uout/callbacks.h>
+#include <uout/uo_callbacks.h>
 
 uoCb_cbsT uoCb_cbs[cbs_size];
 

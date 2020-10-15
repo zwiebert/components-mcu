@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <uout/callbacks.h>
+#include <uout/uo_callbacks.h>
 //#include "esp_console.h"
 #include "esp_vfs_dev.h"
 #include "driver/uart.h"

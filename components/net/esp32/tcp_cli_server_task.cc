@@ -18,7 +18,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/select.h>
-#include <uout/callbacks.h>
+#include <uout/uo_callbacks.h>
 
 
 #define TAG "tcps"

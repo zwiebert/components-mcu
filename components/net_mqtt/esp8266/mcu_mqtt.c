@@ -32,7 +32,7 @@
 #include "user_config.local.h"
 #include "user_config.h"
 #include "esp_mqtt/mqtt/include/mqtt.h"
-#include "uout/status_output.h"
+#include "uout/uo_types.h"
 
 #include "ets_sys.h"
 #include "osapi.h"

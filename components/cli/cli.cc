@@ -8,7 +8,7 @@
 #include "cli_private.h"
 #include "misc/bcd.h"
 #include "cli/cli.h"
-#include "uout/status_output.h"
+#include "uout/uo_types.h"
 #include "txtio/inout.h"
 #include "cli/mutex.hh"
 #include "uout/status_json.hh"
