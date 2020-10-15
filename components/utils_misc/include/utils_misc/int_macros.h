@@ -1,5 +1,5 @@
 /**
- * \file misc/int_macros.h
+ * \file utils_misc/int_macros.h
  * \brief Basic helper macros for integers
  */
 

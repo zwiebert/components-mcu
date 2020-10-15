@@ -5,10 +5,10 @@
  *      Author: bertw
  */
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
-#include "net/http/server/http_server.h"
-#include "misc/int_types.h"
+#include "net_http_server/http_server.h"
+#include "utils_misc/int_types.h"
 
 extern "C++" void main_setup_ip_dependent(void);
 u32 ip4_address, ip4_gateway_address, ip4_netmask;

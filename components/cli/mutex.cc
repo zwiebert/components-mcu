@@ -1,5 +1,5 @@
 #include <cli/mutex.h>
-#include <misc/mutex.hh>
+#include <utils_misc/mutex.hh>
 
 RecMutex cli_mutex;
 

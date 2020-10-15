@@ -1,7 +1,7 @@
-#include "app/config/proj_app_cfg.h"
-#include "net/http/server/http_server.h"
+#include "app_config/proj_app_cfg.h"
+#include "net_http_server/http_server.h"
 #include "uout/status_json.hh"
-#include "net/http/server/esp32/register_uris.h"
+#include "net_http_server/esp32/register_uris.h"
 #include "debug/dbg.h"
 #include <esp_wifi.h>
 #include <esp_event.h>
@@ -10,7 +10,7 @@
 #include <sys/param.h>
 #include <mbedtls/base64.h>
 #include <esp_http_server.h>
-#include <misc/cstring_utils.hh>
+#include <utils_misc/cstring_utils.hh>
 
 static const char *TAG="APP";
 

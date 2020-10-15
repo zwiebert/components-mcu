@@ -22,7 +22,7 @@
 #include "txtio/inout.h"
 
 #include "net/tcp_cli_server.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 
 #define TCP_HARD_TIMEOUT  (60 * 10)  // terminate connections to avoid dead connections piling up
 #define SERIAL_ECHO 1

@@ -8,16 +8,16 @@
 #include "uout/status_json.hh"
 
 #include "uout/uo_types.h"
-#include "misc/int_macros.h"
+#include "utils_misc/int_macros.h"
 #include "txtio/inout.h"
 #include "debug/dbg.h"
 
 #include <string.h>
 #include <stdlib.h>
 #include "userio_app_cfg.h"
-#include "misc/int_types.h"
-#include "misc/ftoa.h"
-#include "misc/itoa.h"
+#include "utils_misc/int_types.h"
+#include "utils_misc/ftoa.h"
+#include "utils_misc/itoa.h"
 
 #define D(x)
 

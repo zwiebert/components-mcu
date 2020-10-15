@@ -6,7 +6,7 @@
  */
 
 #include "cli_private.h"
-#include "misc/bcd.h"
+#include "utils_misc/bcd.h"
 #include "cli/cli.h"
 #include "uout/uo_types.h"
 #include "txtio/inout.h"
@@ -14,7 +14,7 @@
 #include "uout/status_json.hh"
 #include "uout/cli_out.h"
 #include "debug/dbg.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 #include <string.h>
 
 u16 cli_msgid;

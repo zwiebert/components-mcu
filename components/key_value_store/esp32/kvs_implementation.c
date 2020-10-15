@@ -7,9 +7,9 @@
 
 
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 #include "key_value_store/kvs_wrapper.h"
 
 #include "freertos/FreeRTOS.h"

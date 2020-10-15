@@ -1,5 +1,5 @@
 #pragma once
-#include <app/config/proj_app_cfg.h>
+#include <app_config/proj_app_cfg.h>
 
 #include "cli/cli.h"
 

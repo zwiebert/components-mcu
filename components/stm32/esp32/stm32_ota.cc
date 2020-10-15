@@ -8,12 +8,12 @@
 #include "stm32/stm32_ota.h"
 #include "stm32/stm32.h"
 #include "stm32/stm32_bl.h"
-#include "misc/int_macros.h"
+#include "utils_misc/int_macros.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "net/http_client.h"
 #include "debug/dbg.h"
-#include <misc/cstring_utils.hh>
+#include <utils_misc/cstring_utils.hh>
 
 #define STM32_WAIT_AFTER_BOOT_MS 2000
 

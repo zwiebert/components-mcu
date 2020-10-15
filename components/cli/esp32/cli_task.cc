@@ -1,4 +1,4 @@
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "freertos/FreeRTOS.h"
 #include "esp_system.h"
 #include "esp_event.h"
@@ -13,7 +13,7 @@
 
 #include "cli/cli.h"
 #include "txtio/inout.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 
 static TaskHandle_t xHandle = NULL;
 #define STACK_SIZE  3000

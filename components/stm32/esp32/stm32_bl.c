@@ -19,12 +19,12 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_spiffs.h"
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 
 
 #include "stm32/stm32.h"
 #include "stm32/stm32_bl.h"
-#include "misc/int_macros.h"
+#include "utils_misc/int_macros.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "debug/dbg.h"

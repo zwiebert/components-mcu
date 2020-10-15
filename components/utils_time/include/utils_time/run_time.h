@@ -1,5 +1,5 @@
 /**
- * \file           misc/time/periodic.h
+ * \file           misc_time/periodic.h
  * \brief          provide time since MCU startup
  */
 
@@ -14,7 +14,7 @@
  */
 
 #pragma once
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include <stdint.h>
 
 #ifndef USE_ESP_GET_TIME

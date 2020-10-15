@@ -15,7 +15,7 @@
    CONDITIONS OF ANY KIND, either express or implied.
 */
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 
 #include <string.h>
 #include <stdlib.h>

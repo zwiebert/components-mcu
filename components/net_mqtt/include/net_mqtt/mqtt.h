@@ -1,5 +1,5 @@
 /**
- * \file     net/mqtt/mqtt.h
+ * \file     net_mqtt/mqtt.h
  * \brief    C wrapper around MQTT-client library
  * \note     There is mqtt.hh for a C++ interface
  */
@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "stdbool.h"
 #include <stdint.h>
 
@@ -44,7 +44,7 @@ extern void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len); ///< \br
 extern void (*io_mqtt_unsubscribed_cb)(const char *topic, int topic_len); ///< \brief event callback: TOPIC has been unsubscribed
 extern void (*io_mqtt_published_cb)(int msg_id); ///< \brief message with MSG_ID has been published
 
-/*
+/**
  * \brief             event callback: Message has been received
  * \param topic       non null terminated string containing the topic of the message
  * \param topic_len   topic string length

@@ -10,7 +10,7 @@
 #include "net/wifistation.h"
 #include "txtio/inout.h"
 #include "net/ipnet.h"
-#include "app/rtc.h"
+#include "app_misc/rtc.h"
 
 
 #define printf io_printf

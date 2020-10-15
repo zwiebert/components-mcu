@@ -13,13 +13,13 @@
 #include <gpio.h>
 #include <mem.h>
 
-#include "app/settings/config.h"
-#include "app/rtc.h"
-#include "app/settings/config.h"
+#include "app_settings/config.h"
+#include "app_misc/rtc.h"
+#include "app_settings/config.h"
 #include <sntp.h>
 #include "net/ntp.h"
 #include "txtio/inout.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 
 static time_t last_ntp_time;
 bool ntp_initialized;

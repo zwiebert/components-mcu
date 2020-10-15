@@ -1,6 +1,6 @@
-#include "app/config/proj_app_cfg.h"
-#include "net/mqtt/mqtt.h"
-#include "net/mqtt/mqtt_imp.h"
+#include "app_config/proj_app_cfg.h"
+#include "net_mqtt/mqtt.h"
+#include "net_mqtt/mqtt_imp.h"
 #include "cli/cli.h"
 #include "txtio/inout.h"
 
@@ -17,7 +17,7 @@
 #include "lwip/sockets.h"
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
-#include <net/mqtt/mqtt.hh>
+#include <net_mqtt/mqtt.hh>
 
 #include <stddef.h>
 #include <string.h>

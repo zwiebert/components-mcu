@@ -1,4 +1,4 @@
-#include <app/config/proj_app_cfg.h>
+#include <app_config/proj_app_cfg.h>
 #pragma once
 
 class MutexRecursive {

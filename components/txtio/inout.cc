@@ -6,8 +6,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "misc/int_macros.h"
-#include "misc/itoa.h"
+#include "utils_misc/int_macros.h"
+#include "utils_misc/itoa.h"
 #include "txtio/txtio_mutex.hh"
 
 

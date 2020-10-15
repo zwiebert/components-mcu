@@ -5,12 +5,12 @@
  *      Author: bertw
  */
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #ifndef NO_SPIFFS
 
 
 
-#include "app/settings/config.h"
+#include "app_settings/config.h"
 #include "storage/storage.h"
 #include "debug/dbg.h"
 #include "txtio/inout.h"

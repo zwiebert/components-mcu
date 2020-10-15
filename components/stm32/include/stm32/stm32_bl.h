@@ -10,7 +10,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 
 
 #define   STM32_INIT 0x7F

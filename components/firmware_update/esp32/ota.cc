@@ -1,4 +1,4 @@
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #ifdef USE_OTA
 #include "firmware_update/ota.h"
 #include "freertos/FreeRTOS.h"
@@ -14,8 +14,8 @@
 #include "esp_https_ota.h"
 
 #include <txtio/inout.h>
-#include "misc/int_types.h"
-#include "misc/cstring_utils.hh"
+#include "utils_misc/int_types.h"
+#include "utils_misc/cstring_utils.hh"
 
 static const char *TAG = "esp32_ota";
 

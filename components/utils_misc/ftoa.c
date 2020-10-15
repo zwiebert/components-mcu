@@ -1,5 +1,5 @@
-#include "misc/itoa.h"
-#include "misc/int_types.h"
+#include "utils_misc/itoa.h"
+#include "utils_misc/int_types.h"
 #include <string.h>
 
 char* ftoa(float f, char *buf, int n) {

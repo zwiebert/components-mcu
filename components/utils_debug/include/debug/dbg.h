@@ -3,7 +3,7 @@
 #endif
 #pragma once
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "txtio/inout.h"
 
 extern int unit_testing;

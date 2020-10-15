@@ -4,13 +4,13 @@
  *  Created on: 21.04.2020
  *      Author: bertw
  */
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 #include "config_kvs.h"
 
-#include "misc/int_macros.h"
+#include "utils_misc/int_macros.h"
 #include "key_value_store/kvs_wrapper.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 
 
 #if defined USE_TCPS_TASK || defined USE_TCPS
@@ -116,7 +116,7 @@ const char* config_read_wifi_passwd(char *d, unsigned d_size) {
 #endif
 
 #ifdef USE_MQTT
-#include "net/mqtt/mqtt.h"
+#include "net_mqtt/mqtt.h"
 struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
@@ -153,7 +153,7 @@ bool config_read_mqtt_enable() {
 #endif
 
 #ifdef USE_HTTP
-#include "net/http/server/http_server.h"
+#include "net_http_server/http_server.h"
 struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {

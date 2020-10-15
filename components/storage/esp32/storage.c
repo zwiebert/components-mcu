@@ -1,4 +1,4 @@
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "storage/storage.h"
 #include "debug/dbg.h"
 

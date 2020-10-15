@@ -1,5 +1,5 @@
 /**
- * \file   misc/sun.h
+ * \file   utils_misc/sun.h
  * \brief  sun related calculations
  */
 

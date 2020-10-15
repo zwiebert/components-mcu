@@ -6,11 +6,11 @@
  */
 
 #ifndef TEST_HOST
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #endif
 #include "key_value_store/kvs_wrapper.h"
-#include "misc/int_types.h"
-#include "misc/int_macros.h"
+#include "utils_misc/int_types.h"
+#include "utils_misc/int_macros.h"
 #include "debug/dbg.h"
 
 #ifdef HOST_TESTING

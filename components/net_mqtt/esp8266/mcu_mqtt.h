@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "net/mqtt/mqtt.h"
+#include "net_mqtt/mqtt.h"
 
 extern struct cfg_mqtt *io_mqtt_config;
 extern char *io_mqtt_host;

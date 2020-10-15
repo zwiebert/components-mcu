@@ -7,11 +7,11 @@
 #include <espconn.h>
 #include <mem.h>
 
-#include "app/settings/config.h"
+#include "app_settings/config.h"
 #include "time.h"
 
 #include "txtio/inout.h"
-#include "app/rtc.h"
+#include "app_misc/rtc.h"
 
 #define printf con_printf_fun
 #ifndef DISTRIBUTION

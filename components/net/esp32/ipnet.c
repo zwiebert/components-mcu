@@ -1,7 +1,7 @@
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 #include "esp_netif_ip_addr.h"
 
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;

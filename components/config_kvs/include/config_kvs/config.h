@@ -9,9 +9,9 @@
  */
 
 #pragma once
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "config_kvs/config_defaults.h"
-#include <misc/int_types.h>
+#include <utils_misc/int_types.h>
 #include "stdbool.h"
 
 

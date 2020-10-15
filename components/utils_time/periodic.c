@@ -1,7 +1,7 @@
-#include "app/config/proj_app_cfg.h"
-#include "misc/time/periodic.h"
-#include "misc/int_types.h"
-#include "misc/time/run_time.h"
+#include "app_config/proj_app_cfg.h"
+#include "utils_time/periodic.h"
+#include "utils_misc/int_types.h"
+#include "utils_time/run_time.h"
 
 
 bool periodic_ts(unsigned interval_ts, unsigned *state) {

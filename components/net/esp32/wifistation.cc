@@ -1,4 +1,4 @@
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #ifdef USE_WLAN
 #include "net/wifistation.h"
 #include "freertos/FreeRTOS.h"
@@ -17,7 +17,7 @@
 
 #include "net/ipnet.h"
 #include "txtio/inout.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 
 #define printf con_printf_fun
 #ifndef DISTRIBUTION

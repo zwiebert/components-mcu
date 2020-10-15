@@ -4,7 +4,7 @@
  *  Created on: 27.02.2020
  *      Author: bertw
  */
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include "txtio/inout.h"
 #include <esp_system.h>
 #include <esp32/rom/ets_sys.h>

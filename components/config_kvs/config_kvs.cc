@@ -5,16 +5,16 @@
  *      Author: bertw
  */
 
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 
 #include "config_kvs/config.h"
 #include "config_kvs.h"
 #include "config_kvs/config_defaults.h"
 
-#include "misc/int_macros.h"
+#include "utils_misc/int_macros.h"
 #include "key_value_store/kvs_wrapper.h"
-#include "misc/int_types.h"
-#include "misc/stof.h"
+#include "utils_misc/int_types.h"
+#include "utils_misc/stof.h"
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>

@@ -3,7 +3,7 @@
 #endif
 
 /**
- * \file     misc/time/periodic.h
+ * \file     misc_time/periodic.h
  * \brief    functions to poll for periodic intervals
  *
  */

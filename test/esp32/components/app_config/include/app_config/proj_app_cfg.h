@@ -38,7 +38,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "esp32/rom/ets_sys.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 #include "txtio/inout.h"
 
 #define MCU_TYPE "esp32"

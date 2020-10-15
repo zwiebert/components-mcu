@@ -1,4 +1,4 @@
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -17,7 +17,7 @@
 #include "debug/dbg.h"
 #include "net/ipnet.h"
 #include "net/ethernet.h"
-#include "misc/int_types.h"
+#include "utils_misc/int_types.h"
 
 esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
 

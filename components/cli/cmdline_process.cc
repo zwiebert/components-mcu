@@ -6,12 +6,12 @@
  */
 
 #include "cli_private.h"
-#include "misc/bcd.h"
+#include "utils_misc/bcd.h"
 #include "cli/cli.h"
 #include "uout/uo_types.h"
 #include "uout/uo_callbacks.h"
 #include "uout/cli_out.h"
-#include "net/http/server/http_server.h"
+#include "net_http_server/http_server.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
 #include "uout/status_json.hh"

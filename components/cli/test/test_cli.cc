@@ -8,10 +8,10 @@
 #include "unity.h"
 
 #if 0
-#include "app/config/proj_app_cfg.h"
+#include "app_config/proj_app_cfg.h"
 #include <string.h>
-#include "app/settings/config.h"
-#include "misc/bcd.h"
+#include "app_settings/config.h"
+#include "utils_misc/bcd.h"
 #include "../cli_private.h"
 #include "cli/cli.h"
 #include "uout/status_json.hh"

@@ -1,5 +1,5 @@
 #include <stm32/stm32.h>
-#include <misc/mutex.hh>
+#include <utils_misc/mutex.hh>
 
 RecMutex stm32_mutex;
 

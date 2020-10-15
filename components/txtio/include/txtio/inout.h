@@ -5,7 +5,7 @@
 
 #include "stdbool.h"
 #include "stdint.h"
-#include <misc/int_types.h>
+#include <utils_misc/int_types.h>
 
 struct cfg_txtio {
   enum verbosity verbose;
