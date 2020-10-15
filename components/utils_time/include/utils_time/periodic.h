@@ -1,13 +1,13 @@
-#ifdef __cplusplus
-  extern "C" {
-#endif
-
 /**
- * \file     misc_time/periodic.h
+ * \file     utils_time/periodic.h
  * \brief    functions to poll for periodic intervals
  *
  */
 
+
+#ifdef __cplusplus
+  extern "C" {
+#endif
 
 #pragma once
 

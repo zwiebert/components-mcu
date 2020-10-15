@@ -1,17 +1,11 @@
 /**
- * \file           misc_time/periodic.h
- * \brief          provide time since MCU startup
+ * \file   utils_time/run_time.h
+ * \brief  provide time since MCU startup
  */
 
 #ifdef __cplusplus
   extern "C" {
 #endif
-/*
- * run_time.h
- *
- *  Created on: 27.03.2020
- *      Author: bertw
- */
 
 #pragma once
 #include "app_config/proj_app_cfg.h"
