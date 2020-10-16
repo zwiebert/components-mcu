@@ -170,8 +170,6 @@ private:
   }
 private:
   int myFd = STDOUT_FILENO;
-  void *myReq = nullptr;
-  writeReq_fnT myWriteReqFn = nullptr;
 };
 
 

@@ -148,7 +148,7 @@ void cli_process_cmdline(char *line, const struct TargetDesc &td, process_parm_c
       td.so().root_close();
 #ifdef USE_WS
       if (so_tgt_test(SO_TGT_WS)) {
-        uoApp_publish_wsJson(td.sj().get_json());
+        uoCb_publish_wsJson(td.sj().get_json());
       }
 #endif
     }

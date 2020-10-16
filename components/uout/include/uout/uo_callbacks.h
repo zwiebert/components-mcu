@@ -19,12 +19,14 @@ typedef struct uo_flagsT {
     /// \brief event types a subscriber wants to be notified about. One callback may handle more than one event.
     struct {
       bool pin_change :1;
-      bool pct_change :1;
-      bool async_http_resp :1;
-      bool timer_change :1;
       bool ip_address_change :1;
+      bool async_http_resp :1;
+
+      bool pct_change :1;
+      bool timer_change :1;
       bool rf_msg_received :1;
       bool valve_change :1;
+
       bool uo_evt_flag_7 :1;
       bool uo_evt_flag_8 :1;
       bool uo_evt_flag_9 :1;
@@ -91,10 +93,10 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb);
 // publishing
 
 /// \brief publish json to tgt.websocket subscribers
-void uoApp_publish_wsJson(const char *json);
+void uoCb_publish_wsJson(const char *json);
 
 /// \brief publish input pin level to evt.pin_change subscribers
-void uoApp_publish_pinChange(const so_arg_pch_t args);
+void uoCb_publish_pinChange(const so_arg_pch_t args);
 
 /// \brief publish ip address to evt.ip_addr_change subscribers
 void uoCb_publish_ipAddress(const char *ip_addr);

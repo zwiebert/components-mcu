@@ -36,7 +36,7 @@ static void publish(uoCb_cbT cb, const void *ptr, uo_flagsT flags) {
   cb(msg);
 }
 
-void uoApp_publish_wsJson(const char *json) {
+void uoCb_publish_wsJson(const char *json) {
   for (auto const &it : uoCb_cbs) {
     if (!it.cb)
       continue;
@@ -52,7 +52,7 @@ void uoApp_publish_wsJson(const char *json) {
   }
 }
 
-void uoApp_publish_pinChange(const so_arg_pch_t args) {
+void uoCb_publish_pinChange(const so_arg_pch_t args) {
   for (auto const &it : uoCb_cbs) {
     if (!it.cb)
       continue;
