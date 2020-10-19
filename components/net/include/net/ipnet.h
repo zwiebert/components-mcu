@@ -1,3 +1,7 @@
+/**
+ * \file   net/ipnet.h
+ * \brief  Getting some info about our IP connection (XXX)
+ */
 #ifdef __cplusplus
   extern "C" {
 #endif
@@ -18,16 +22,36 @@ void ipnet_addr_as_string(char *buf, unsigned buf_len);
 
 extern void (*ipnet_CONNECTED_cb)();
 
+/**
+ * \brief Event: Got connected to IP
+ * \note  Needs to be called from main-thread!
+ */
 void ipnet_connected(void);
+
+/**
+ * \brief Event: Got disconnected from IP
+ * \note  Needs to be called from main-thread!
+ */
 void ipnet_disconnected(void);
-bool ipnet_isConnected(void);
 
-uint32_t get_ip4addr_local();
-uint32_t get_ip4addr_gateway();
-uint32_t get_ip4netmask();
 
-typedef void (*ipnet_cb)(void);
+bool ipnet_isConnected(void); ///< Test if connection to IP exists
+uint32_t get_ip4addr_local(); ///< Get local IP4 address
+uint32_t get_ip4addr_gateway(); ///< Get gateway IP4 address
+uint32_t get_ip4netmask(); ///< Get IP4 net-mask
+
+
+typedef void (*ipnet_cb)(void); ///< Callback function pointer type
+
+/**
+ * \brief    Register callback to get notified about getting a new IP address (XXX)
+ * \param cb Callback function pointer
+ */
 void ipnet_cbRegister_gotIpAddr(ipnet_cb cb);
+/**
+ * \brief Register callback to get notified about losing IP address (XXX)
+ * \param cb Callback function pointer
+ */
 void ipnet_cbRegister_lostIpAddr(ipnet_cb cb);
 
 

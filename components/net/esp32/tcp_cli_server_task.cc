@@ -14,7 +14,7 @@
 #include "lwip/netdb.h"
 #include "lwip/sockets.h"
 #include "utils_misc/int_types.h"
-#include "net_http_server/http_server.h"
+#include "net_http_server/http_server_setup.h"
 
 #include "time.h"
 #include "txtio/inout.h"

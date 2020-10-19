@@ -7,7 +7,7 @@
 
 #include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
-#include "net_http_server/http_server.h"
+#include "net_http_server/http_server_setup.h"
 #include "utils_misc/int_types.h"
 
 extern "C++" void main_setup_ip_dependent(void);

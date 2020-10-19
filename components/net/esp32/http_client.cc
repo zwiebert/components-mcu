@@ -119,7 +119,3 @@ bool httpClient_downloadFile(const char *srcUrl, const char *dstFile)
     return result;
 }
 
-void httpClient_setup()
-{
-
-}

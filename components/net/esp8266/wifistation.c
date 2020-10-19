@@ -7,7 +7,7 @@
 #include <espconn.h>
 #include <mem.h>
 #include "time.h"
-#include "net/wifistation.h"
+#include "net/wifi_station_setup.h"
 #include "txtio/inout.h"
 #include "net/ipnet.h"
 #include "app_misc/rtc.h"

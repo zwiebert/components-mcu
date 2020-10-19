@@ -8,7 +8,7 @@
 
 #include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
-#include "net_http_server/http_server.h"
+#include "net_http_server/http_server_setup.h"
 #include "net/tcp_cli_server.h"
 
 #include <string.h>

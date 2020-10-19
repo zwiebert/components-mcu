@@ -16,7 +16,7 @@
 #include "driver/periph_ctrl.h"
 #include "debug/dbg.h"
 #include "net/ipnet.h"
-#include "net/ethernet.h"
+#include "net/ethernet_setup.h"
 #include "utils_misc/int_types.h"
 
 esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
@@ -127,7 +127,7 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
       ipnet_gotIpAddr_cb();
 }
 
-void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
+static void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
 
   switch(lan_phy) {
   case lanPhyRTL8201:

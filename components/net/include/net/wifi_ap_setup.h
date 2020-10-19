@@ -1,6 +1,6 @@
 /**
  * \file   net/wifi_ap_setup.h
- * \brief  Configure WLAN access-point
+ * \brief  Create WLAN access-point
  */
 
 

@@ -69,7 +69,7 @@ enum verbosity config_read_verbose() {
 #endif
 
 #ifdef USE_LAN
-#include "net/ethernet.h"
+#include "net/ethernet_setup.h"
 struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
@@ -93,7 +93,7 @@ int8_t config_read_lan_pwr_gpio() {
 #endif
 
 #ifdef USE_NTP
-#include "net/ntp.h"
+#include "net/ntp_client_setup.h"
 struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
@@ -113,7 +113,7 @@ const char* config_read_ntp_server(char *d, unsigned d_size) {
 #endif
 
 #ifdef USE_WLAN
-#include "net/wifistation.h"
+#include "net/wifi_station_setup.h"
 struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
@@ -174,7 +174,7 @@ bool config_read_mqtt_enable() {
 #endif
 
 #ifdef USE_HTTP
-#include "net_http_server/http_server.h"
+#include "net_http_server/http_server_setup.h"
 struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {

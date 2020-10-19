@@ -11,7 +11,7 @@
 #include "uout/uo_types.h"
 #include "uout/uo_callbacks.h"
 #include "uout/cli_out.h"
-#include "net_http_server/http_server.h"
+#include "net_http_server/http_server_setup.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
 #include "uout/status_json.hh"

@@ -1,7 +1,9 @@
+
 #include "app_config/proj_app_cfg.h"
-#include "net_http_server/http_server.h"
+#include "../http_server_impl.h"
+#include "net_http_server/http_server_setup.h"
 #include "uout/status_json.hh"
-#include "net_http_server/esp32/register_uris.h"
+#include "net_http_server/esp32/http_server_esp32.h"
 #include "debug/dbg.h"
 #include <esp_wifi.h>
 #include <esp_event.h>
