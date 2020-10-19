@@ -1,3 +1,6 @@
+#include "net/tcp_cli_server_setup.hh"
+#include "net/tcp_cli_server.h"
+
 #include "app_config/proj_app_cfg.h"
 #include "cli/cli.h"
 #include "cli/mutex.hh"
@@ -12,7 +15,7 @@
 #include "lwip/sockets.h"
 #include "utils_misc/int_types.h"
 #include "net_http_server/http_server.h"
-#include "net/tcp_cli_server.h"
+
 #include "time.h"
 #include "txtio/inout.h"
 #include <errno.h>
@@ -292,9 +295,11 @@ static void pctChange_cb(const uoCb_msgT msg) {
   }
 }
 
+static uo_flagsT UserFlags;
+
 /// output callbacks
 static void callback_subscribe() {
-  uo_flagsT flags;
+  uo_flagsT flags = UserFlags;
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;
   flags.evt.rf_msg_received = true;
@@ -310,6 +315,9 @@ static TaskHandle_t xHandle = NULL;
 #define STACK_SIZE  3000
 void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
   static uint8_t ucParameterToPass;
+
+  if (cfg_tcps)
+    UserFlags = cfg_tcps->flags;
 
   if (!cfg_tcps || !cfg_tcps->enable) {
     if (xHandle) {

@@ -3,7 +3,9 @@
 #endif
 #pragma once
 
-void txtio_mcu_setup(void);
+struct cfg_txtio;
+
+void txtio_mcu_setup(struct cfg_txtio *cfg_txtio);
 
 #ifdef __cplusplus
   }

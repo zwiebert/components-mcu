@@ -7,15 +7,8 @@
 #include "stdint.h"
 #include <utils_misc/int_types.h>
 
-struct cfg_txtio {
-  enum verbosity verbose;
-  int baud;
-};
-extern struct cfg_txtio *txtio_config;
-#define TXTIO_IS_VERBOSE(lvl) (txtio_config->verbose >= (lvl))
-
-void txtio_setup(struct cfg_txtio *cfg_txtio);
-
+extern enum verbosity txtio_verbose;
+#define TXTIO_IS_VERBOSE(lvl) (txtio_verbose >= (lvl))
 
 extern int (*io_putc_fun)(char c);
 extern int (*io_getc_fun)(void);

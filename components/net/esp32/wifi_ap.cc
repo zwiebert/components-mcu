@@ -4,6 +4,7 @@
  *  Created on: 20.07.2019
  *      Author: bertw
  */
+#include <net/wifi_ap_setup.h>
 
 #include "app_config/proj_app_cfg.h"
 #include "net/ipnet.h"
@@ -52,8 +53,9 @@ void wifiAp_setup(const char *ap_ssid, const char *ap_passwd)
     wifi_config_t wifi_config = {
         .ap = {
             .ssid_len = strlen(ap_ssid),
+            .authmode = WIFI_AUTH_WPA_WPA2_PSK,
             .max_connection = EXAMPLE_MAX_STA_CONN,
-            .authmode = WIFI_AUTH_WPA_WPA2_PSK
+
         },
     };
     STRLCPY ((char *)wifi_config.ap.ssid, ap_ssid, sizeof wifi_config.ap.ssid);

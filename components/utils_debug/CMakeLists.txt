@@ -1,4 +1,4 @@
-set(srcs dbg.c)
+set(srcs dbg.cc)
 
 idf_component_register(
     SRCS ${srcs} 

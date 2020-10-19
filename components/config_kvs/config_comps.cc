@@ -7,16 +7,28 @@
 #include "app_config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 #include "config_kvs.h"
+#include <txtio/txtio_setup.hh>
 
 #include "utils_misc/int_macros.h"
 #include "key_value_store/kvs_wrapper.h"
 #include "utils_misc/int_types.h"
+#include <app_uout/callbacks.h>
+#include "net/tcp_cli_server_setup.hh"
 
 
 #if defined USE_TCPS_TASK || defined USE_TCPS
 #include "net/tcp_cli_server.h"
 void config_setup_cliTcpServer() {
-  struct cfg_tcps c { .enable = true };
+  uo_flagsT flags;
+  flags.evt.pin_change = true;
+  flags.evt.pct_change = true;
+  flags.evt.rf_msg_received = true;
+  flags.evt.uo_evt_flag_CUAS = true;
+  flags.evt.uo_evt_flag_PRAS = true;
+  flags.fmt.json = true;
+  flags.fmt.txt = true;
+
+  struct cfg_tcps c { .flags = flags, .enable = true };
 #ifdef USE_TCPS
  tcpCli_setup(&c);
 #elif defined USE_TCPS_TASK
@@ -38,7 +50,16 @@ struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   return c;
 }
 void config_setup_txtio() {
-  struct cfg_txtio c { .baud = MY_MCU_UART_BAUD_RATE };
+  uo_flagsT flags;
+  flags.evt.pin_change = true;
+  flags.evt.pct_change = true;
+  flags.evt.rf_msg_received = true;
+  flags.evt.uo_evt_flag_CUAS = true;
+  flags.evt.uo_evt_flag_PRAS = true;
+  flags.fmt.json = true;
+  flags.fmt.txt = true;
+
+  struct cfg_txtio c { .flags = flags, .baud = MY_MCU_UART_BAUD_RATE };
   config_read_txtio(&c);
   txtio_setup(&c);
 }

@@ -1,22 +1,23 @@
+/**
+ * \file net/tcp_cli_server.h
+ * \brief TCP server for interactive and non-interactive CLI clients
+ * \author bertw
+ */
+
 #ifdef __cplusplus
   extern "C" {
 #endif
-/*
- * tcp_cli_server.h
- *
- *  Created on: 27.02.2020
- *      Author: bertw
- */
 
 #pragma once
 #include "stdbool.h"
 
-struct cfg_tcps { bool enable; };
 
+/**
+ * \brief  Do work
+ * \note   Not implemented if the server runs as a separate task
+ */
 void tcpCli_loop(void);
-void tcpCli_setup(const struct cfg_tcps *cfg_tcps);
 
-void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps);
 
 #ifdef __cplusplus
   }

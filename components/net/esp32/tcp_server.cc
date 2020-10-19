@@ -1,3 +1,5 @@
+#include "net/tcp_cli_server_setup.hh"
+
 #include "freertos/FreeRTOS.h"
 #include "esp_wifi.h"
 #include "esp_system.h"

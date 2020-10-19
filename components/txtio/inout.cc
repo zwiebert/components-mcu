@@ -1,4 +1,6 @@
+
 #include "txtio/inout.h"
+#include "txtio/txtio_setup.hh"
 #include "txtio_app_cfg.h"
 #include "txtio_imp.h"
 #include <stdio.h>
@@ -10,6 +12,8 @@
 #include "utils_misc/itoa.h"
 #include "txtio/txtio_mutex.hh"
 
+
+enum verbosity txtio_verbose;
 
 struct cfg_txtio *txtio_config;
 
@@ -273,8 +277,8 @@ print_array_8_inv(const u8 *src, int len) {
 
 
 void txtio_setup(struct cfg_txtio *cfg_txtio) {
-  static struct cfg_txtio cfg;
-  cfg = *cfg_txtio;
-  txtio_config = &cfg;
-  txtio_mcu_setup();
+  if (cfg_txtio) {
+    txtio_verbose = cfg_txtio->verbose;
+  }
+  txtio_mcu_setup(cfg_txtio);
 }

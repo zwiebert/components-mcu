@@ -1,6 +1,3 @@
-#ifdef __cplusplus
-  extern "C" {
-#endif
 /*
  * int_types.h
  *
@@ -36,7 +33,3 @@ enum verbosity {
   vrbNone, vrb1, vrb2, vrb3, vrb4, vrbDebug
 };
 
-
-#ifdef __cplusplus
-  }
-#endif
