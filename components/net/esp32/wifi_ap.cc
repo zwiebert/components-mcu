@@ -32,11 +32,11 @@ static void wifi_event_handler(void* arg, esp_event_base_t event_base,
 {
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
-        ESP_LOGI(TAG, "station "MACSTR" join, AID=%d",
+        ESP_LOGI(TAG, "station " MACSTR " join, AID=%d",
                  MAC2STR(event->mac), event->aid);
     } else if (event_id == WIFI_EVENT_AP_STADISCONNECTED) {
         wifi_event_ap_stadisconnected_t* event = (wifi_event_ap_stadisconnected_t*) event_data;
-        ESP_LOGI(TAG, "station "MACSTR" leave, AID=%d",
+        ESP_LOGI(TAG, "station " MACSTR " leave, AID=%d",
                  MAC2STR(event->mac), event->aid);
     }
 }
@@ -52,7 +52,7 @@ void wifiAp_setup(const char *ap_ssid, const char *ap_passwd)
 
     wifi_config_t wifi_config = {
         .ap = {
-            .ssid_len = strlen(ap_ssid),
+            .ssid_len = static_cast<u8>(strlen(ap_ssid)),
             .authmode = WIFI_AUTH_WPA_WPA2_PSK,
             .max_connection = EXAMPLE_MAX_STA_CONN,
 

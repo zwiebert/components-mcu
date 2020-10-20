@@ -143,9 +143,6 @@ static void callback_subscribe(uo_flagsT flags) {
   flags.fmt.txt = true;
   uoCb_subscribe(pctChange_cb, flags);
 }
-static void callback_unsubscribe() {
-  uoCb_unsubscribe(pctChange_cb);
-}
 
 
 extern "C++" void txtio_mcu_setup();
