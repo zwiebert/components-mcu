@@ -46,7 +46,7 @@ static int es_io_putc(char c) {
 }
 
 
-static void initialize_console(void)
+static void initialize_console(struct cfg_txtio *cfg_txtio)
 {
   static bool once;
   if (once)
@@ -69,7 +69,7 @@ static void initialize_console(void)
      * correct while APB frequency is changing in light sleep mode.
      */
     const uart_config_t uart_config = {
-            .baud_rate = txtio_config->baud,
+            .baud_rate = cfg_txtio->baud,
             .data_bits = UART_DATA_8_BITS,
             .parity = UART_PARITY_DISABLE,
             .stop_bits = UART_STOP_BITS_1,
@@ -149,13 +149,13 @@ extern "C++" void txtio_mcu_setup();
 
 void txtio_mcu_setup(struct cfg_txtio *cfg_txtio) {
 #ifdef USE_CLI_TASK
-  initialize_console();
+  initialize_console(cfg_txtio);
 #endif
   io_putc_fun = es_io_putc;
   io_getc_fun = es_io_getc;
   con_printf_fun = ets_printf;
 
-  esp_log_level_set("*", static_cast<esp_log_level_t>(txtio_config->verbose));
+  esp_log_level_set("*", static_cast<esp_log_level_t>(cfg_txtio->verbose));
 #if 0
   if (TXTIO_IS_VERBOSE(6)) {
     esp_log_level_set("*", ESP_LOG_INFO);

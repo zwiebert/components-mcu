@@ -15,10 +15,6 @@
 
 enum verbosity txtio_verbose;
 
-struct cfg_txtio *txtio_config;
-
-
-
 int (*io_putc_fun)(char c);
 int (*io_getc_fun)(void);
 int (*con_printf_fun)(const char *fmt, ...);
