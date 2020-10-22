@@ -6,6 +6,7 @@ option(HOST_TEST_CATCH2 "enable Catch2 test framework" OFF)
 add_compile_definitions(HOST TEST_HOST TEST HOST_TESTING UNITY_SUPPORT_TEST_CASES)
 set(TEST_HOST true)
 set(UNIT_TESTING true)
+set(PLATFORM_HOST true)
 
 include(CTest)
 
