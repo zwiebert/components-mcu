@@ -91,7 +91,7 @@ struct uoCb_msgT {
 };
 
 typedef void (*uoCb_cbT)(const uoCb_msgT msg);
-constexpr int cbs_size = 6;
+constexpr int cbs_size = 8;
 struct uoCb_cbsT {
   uoCb_cbT cb;
   uo_flagsT flags;
@@ -106,7 +106,19 @@ struct uoCb_Idxs {
   uint8_t arr[cbs_size];
 };
 
+/**
+ * \brief       Filter all call-backs
+ * \param flags Exactly one format bit must be set here. A callback will match if any in flags_evt or flags_tgt matches with callback flags.
+ * \return      The matching call-backs as an array of indexes to \linke uoCb_cbs \endlink.
+ */
 uoCb_Idxs uoCb_filter(uo_flagsT flags);
+
+/**
+ * \brief       Filter all call-backs
+ * \param flags Exactly one format bit must be set here. A callback will match if any in flags_evt or flags_tgt matches with callback flags.
+ * \param idxs  The set of call-backs to match from.
+ * \return      The matching call-backs as an array of indexes to \linke uoCb_cbs \endlink.
+ */
 uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs);
 
 /**
@@ -119,6 +131,10 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb);
 
 
 // publishing
+
+/// \brief publish any data
+/// \note  Use this to implement your own publish functions
+void uoCb_publish(uoCb_cbT cb, const void *ptr, uo_flagsT flags);
 
 /// \brief publish json to tgt.websocket subscribers
 void uoCb_publish_wsJson(const char *json);
