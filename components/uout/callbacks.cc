@@ -7,13 +7,44 @@
 #include <uout/uo_callbacks.h>
 
 uoCb_cbsT uoCb_cbs[cbs_size];
+uoCb_Idxs uoCb_cbs_idxs;
+
+uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs) {
+  uoCb_Idxs result { };
+
+  for (auto &it : uoCb_cbs) {
+    if (it.cb) {
+      continue;
+    }
+    if (0 == (it.flags.evt_flags & flags.evt_flags) && 0 == (it.flags.tgt_flags & flags.tgt_flags))
+      continue;
+    if (0 == (it.flags.fmt_flags & flags.fmt_flags))
+      continue;
+
+    result.arr[result.size++] = &it - &uoCb_cbs[0];
+  }
+  return result;
+}
+
+uoCb_Idxs uoCb_filter(uo_flagsT flags) {
+  return uoCb_filter(flags, uoCb_cbs_idxs);
+}
+
+static void uoCb_update_idxs() {
+  uoCb_cbs_idxs.size = 0;
+  for (auto &it : uoCb_cbs) {
+    uoCb_cbs_idxs.arr[uoCb_cbs_idxs.size++] = &it - &uoCb_cbs[0];
+  }
+}
 
 bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags) {
   for (auto &it : uoCb_cbs) {
-    if (it.cb)
+    if (it.cb) {
       continue;
+    }
     it.cb = msg_cb;
     it.flags = flags;
+    uoCb_update_idxs();
     return true;
   }
   return false;
@@ -25,6 +56,7 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
       continue;
     it.cb = nullptr;
     it.flags.evt_flags = it.flags.fmt_flags = it.flags.tgt_flags = 0;
+    uoCb_update_idxs();
     return true;
   }
   return false;

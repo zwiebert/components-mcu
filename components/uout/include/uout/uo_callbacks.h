@@ -9,6 +9,8 @@
 #include <uout/uo_types.h>
 #include <type_traits>
 
+
+
 /**
  * \brief  flags to address subscribers  by event, data format and target
  */
@@ -22,20 +24,31 @@ typedef struct uo_flagsT {
       bool ip_address_change :1;
       bool async_http_resp :1;
 
-      bool pct_change :1;
-      bool timer_change :1;
+      bool pct_change :1; ///< XXX: application-specific flag
+      bool timer_change :1; ///< XXX: application-specific flag
       bool rf_msg_received :1;
-      bool valve_change :1;
+      bool valve_change :1; ///< XXX: application-specific flag
 
-      bool uo_evt_flag_7 :1;
-      bool uo_evt_flag_8 :1;
+      /**
+       *  \brief any application state change which would interest user clients
+       *   (makes sense with JSON or TXT format)
+       *  \note Favor this bit when possible. This way the publishing function can be implemented
+       *        directly in the reporting component instead of an "app_uout" subcomponent.
+       */
+      bool gen_app_state_change :1;
+
+      /**
+       * \brief Any application error message which should be forwarded to user clients.
+       */
+      bool gen_app_error_message :1;
+
       bool uo_evt_flag_9 :1;
       bool uo_evt_flag_A :1;
       bool uo_evt_flag_B :1;
       bool uo_evt_flag_C :1;
       bool uo_evt_flag_D :1;
       bool uo_evt_flag_E :1;
-      bool uo_evt_flag_F :1;
+      bool uo_evt_flag_F :1;  ///< application specific flags in sub-components  are starting from here (highest to lowest)
     } evt;
     uint16_t evt_flags = 0;
   };
@@ -77,9 +90,24 @@ struct uoCb_msgT {
   uo_flagsT flags;
 };
 
-// subscribing
-
 typedef void (*uoCb_cbT)(const uoCb_msgT msg);
+constexpr int cbs_size = 6;
+struct uoCb_cbsT {
+  uoCb_cbT cb;
+  uo_flagsT flags;
+};
+extern uoCb_cbsT uoCb_cbs[cbs_size];
+
+/**
+ * \brief  Result type for filtering callbacks
+ */
+struct uoCb_Idxs {
+  uint8_t size;
+  uint8_t arr[cbs_size];
+};
+
+uoCb_Idxs uoCb_filter(uo_flagsT flags);
+uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs);
 
 /**
  * \brief register a callback to subscribe for published messages
@@ -119,14 +147,6 @@ inline const char *uoCb_txtFromMsg(const uoCb_msgT msg) {
 
 #if 1//def UOUT_PROTECTED
 
-constexpr int cbs_size = 6;
-
-struct uoCb_cbsT {
-  uoCb_cbT cb;
-  uo_flagsT flags;
-};
-
-extern uoCb_cbsT uoCb_cbs[cbs_size];
 
 
 #endif
