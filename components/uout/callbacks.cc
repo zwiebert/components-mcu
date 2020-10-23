@@ -1,8 +1,7 @@
 #include <utils_misc/int_macros.h>
-#include <cli/mutex.hh>
-#include <txtio/txtio_mutex.hh>
-#include <mutex>
 #include <uout/uo_callbacks.h>
+
+#include <stdio.h>
 
 uoCb_cbsT uoCb_cbs[cbs_size];
 uoCb_Idxs uoCb_cbs_idxs;
@@ -61,7 +60,6 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
 }
 
 void uoCb_publish(uoCb_cbT cb, const void *ptr, uo_flagsT flags) {
-  std::scoped_lock lock { cli_mutex, txtio_mutex };
   uoCb_msgT  msg { .cptr = ptr, .flags = flags };
   cb(msg);
 }

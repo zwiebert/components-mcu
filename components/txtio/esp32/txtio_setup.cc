@@ -6,19 +6,25 @@
  */
 #include "../txtio_imp.h"
 #include <txtio/txtio_setup.hh>
-#include "app_config/proj_app_cfg.h"
+#include <txtio/txtio_mutex.hh>
 #include "txtio/inout.h"
+
+#include "driver/uart.h"
+
+
+
+#include "app_config/proj_app_cfg.h"
+#include <uout/uo_callbacks.h>
+
+// sys
+//#include "esp_console.h"
+#include "esp_vfs_dev.h"
 #include <esp_system.h>
 #include <esp32/rom/ets_sys.h>
 #include "esp_log.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <uout/uo_callbacks.h>
-//#include "esp_console.h"
-#include "esp_vfs_dev.h"
-#include "driver/uart.h"
-
 
 
 #define UART_RX_RINGBUF_SIZE (1024 * 2)
@@ -118,6 +124,8 @@ static void initialize_console(struct cfg_txtio *cfg_txtio)
 }
 
 static void pctChange_cb(const uoCb_msgT msg) {
+  LockGuard lock(txtio_mutex);
+
   if (auto txt = uoCb_txtFromMsg(msg)) {
 #ifdef USE_CLI_TASK
   uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, txt, strlen(txt));

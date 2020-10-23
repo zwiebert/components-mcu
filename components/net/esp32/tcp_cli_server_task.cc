@@ -61,6 +61,17 @@ static int cconn_count;
 static struct cli_buf buf;
 
 
+
+
+#include <utils_misc/mutex.hh>
+#include <app_config/proj_app_cfg.h>
+
+
+static RecMutex tcpCli_mutex;
+
+
+
+
 static void set_sockfd(int fd) {
   if (fd + 1 > nfds)
     nfds = fd + 1;
@@ -283,6 +294,8 @@ static void tcps_task(void *pvParameters) {
 }
 
 static void pctChange_cb(const uoCb_msgT msg) {
+  LockGuard lock(tcpCli_mutex);
+
   if (auto txt = uoCb_txtFromMsg(msg)) {
     for (; *txt; ++txt)
       tcpst_putc_all(*txt);
