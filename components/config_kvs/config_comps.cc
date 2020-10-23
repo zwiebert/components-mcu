@@ -12,7 +12,6 @@
 #include "utils_misc/int_macros.h"
 #include "key_value_store/kvs_wrapper.h"
 #include "utils_misc/int_types.h"
-#include <app_uout/callbacks.h>
 #include "net/tcp_cli_server_setup.hh"
 
 
@@ -23,8 +22,7 @@ void config_setup_cliTcpServer() {
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;
   flags.evt.rf_msg_received = true;
-  flags.evt.uo_evt_flag_CUAS = true;
-  flags.evt.uo_evt_flag_PRAS = true;
+  flags.evt.gen_app_state_change = true;
   flags.fmt.json = true;
   flags.fmt.txt = true;
 
@@ -54,8 +52,7 @@ void config_setup_txtio() {
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;
   flags.evt.rf_msg_received = true;
-  flags.evt.uo_evt_flag_CUAS = true;
-  flags.evt.uo_evt_flag_PRAS = true;
+  flags.evt.gen_app_state_change = true;
   flags.fmt.json = true;
   flags.fmt.txt = true;
 

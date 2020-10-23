@@ -316,6 +316,8 @@ static void callback_subscribe() {
   flags.evt.pin_change = true;
   flags.evt.pct_change = true;
   flags.evt.rf_msg_received = true;
+  flags.evt.gen_app_state_change = true;
+  flags.evt.gen_app_error_message = true;
   flags.fmt.json = true;
   flags.fmt.txt = true;
   uoCb_subscribe(pctChange_cb, flags);
