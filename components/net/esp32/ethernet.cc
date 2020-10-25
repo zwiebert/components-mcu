@@ -19,7 +19,7 @@
 #include "net/ethernet_setup.h"
 #include "utils_misc/int_types.h"
 
-esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
+extern "C" esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
 
 #ifdef USE_LAN
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
@@ -52,7 +52,7 @@ static esp_err_t phy_pwctl_with_voltage(esp_eth_phy_t *phy, bool enable) {
 
   if (enable) {
     if (ethernet_phy_power_pin >= 0) {
-      gpio_set_level(ethernet_phy_power_pin, 1);
+      gpio_set_level(static_cast<gpio_num_t>(ethernet_phy_power_pin), 1);
       vTaskDelay(pdMS_TO_TICKS(300));
     }
     if (orig_pwrctl) {
@@ -63,7 +63,7 @@ static esp_err_t phy_pwctl_with_voltage(esp_eth_phy_t *phy, bool enable) {
       result = orig_pwrctl(phy, enable);
     }
     if (ethernet_phy_power_pin >= 0)
-      gpio_set_level(ethernet_phy_power_pin, 0);
+      gpio_set_level(static_cast<gpio_num_t>(ethernet_phy_power_pin), 0);
   }
 
   return result;
@@ -164,7 +164,7 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
     // power on phy here
     if (ethernet_phy_power_pin >= 0) {
       gpio_pad_select_gpio(ethernet_phy_power_pin);
-      gpio_set_direction(ethernet_phy_power_pin, GPIO_MODE_OUTPUT);
+      gpio_set_direction(static_cast<gpio_num_t>(ethernet_phy_power_pin), GPIO_MODE_OUTPUT);
     }
 
     // Setup MAC
