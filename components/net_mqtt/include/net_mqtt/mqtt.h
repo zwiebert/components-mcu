@@ -5,7 +5,7 @@
  */
 
 #ifdef __cplusplus
-  extern "C++" {
+extern "C++" {
 #endif
 
 #pragma once
@@ -15,31 +15,21 @@
 #include <stdint.h>
 
 struct cfg_mqtt {
-char url[64];
-char user[16];
-char password[31];
-char client_id[32];
-int8_t enable;
+  char url[64];
+  char user[16];
+  char password[31];
+  char client_id[32];
+  int8_t enable;
 };
-
-#if defined USE_MQTT || defined HOST_TESTING
 
 void io_mqtt_subscribe(const char *topic, int qos);
 void io_mqtt_unsubscribe(const char *topic);
 void io_mqtt_publish(const char *topic, const char *data);
 void io_mqtt_setup(struct cfg_mqtt *cfg_mqt);
 
-#else
-#define io_mqtt_subscribe(topic, qos)
-#define io_mqtt_unsubscribe(topic)
-#define io_mqtt_publish(topic, data)
-#define setup_mqtt(cfg)
-#endif
-
-
 // callbacks (in C++ derive from Net_Mqtt class instead)
-extern void (*io_mqtt_connected_cb) (); ///< \brief event callback: MQTT client connected to server
-extern void (*io_mqtt_disconnected_cb) (); ///< \brief event callback: MQTT client disconnected from server
+extern void (*io_mqtt_connected_cb)(); ///< \brief event callback: MQTT client connected to server
+extern void (*io_mqtt_disconnected_cb)(); ///< \brief event callback: MQTT client disconnected from server
 extern void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len); ///< \brief event callback: TOPIC  has been subscribed
 extern void (*io_mqtt_unsubscribed_cb)(const char *topic, int topic_len); ///< \brief event callback: TOPIC has been unsubscribed
 extern void (*io_mqtt_published_cb)(int msg_id); ///< \brief message with MSG_ID has been published
@@ -58,8 +48,17 @@ bool topic_startsWith(const char *topic, int topic_len, const char *s);
 /// \brief test if TOPIC with TOPIC_LEN ends with string S
 bool topic_endsWith(const char *topic, int topic_len, const char *s);
 
-
+#if !defined USE_MQTT && !defined HOST_TESTING
+inline void io_mqtt_subscribe(const char *topic, int qos) {
+}
+inline void io_mqtt_unsubscribe(const char *topic) {
+}
+inline void io_mqtt_publish(const char *topic, const char *data) {
+}
+inline void io_mqtt_setup(struct cfg_mqtt *cfg_mqt) {
+}
+#endif
 
 #ifdef __cplusplus
-  }
+}
 #endif

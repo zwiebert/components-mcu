@@ -20,6 +20,9 @@ typedef enum {
   SO_TGT_ANY = (SO_TGT_CLI|SO_TGT_HTTP|SO_TGT_MQTT|SO_TGT_WS)
 } so_target_bits;
 
+constexpr so_target_bits operator|(so_target_bits lhs, so_target_bits rhs) {
+  return static_cast<so_target_bits>((unsigned)lhs | (unsigned)rhs);
+}
 
 #define so_tgt_test(bitmask) (td.tgt() & (bitmask))
 #define cli_isInteractive() (so_tgt_test(SO_TGT_CLI) &&  so_tgt_test(SO_TGT_FLAG_TXT))
