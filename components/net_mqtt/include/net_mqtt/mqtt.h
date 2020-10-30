@@ -22,7 +22,7 @@ char client_id[32];
 int8_t enable;
 };
 
-#ifdef USE_MQTT
+#if defined USE_MQTT || defined HOST_TESTING
 
 void io_mqtt_subscribe(const char *topic, int qos);
 void io_mqtt_unsubscribe(const char *topic);
