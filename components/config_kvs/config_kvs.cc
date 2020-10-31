@@ -27,7 +27,7 @@ const char * const configKvs_keys[] = {
   "C_WIFI_SSID", "C_WIFI_PASSWD",
 #endif
  #ifdef USE_MQTT
-  "C_MQTT_URL", "C_MQTT_USER", "C_MQTT_PASSWD", "C_MQTT_CID", "C_MQTT_ENABLE",
+  "C_MQTT_URL", "C_MQTT_USER", "C_MQTT_PASSWD", "C_MQTT_CID", "C_MQTT_ENABLE", "C_MQTT_RTOPIC",
 #endif
 #ifdef USE_HTTP
   "C_HTTP_USER", "C_HTTP_PASSWD", "C_HTTP_ENABLE",
