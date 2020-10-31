@@ -165,6 +165,9 @@ const char* config_read_mqtt_passwd(char *d, unsigned d_size) {
 const char* config_read_mqtt_client_id(char *d, unsigned d_size) {
   return config_read_item_s(CB_MQTT_CLIENT_ID, d, d_size, MY_MQTT_CLIENT_ID);
 }
+const char* config_read_mqtt_root_topic(char *d, unsigned d_size) {
+  return config_read_item_s(CB_MQTT_ROOT_TOPIC, d, d_size, MY_MQTT_ROOT_TOPIC);
+}
 bool config_read_mqtt_enable() {
   return !!config_read_item_i8(CB_MQTT_ENABLE, MY_MQTT_ENABLE);
 }

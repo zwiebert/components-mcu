@@ -21,7 +21,7 @@ enum configItem {
   CB_WIFI_SSID, CB_WIFI_PASSWD,
 #endif
 #ifdef USE_MQTT
-  CB_MQTT_URL, CB_MQTT_USER, CB_MQTT_PASSWD, CB_MQTT_CLIENT_ID, CB_MQTT_ENABLE,
+  CB_MQTT_URL, CB_MQTT_USER, CB_MQTT_PASSWD, CB_MQTT_CLIENT_ID, CB_MQTT_ROOT_TOPIC, CB_MQTT_ENABLE,
 #endif
 #ifdef USE_HTTP
   CB_HTTP_USER, CB_HTTP_PASSWD, CB_HTTP_ENABLE,
@@ -63,6 +63,7 @@ const char* config_read_mqtt_url(char *d, unsigned d_size);
 const char* config_read_mqtt_user(char *d, unsigned d_size);
 const char* config_read_mqtt_passwd(char *d, unsigned d_size);
 const char* config_read_mqtt_client_id(char *d, unsigned d_size);
+const char* config_read_mqtt_root_topic(char *d, unsigned d_size);
 bool config_read_mqtt_enable();
 
 void config_setup_httpServer();

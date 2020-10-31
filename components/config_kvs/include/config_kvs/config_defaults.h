@@ -89,7 +89,15 @@
 #ifdef CONFIG_MY_MQTT_CLIENT_ID
 #define MY_MQTT_CLIENT_ID CONFIG_MY_MQTT_CLIENT_ID
 #else
-#define MY_MQTT_CLIENT_ID "tfmcu"
+#define MY_MQTT_CLIENT_ID "my_mcu"
+#endif
+#endif
+
+#ifndef MY_MQTT_ROOT_TOPIC
+#ifdef CONFIG_MY_MQTT_ROOT_TOPIC
+#define MY_MQTT_ROOT_TOPIC CONFIG_MY_MQTT_ROOT_TOPIC
+#else
+#define MY_MQTT_ROOT_TOPIC "my_mcu"
 #endif
 #endif
 
