@@ -10,12 +10,13 @@
 #include "app_config/proj_app_cfg.h"
 #include "config_kvs/config.h"
 #include <key_value_store/kvs_wrapper.h>
+#include <config_kvs/comp_settings.hh>
 
 #ifndef CFG_NAMESPACE
 #define CFG_NAMESPACE "config"
 #endif
 
-#define cfg_key(cb) config_get_kvs_key(cb)
+
 
 
 

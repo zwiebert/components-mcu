@@ -21,29 +21,6 @@
 
 #define D(x) 
 
-const char * const configKvs_keys[] = {
-  "C_VERBOSE",
-#ifdef USE_WLAN
-  "C_WIFI_SSID", "C_WIFI_PASSWD",
-#endif
- #ifdef USE_MQTT
-  "C_MQTT_URL", "C_MQTT_USER", "C_MQTT_PASSWD", "C_MQTT_CID", "C_MQTT_ENABLE", "C_MQTT_RTOPIC",
-#endif
-#ifdef USE_HTTP
-  "C_HTTP_USER", "C_HTTP_PASSWD", "C_HTTP_ENABLE",
-#endif
-#ifdef USE_NTP
-  "C_NTP_SERVER",
-#endif
-#ifdef USE_LAN
-  "C_LAN_PHY", "C_LAN_PWR_GPIO",
-#endif
-};
-
-
-const char *config_get_kvs_key(uint8_t cb) {
-  return (((int)cb < (int)CB_size) ? configKvs_keys[(cb)] : config_keys[(cb-CB_size)]);
-}
 
 unsigned nvsStr(kvshT handle, const char *key, void *dst, size_t dst_len, bool save) {
   if (save) {
@@ -61,109 +38,118 @@ unsigned nvsBlob(kvshT handle, const char *key, void *dst, size_t dst_len, bool 
     }
 }
 
-bool config_save_item_s(enum configItem item, const char *val) {
+
+///////////////////////////////////////
+
+const char* config_read_item_s(const char *key, char *d, unsigned d_size, const char *def) {
+  kvshT h;
+  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+    if (kvs_rw_str(h, key, d, d_size, false))
+      def = d;
+    kvs_close(h);
+  }
+  return def;
+}
+void* config_read_item_b(const char *key, void *d, unsigned d_size, void *def) {
+  kvshT h;
+  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+    if (kvs_rw_blob(h, key, d, d_size, false))
+      def = d;
+    kvs_close(h);
+  }
+  return def;
+}
+
+uint32_t config_read_item_u32(const char *key, uint32_t def) {
+  kvshT h;
+  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+    def = kvs_get_u32(h, key, def, nullptr);
+    kvs_close(h);
+  }
+  return def;
+}
+
+int8_t config_read_item_i8(const char *key, int8_t def) {
+  kvshT h;
+  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+    def = kvs_get_i8(h, key, def, nullptr);
+    kvs_close(h);
+  }
+  return def;
+}
+float config_read_item_f(const char *key, float def) {
+  kvshT h;
+  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+    kvs_rw_blob(h, key, &def, sizeof def, false);
+    kvs_close(h);
+  }
+  return def;
+}
+
+
+
+//////////////////////////////////////////////////////////
+
+
+bool config_save_item_s(const char *key, const char *val) {
   kvshT h;
   bool result = false;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
-    result = strlen(val) == kvsWs(item, (char*)val);
+    result = strlen(val) == kvs_rw_str(h, key, (char*)val, 0, true);
     kvs_commit(h);
     kvs_close(h);
   }
   return result;
 }
 
-bool config_save_item_b(enum configItem item, const void *val, unsigned size) {
+bool config_save_item_b(const char *key, const void *val, unsigned size) {
   kvshT h;
   bool result = false;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
-    result = size == kvs_rw_blob(h, cfg_key(item), (void*)val, size, true);
+    result = size == kvs_rw_blob(h, key, (void*)val, size, true);
     kvs_commit(h);
     kvs_close(h);
   }
   return result;
 }
 
-bool config_save_item_u32(enum configItem item, const char *val) {
+bool config_save_item_u32(const char *key, const char *val) {
   u32 v = strtoul(val, 0, 10);
-  return config_save_item_n_u32(item, v);
+  return config_save_item_n_u32(key, v);
 }
-bool config_save_item_i8(enum configItem item, const char *val) {
+bool config_save_item_i8(const char *key, const char *val) {
   i8 v = atoi(val);
-  return config_save_item_n_i8(item, v);
+  return config_save_item_n_i8(key, v);
 }
-bool config_save_item_f(enum configItem item, const char *val) {
+bool config_save_item_f(const char *key, const char *val) {
   float v = stof(val);
-  return config_save_item_n_f(item, v);
+  return config_save_item_n_f(key, v);
 }
-bool config_save_item_n_u32(enum configItem item, uint32_t val) {
+bool config_save_item_n_u32(const char *key, uint32_t val) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
-    kvsW(u32, item, val);
+    kvs_set_u32(h,key, val);
     kvs_commit(h);
     kvs_close(h);
   }
   return true;
 }
-bool config_save_item_n_i8(enum configItem item, int8_t val) {
+bool config_save_item_n_i8(const char *key, int8_t val) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
-    kvsW(i8, item, val);
+    kvs_set_i8(h, key, val);
     kvs_commit(h);
     kvs_close(h);
   }
   return true;
 }
-bool config_save_item_n_f(enum configItem item, float val) {
+bool config_save_item_n_f(const char *key, float val) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
-    kvsWb(item, val);
+    kvs_rw_blob(h, key, &val, sizeof val, true);
     kvs_commit(h);
     kvs_close(h);
   }
   return true;
-}
-
-
-const char* config_read_item_s(enum configItem item, char *d, unsigned d_size, const char *def) {
-  kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    if (kvs_rw_str(h, cfg_key(item), d, d_size, false))
-      def = d;
-    kvs_close(h);
-  }
-  return def;
-}
-void* config_read_item_b(enum configItem item, void *d, unsigned d_size, void *def) {
-  kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    if (kvs_rw_blob(h, cfg_key(item), d, d_size, false))
-      def = d;
-    kvs_close(h);
-  }
-  return def;
-}
-uint32_t config_read_item_u32(enum configItem item, uint32_t def) {
-  kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsR(u32, item, def);
-    kvs_close(h);
-  }
-  return def;
-}
-int8_t config_read_item_i8(enum configItem item, int8_t def) {
-  kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsR(i8, item, def);
-    kvs_close(h);
-  }
-  return def;
-}
-float config_read_item_f(enum configItem item, float def) {
-  kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
-    kvsRb(item, def);
-    kvs_close(h);
-  }
-  return def;
 }
 

@@ -1,7 +1,11 @@
-#include "unity.h"
+#include <unity.h>
+#ifdef TEST_HOST
+#include <test_runner.h>
+#endif
 
 #include "app_config/proj_app_cfg.h"
 #include "../include/config_kvs/config.h"
+#include <config_kvs/comp_settings.hh>
 #include "utils_misc/int_types.h"
 #include "utils_misc/itoa.h"
 #include <stdlib.h>
@@ -97,3 +101,20 @@ TEST_CASE("test config save_restore", "[config]")
 }
 #endif
 #endif
+
+
+constexpr CompSettings compSettings;
+
+
+
+
+void tst_compSettings() {
+
+}
+
+
+
+TEST_CASE("CompSettings", "[config]")
+{
+  tst_compSettings();
+}
