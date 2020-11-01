@@ -16,7 +16,7 @@ bool config_save_item_n_u32(const char *key, uint32_t val);
 bool config_save_item_n_i8(const char *key, int8_t val);
 bool config_save_item_n_f(const char *key, float val);
 
-void* config_read_item_b(const char *key, void *d, unsigned d_size, void *def);
+const void* config_read_item_b(const char *key, void *d, unsigned d_size, const void *def);
 const char* config_read_item_s(const char *key, char *d, unsigned d_size, const char *def);
 uint32_t config_read_item_u32(const char *key, uint32_t def);
 int8_t config_read_item_i8(const char *key, int8_t def);

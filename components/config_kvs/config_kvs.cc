@@ -50,7 +50,7 @@ const char* config_read_item_s(const char *key, char *d, unsigned d_size, const 
   }
   return def;
 }
-void* config_read_item_b(const char *key, void *d, unsigned d_size, void *def) {
+const void* config_read_item_b(const char *key, void *d, unsigned d_size, const void *def) {
   kvshT h;
   if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
     if (kvs_rw_blob(h, key, d, d_size, false))

@@ -1,12 +1,16 @@
+/**
+ * \file config_kvs/comp_settings.hh
+ * \brief Settings for shared components
+ */
+
 #pragma once
+#include "settings.hh"
+
+
 #include "app_config/proj_app_cfg.h"
 #include <app_config/options.hh>
 #include "config.h"
 #include <assert.h>
-
-enum KvsType : u8 {
-  CBT_none, CBT_i8, CBT_u8, CBT_i16, CBT_u16, CBT_i32, CBT_u32, CBT_i64, CBT_u64, CBT_str, CBT_f, CBT_blob, CBT_end
-};
 
 enum configItem {
   CB_VERBOSE,
@@ -29,15 +33,7 @@ enum configItem {
   CB_size
 };
 
-class CompSettings {
-
-private:
-  constexpr void initField(const configItem ci, const char *const kvsKey, const otok optKey, const KvsType kvsType) {
-    const unsigned idx = ci;
-    cs_optKeys[idx] = optKey;
-    cs_kvsKeys[idx] = kvsKey;
-    cs_kvsTypes[idx] = kvsType;
-  }
+class CompSettings : public Settings<configItem, CB_size> {
 
 public:
   constexpr CompSettings() {
@@ -68,65 +64,22 @@ public:
     // initField(, "", otok::k_);
 #endif
   }
-
-public:
-
-  constexpr const char* get_kvsKey(configItem idx) const {
-    return cs_kvsKeys[idx];
-  }
-  constexpr KvsType get_kvsType(configItem idx) const {
-    return cs_kvsTypes[idx];
-  }
-
-  constexpr otok get_optKey(configItem idx) const {
-    return cs_optKeys[idx];
-  }
-  constexpr const char* get_optKeyStr(configItem idx) const {
-    return otok_strings[static_cast<otokBaseT>(cs_optKeys[idx])];
-  }
-
-  struct Item {
-    const char *kvsKey;
-    otok optKey;
-  };
-
-public:
-  const char *cs_kvsKeys[CB_size] { };
-  otok cs_optKeys[CB_size] { };
-  KvsType cs_kvsTypes[CB_size] { };
 };
 
 constexpr CompSettings comp_settings;
 
-template<typename Kvs_Type>
-Kvs_Type config_read_item(configItem item, Kvs_Type def) {
-  switch (comp_settings.get_kvsType(item)) {
-  case CBT_u32:
-    return config_read_item_i8(comp_settings.get_kvsKey(item), (u32) def);
-  case CBT_i8:
-    return config_read_item_i8(comp_settings.get_kvsKey(item), (i8) def);
-  case CBT_f:
-    return config_read_item_f(comp_settings.get_kvsKey(item), (float) def);
-  default:
-    assert(!"unhandled type");
-  }
-  return def;
-}
-
-template<typename Kvs_Type>
-const Kvs_Type* config_read_item(configItem item, Kvs_Type *d, size_t d_size, const Kvs_Type *def) {
-  switch (comp_settings.get_kvsType(item)) {
-  case CBT_str:
-    return config_read_item_s(comp_settings.get_kvsKey(item), d, d_size, (const char*) def);
-  default:
-    assert(!"unhandled type");
-  }
-  return def;
-}
-
-inline const char* cfg_key(configItem item) {
+constexpr const char* settings_get_kvsKey(configItem item) {
   return comp_settings.get_kvsKey(item);
 }
-inline const char* cfg_optStr(configItem item) {
+constexpr KvsType settings_get_kvsType(configItem item) {
+  return comp_settings.get_kvsType(item);
+}
+constexpr otok settings_get_optKey(configItem item) {
+  return comp_settings.get_optKey(item);
+}
+constexpr const char* settings_get_optKeyStr(configItem item) {
   return comp_settings.get_optKeyStr(item);
 }
+
+
+
