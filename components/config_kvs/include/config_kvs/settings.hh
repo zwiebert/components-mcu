@@ -5,6 +5,7 @@
 #pragma once
 #include "app_config/proj_app_cfg.h"
 #include <app_config/options.hh>
+#include <uout/so_target_desc.hh>
 #include "config.h"
 #include <assert.h>
 
@@ -20,34 +21,50 @@ enum KvsType : u8 {
  */
 template<typename CfgItem, size_t Size, size_t Offset = 0>
 class Settings {
+public:
+  using soCfgFunT = void (*)(const TargetDesc &td);
 
 public:
-  constexpr const char* get_kvsKey(CfgItem idx) const {
+  constexpr const char* get_kvsKey(const CfgItem idx) const {
     return m_kvsKeys[idx - Offset];
   }
-  constexpr KvsType get_kvsType(CfgItem idx) const {
+  constexpr KvsType get_kvsType(const CfgItem idx) const {
     return m_kvsTypes[idx - Offset];
   }
 
-  constexpr otok get_optKey(CfgItem idx) const {
+  constexpr otok get_optKey(const CfgItem idx) const {
     return m_optKeys[idx - Offset];
   }
-  constexpr const char* get_optKeyStr(CfgItem idx) const {
+  constexpr const char* get_optKeyStr(const CfgItem idx) const {
     return otok_strings[static_cast<otokBaseT>(m_optKeys[idx - Offset])];
   }
 
+  constexpr soCfgFunT get_soCfgFun(const CfgItem idx) const {
+    return m_soCfgFuns[idx - Offset];
+  }
+
+  constexpr soCfgFunT get_soCfgFun(const otok optKey) const {
+    for (int i=0; i < Size; ++i) {
+      if (optKey == m_optKeys[i])
+      return m_soCfgFuns[i];
+    }
+    return nullptr;
+
+  }
+
 protected:
-  constexpr void initField(const CfgItem ai, const char *const kvsKey, const otok optKey, const KvsType kvsType) {
+  constexpr void initField(const CfgItem ai, const char *const kvsKey, const otok optKey, const KvsType kvsType, soCfgFunT soCfgFun = 0) {
     unsigned idx = ai - Offset;
     m_optKeys[idx] = optKey;
     m_kvsKeys[idx] = kvsKey;
     m_kvsTypes[idx] = kvsType;
+    m_soCfgFuns[idx] = soCfgFun;
   }
 protected:
   const char *m_kvsKeys[Size] { };
+  soCfgFunT m_soCfgFuns[Size] { };
   otok m_optKeys[Size] { };
   KvsType m_kvsTypes[Size] { };
-
 };
 
 
