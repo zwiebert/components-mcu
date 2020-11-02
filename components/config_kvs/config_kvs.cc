@@ -113,8 +113,8 @@ bool config_save_item_b(const char *key, const void *val, unsigned size) {
   return result;
 }
 
-bool config_save_item_u32(const char *key, const char *val) {
-  u32 v = strtoul(val, 0, 10);
+bool config_save_item_u32(const char *key, const char *val, unsigned base) {
+  u32 v = strtoul(val, 0, base);
   return config_save_item_n_u32(key, v);
 }
 bool config_save_item_i8(const char *key, const char *val) {

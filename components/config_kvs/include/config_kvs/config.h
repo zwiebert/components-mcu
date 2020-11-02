@@ -9,7 +9,7 @@
 
 bool config_save_item_s(const char *key, const char *val);
 bool config_save_item_b(const char *key, const void *val, unsigned size);
-bool config_save_item_u32(const char *key, const char *val);
+bool config_save_item_u32(const char *key, const char *val, unsigned base = 10);
 bool config_save_item_i8(const char *key, const char *val);
 bool config_save_item_f(const char *key, const char *val);
 bool config_save_item_n_u32(const char *key, uint32_t val);
