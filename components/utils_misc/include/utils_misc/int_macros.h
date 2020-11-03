@@ -3,9 +3,6 @@
  * \brief Basic helper macros for integers
  */
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
 #pragma once
 
 #ifndef MIN
@@ -39,6 +36,10 @@
 
 #define BIT(nr)  (1UL << (nr))
 
-#ifdef __cplusplus
-  }
-#endif
+#define GET_BIT64(var,pos) ((var) & (1ULL<<(pos)))
+#define SET_BIT64(var,pos) ((var) |= (1ULL << (pos)))
+#define CLR_BIT64(var,pos) ((var) &= ~((1ULL) << (pos)))
+#define PUT_BIT64(var,pos, val) ((val) ? SET_BIT64(var,pos) : CLR_BIT64(var,pos))
+#define BIT64(nr)  (1ULL << (nr))
+
+
