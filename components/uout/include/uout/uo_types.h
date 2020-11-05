@@ -17,6 +17,7 @@
 typedef struct {
   uint8_t gpio_num; ///< GPIO number of the pin
   bool level; ///< Current pin level
+  int8_t level_int;
 } so_arg_pch_t;
 
 

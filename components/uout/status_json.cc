@@ -198,7 +198,7 @@ bool StatusJsonT::add_value_d(int val) {
   return true;
 }
 
-bool StatusJsonT::add_key_value_pair_f(const char *key, float val) {
+bool StatusJsonT::add_key_value_pair_f(const char *key, float val, int prec) {
   D(db_printf("%s(%s, %f)\n", __func__, key, val));
   precond(myBuf_idx > 0);;
   precond(key); unused_write_out_buf();
@@ -206,7 +206,7 @@ bool StatusJsonT::add_key_value_pair_f(const char *key, float val) {
     return false;
 
   char buf[20];
-  ftoa(val, buf, 5);
+  ftoa(val, buf, prec);
   myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":", buf, ",");
   D(ets_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);

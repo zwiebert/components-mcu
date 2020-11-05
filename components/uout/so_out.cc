@@ -103,10 +103,10 @@ void SoOut::print(const char *key, unsigned val, int base) const {
 
 void SoOut::print(const char *key, float val, int n) const {
   char buf[20];
-  ftoa(val, buf, 5);
+  ftoa(val, buf, n);
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json())
-    myTd.sj().add_key_value_pair_f(key, val);
+    myTd.sj().add_key_value_pair_f(key, val, n);
 }
 

@@ -29,7 +29,7 @@ public:
 
   bool add_key_value_pair_s(const char *key, const char *val); ///< \brief  Add key value pair "KEY":"VAL"
   bool add_key_value_pair_d(const char *key, int val); ///< \brief  Add key value pair "KEY":VAL
-  bool add_key_value_pair_f(const char *key, float val); ///< \brief  Add key value pair "KEY":VAL
+  bool add_key_value_pair_f(const char *key, float val, int prec = 5); ///< \brief  Add key value pair "KEY":VAL
 
   bool add_array(const char *key);  ///< \brief  add array  "KEY":[
   void close_array(); ///< \brief close array with ],
