@@ -42,7 +42,11 @@ typedef struct uo_flagsT {
        */
       bool gen_app_error_message :1;
 
-      bool uo_evt_flag_9 :1;
+      /**
+       * \brief Any log message.
+       */
+      bool gen_app_log_message :1;
+
       bool uo_evt_flag_A :1;
       bool uo_evt_flag_B :1;
       bool uo_evt_flag_C :1;
@@ -143,6 +147,16 @@ void uoCb_publish_pinChange(const so_arg_pch_t args);
 
 /// \brief publish ip address to evt.ip_addr_change subscribers
 void uoCb_publish_ipAddress(const char *ip_addr);
+
+struct LogMessage {
+  const char *tag;
+  const char *txt;
+  enum WarnLevel : uint8_t { wl_Info, wl_Warn, wl_Fail, wl_Bug };
+  WarnLevel warn_level;
+};
+/// \brief publish log message
+void uoCb_publish_logMessage(const LogMessage msg);
+
 
 // accessing message
 inline const char *uoCb_jsonFromMsg(const uoCb_msgT msg) {

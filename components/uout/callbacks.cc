@@ -6,7 +6,6 @@
 static uoCb_cbsT uoCb_cbs[cbs_size]; ///< store call-back pointers
 static uoCb_Idxs uoCb_cbs_idxs; ///< keep indexes of all currently registered call-backs
 
-
 /////////////////// Filter /////////////////////////////////////
 
 // public
@@ -29,7 +28,6 @@ uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs) {
 uoCb_Idxs uoCb_filter(uo_flagsT flags) {
   return uoCb_filter(flags, uoCb_cbs_idxs);
 }
-
 
 /////////////////////// Subscriptions /////////////////////////////
 
@@ -68,7 +66,6 @@ bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
   }
   return false;
 }
-
 
 ///////////// Publishing /////////////////////////////
 
@@ -115,9 +112,8 @@ void uoCb_publish_pinChange(const so_arg_pch_t args) {
   flags.fmt.json = true;
   if (auto idxs = uoCb_filter(flags); idxs.size) {
     char buf[64];
-    snprintf(buf, sizeof buf, "{\"mcu\":{\"gpio%d\":%d}}", args.gpio_num, args.level);
-
-    uoCb_publish(idxs, buf, flags);
+    if (sizeof buf >= snprintf(buf, sizeof buf, "{\"mcu\":{\"gpio%d\":%d}}", args.gpio_num, args.level))
+      uoCb_publish(idxs, buf, flags);
   }
 }
 
@@ -128,18 +124,40 @@ void uoCb_publish_ipAddress(const char *ip_addr) {
   flags.fmt.json = true;
   if (auto idxs = uoCb_filter(flags); idxs.size) {
     char buf[64];
-    snprintf(buf, sizeof buf, "{\"mcu\":{\"ipaddr\":\"%s\"}}", ip_addr);
-
-    uoCb_publish(idxs, buf, flags);
+    if (sizeof buf >= snprintf(buf, sizeof buf, "{\"mcu\":{\"ipaddr\":\"%s\"}}", ip_addr))
+      uoCb_publish(idxs, buf, flags);
   }
 
   flags.fmt.json = false;
   flags.fmt.txt = true;
   if (auto idxs = uoCb_filter(flags); idxs.size) {
     char buf[64];
-    snprintf(buf, sizeof buf, "tf: ipaddr: %s;\n", ip_addr);
-
-    uoCb_publish(idxs, buf, flags);
+    if (sizeof buf >= snprintf(buf, sizeof buf, "tf: ipaddr: %s;\n", ip_addr))
+      uoCb_publish(idxs, buf, flags);
   }
 }
 
+void uoCb_publish_logMessage(const LogMessage msg) {
+  uo_flagsT flags;
+  flags.evt.gen_app_log_message = true;
+  if ((int) msg.warn_level > (int) LogMessage::wl_Info)
+    flags.evt.gen_app_error_message = true;
+
+  flags.fmt.json = true;
+  if (auto idxs = uoCb_filter(flags); idxs.size) {
+    char buf[128];
+    if (int n = snprintf(buf, sizeof buf, "{\"log\":{\"wl\":%d, \"tag\":\"%s\", \"txt\":\"%s\"}}", (int) msg.warn_level, msg.tag, msg.txt); sizeof buf >= n) {
+      // XXX: quote special characters in msg.txt!
+      uoCb_publish(idxs, buf, flags);
+    }
+  }
+
+  flags.fmt.json = false;
+  flags.fmt.txt = true;
+  if (auto idxs = uoCb_filter(flags); idxs.size) {
+    char buf[128];
+    if (sizeof buf >= snprintf(buf, sizeof buf, "tf: log:%d:  %s: %s\n", (int) msg.warn_level, msg.tag, msg.txt)) {
+      uoCb_publish(idxs, buf, flags);
+    }
+  }
+}

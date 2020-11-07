@@ -149,6 +149,7 @@ static void callback_subscribe(uo_flagsT flags) {
   flags.evt.ip_address_change = true;
   flags.evt.gen_app_state_change = true;
   flags.evt.gen_app_error_message = true;
+  flags.evt.gen_app_log_message = true;
   flags.fmt.json = true;
   flags.fmt.txt = true;
   uoCb_subscribe(pctChange_cb, flags);
