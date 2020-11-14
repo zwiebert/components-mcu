@@ -19,6 +19,7 @@
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
 #include <net_mqtt/mqtt.hh>
+#include <mbedtls/error.h>
 
 #include <stddef.h>
 #include <string.h>
@@ -97,6 +98,16 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
     if (auto eh = event->error_handle) {
       if (eh->error_type == MQTT_ERROR_TYPE_ESP_TLS) {
         txt = "TLS error";
+#ifdef MQTT_SUPPORTED_FEATURE_TRANSPORT_ERR_REPORTING
+        char buf[128];
+        mbedtls_strerror(eh->esp_tls_last_esp_err, buf, sizeof buf);
+        if (*buf)
+          txt = buf;
+        else {
+          snprintf(buf, sizeof buf, "TLS error: %x", eh->esp_tls_last_esp_err);
+          txt = buf;
+        }
+#endif
       } else if (eh->error_type == MQTT_ERROR_TYPE_CONNECTION_REFUSED) {
         switch (eh->connect_return_code) {
         case MQTT_CONNECTION_ACCEPTED:
@@ -135,14 +146,26 @@ void io_mqtt_subscribe(const char *topic, int qos) {
   if (!client || !is_connected)
     return;
 
-  /*int msg_id = */esp_mqtt_client_subscribe(client, topic, qos);
+  int msg_id = esp_mqtt_client_subscribe(client, topic, qos);
+  {
+    char buf[128];
+    if (sizeof buf >= snprintf(buf, sizeof buf, "subscribe: msg_id=%d, TOPIC=<%s>, QOS=<%d>", msg_id, topic, qos)) {
+      uoCb_publish_logMessage( { .tag = TAG, .txt = buf, .warn_level = LogMessage::wl_Info });
+    }
+  }
 }
 
 void io_mqtt_unsubscribe(const char *topic) {
   if (!client || !is_connected)
     return;
 
-  /*int msg_id = */esp_mqtt_client_unsubscribe(client, topic);
+  int msg_id = esp_mqtt_client_unsubscribe(client, topic);
+  {
+    char buf[128];
+    if (sizeof buf >= snprintf(buf, sizeof buf, "subscribe: msg_id=%d, TOPIC=<%s>", msg_id, topic)) {
+      uoCb_publish_logMessage( { .tag = TAG, .txt = buf, .warn_level = LogMessage::wl_Info });
+    }
+  }
 }
 
 void io_mqtt_publish(const char *topic, const char *data) {
