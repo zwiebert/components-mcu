@@ -20,7 +20,7 @@ char* ftoa(float f, char *buf, int n) {
   for (i = 0; i < n; ++i)
     mult *= 10;
 
-  rop = (u32) (f * mult);
+  rop = (u32) (f * mult + .5);
   ltoa(rop, s, 10);
 
   return buf;
