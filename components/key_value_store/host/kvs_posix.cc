@@ -431,8 +431,8 @@ static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, s
     struct line_info li = { .magic = COOKIE, .kvs_type = kvs_type, .nval = { .len = { .blob_len = length, .blob_size = size }} };
     STRLCPY(li.key, key, MAX_KEY_LEN+1);
 
-    int res = kvs_write(h, &li, pos);
-    write(h->fd, src, length);
+    int res = kvs_write(h, &li, pos); //XXX
+    res = write(h->fd, src, length);
     return res;
   }
   return -1;
