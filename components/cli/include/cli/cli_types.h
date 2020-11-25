@@ -13,7 +13,7 @@ struct TargetDesc;
 
 /// \brief key value pair
 typedef struct {
-  char *key;
+  const char *key;
   const char *val;
 } clpar;
 
