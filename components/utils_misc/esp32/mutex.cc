@@ -13,18 +13,18 @@ MutexRecursive::MutexRecursive() {
 #include <esp_log.h>
 void MutexRecursive::lock() {
   //ESP_LOGI("trace", "lock()");
-  if (xSemaphoreTakeRecursive(mHandle, portMAX_DELAY))
+  if (xSemaphoreTakeRecursive(static_cast<QueueHandle_t>(mHandle), portMAX_DELAY))
     return;
   abort();
 }
 
 bool MutexRecursive::try_lock() {
-  return !!xSemaphoreTakeRecursive(mHandle, 0);
+  return !!xSemaphoreTakeRecursive(static_cast<QueueHandle_t>(mHandle), 0);
 }
 
 void MutexRecursive::unlock() {
   //ESP_LOGI("trace", "unlock()");
-  xSemaphoreGiveRecursive(mHandle);
+  xSemaphoreGiveRecursive(static_cast<QueueHandle_t>(mHandle));
 }
 
 
