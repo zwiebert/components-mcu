@@ -14,7 +14,7 @@ enum KvsType : u8 {
 };
 
 enum StoreFun : u8 {
-  STF_none, STF_direct, STF_direct_hex,
+  STF_none, STF_direct, STF_direct_hex, STF_direct_bool
 };
 
 /**

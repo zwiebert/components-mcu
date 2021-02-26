@@ -60,7 +60,7 @@ public:
     initField(CB_WIFI_PASSWD, "C_WIFI_PASSWD", otok::k_wlan_password, CBT_str, soCfg_WLAN_PASSWORD, STF_direct);
 #endif
 #ifdef USE_MQTT
-    initField(CB_MQTT_ENABLE, "C_MQTT_ENABLE", otok::k_mqtt_enable, CBT_i8, soCfg_MQTT_ENABLE);
+    initField(CB_MQTT_ENABLE, "C_MQTT_ENABLE", otok::k_mqtt_enable, CBT_i8, soCfg_MQTT_ENABLE, STF_direct_bool);
     initField(CB_MQTT_URL, "C_MQTT_URL", otok::k_mqtt_url, CBT_str, soCfg_MQTT_URL, STF_direct);
     initField(CB_MQTT_USER, "C_MQTT_USER", otok::k_mqtt_user, CBT_str, soCfg_MQTT_USER, STF_direct);
     initField(CB_MQTT_PASSWD, "C_MQTT_PASSWD", otok::k_mqtt_password, CBT_str, soCfg_MQTT_PASSWORD, STF_direct);
@@ -68,7 +68,7 @@ public:
     initField(CB_MQTT_ROOT_TOPIC, "C_MQTT_RTOPIC", otok::k_mqtt_root_topic, CBT_str, soCfg_MQTT_ROOT_TOPIC, STF_direct);
 #endif
 #ifdef USE_HTTP
-    initField(CB_HTTP_ENABLE, "C_HTTP_ENABLE", otok::k_http_enable, CBT_i8, soCfg_HTTP_ENABLE);
+    initField(CB_HTTP_ENABLE, "C_HTTP_ENABLE", otok::k_http_enable, CBT_i8, soCfg_HTTP_ENABLE, STF_direct_bool);
     initField(CB_HTTP_USER, "C_HTTP_USER", otok::k_http_user, CBT_str, soCfg_HTTP_USER, STF_direct);
     initField(CB_HTTP_PASSWD, "C_HTTP_PASSWD", otok::k_http_password, CBT_str, soCfg_HTTP_PASSWORD, STF_direct);
 #endif
