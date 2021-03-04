@@ -138,7 +138,7 @@ static void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
     break;
   case lanPhyLAN8270:
   default:
-    ethernet_create_phy = my_esp_eth_phy_new_lan8720;
+    ethernet_create_phy = esp_eth_phy_new_lan8720;
     break;
   }
 
@@ -165,6 +165,8 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
     if (ethernet_phy_power_pin >= 0) {
       gpio_pad_select_gpio(ethernet_phy_power_pin);
       gpio_set_direction(static_cast<gpio_num_t>(ethernet_phy_power_pin), GPIO_MODE_OUTPUT);
+      gpio_set_level(static_cast<gpio_num_t>(ethernet_phy_power_pin), 1);
+      vTaskDelay(pdMS_TO_TICKS(300));
     }
 
     // Setup MAC
@@ -180,7 +182,7 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
 
 
     if (ethernet_phy_pwrctl) {
-#if 0  // XXX: the original PhyLAN8270 pwrctl seems to get in the way and fails unpredictable on OLIMEX with power-pin and without hardware reset pin. Dunno why...
+#if 1  // XXX: the original PhyLAN8270 pwrctl seems to get in the way and fails unpredictable on OLIMEX with power-pin and without hardware reset pin. Dunno why...
       orig_pwrctl = phy->pwrctl;
 #endif
       phy->pwrctl = ethernet_phy_pwrctl;  // XXX: this requires a patch in ESP-IDF's esp_eth component, which just calls the pwrctl directly instead using the function pointer in esp_eth_phy_t
