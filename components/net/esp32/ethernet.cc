@@ -25,7 +25,6 @@ extern "C" esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *con
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 
 static esp_eth_phy_t *(*ethernet_create_phy)(const eth_phy_config_t *config);
-static esp_err_t (*ethernet_phy_pwrctl)(esp_eth_phy_t *phy, bool enable);
 static i8 ethernet_phy_power_pin = -1;
 
 
@@ -34,41 +33,6 @@ static i8 ethernet_phy_power_pin = -1;
 static esp_eth_handle_t s_eth_handle = NULL;
 
 static const char *TAG = "ethernet";
-
-
-static esp_err_t (*orig_pwrctl)(esp_eth_phy_t *phy, bool enable);
-/**
- * @brief re-define power enable func for phy
- *
- * @param enable true to enable, false to disable
- *
- * @note This function replaces the default PHY power on/off function.
- * If this GPIO is not connected on your device (and PHY is always powered),
- * you can use the default PHY-specific power on/off function.
- */
-static esp_err_t phy_pwctl_with_voltage(esp_eth_phy_t *phy, bool enable) {
-  esp_err_t result = ESP_OK;
- //DX(io_printf("%s: enable:%d\n", __func__, (int)enable));
-
-  if (enable) {
-    if (ethernet_phy_power_pin >= 0) {
-      gpio_set_level(static_cast<gpio_num_t>(ethernet_phy_power_pin), 1);
-      vTaskDelay(pdMS_TO_TICKS(300));
-    }
-    if (orig_pwrctl) {
-      result = orig_pwrctl(phy, enable);
-    }
-  } else {
-    if (orig_pwrctl) {
-      result = orig_pwrctl(phy, enable);
-    }
-    if (ethernet_phy_power_pin >= 0)
-      gpio_set_level(static_cast<gpio_num_t>(ethernet_phy_power_pin), 0);
-  }
-
-  return result;
-}
-
 
 /**
  * @note RMII data pins are fixed in esp32:
@@ -136,7 +100,7 @@ static void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
   case lanPhyIP101:
     ethernet_create_phy = esp_eth_phy_new_ip101;
     break;
-  case lanPhyLAN8270:
+  case lanPhyLAN8720:
   default:
     ethernet_create_phy = esp_eth_phy_new_lan8720;
     break;
@@ -145,9 +109,6 @@ static void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
 
   ethernet_phy_power_pin = lan_pwr_gpio;
 
-  if (ethernet_phy_power_pin >= 0) {
-    ethernet_phy_pwrctl = phy_pwctl_with_voltage;
-  }
 }
 
 void ethernet_setup(struct cfg_lan *cfg_lan) {
@@ -179,15 +140,6 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
     phy_config.phy_addr = 0;
     phy_config.reset_gpio_num = -1;
     esp_eth_phy_t *phy = ethernet_create_phy(&phy_config);
-
-
-    if (ethernet_phy_pwrctl) {
-#if 1  // XXX: the original PhyLAN8270 pwrctl seems to get in the way and fails unpredictable on OLIMEX with power-pin and without hardware reset pin. Dunno why...
-      orig_pwrctl = phy->pwrctl;
-#endif
-      phy->pwrctl = ethernet_phy_pwrctl;  // XXX: this requires a patch in ESP-IDF's esp_eth component, which just calls the pwrctl directly instead using the function pointer in esp_eth_phy_t
-    }
-
 
     // Ethernet Driver
     esp_eth_config_t config = ETH_DEFAULT_CONFIG(mac, phy);

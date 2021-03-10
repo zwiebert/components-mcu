@@ -135,11 +135,11 @@
 #define MY_NETWORK_CONNECTION_OLD_USERS nwWlanSta
 
 #ifndef MY_LAN_PHY
-#define MY_LAN_PHY lanPhyLAN8270
+#define MY_LAN_PHY lanPhyLAN8720
 #endif
 
 #ifndef MY_LAN_PWR_GPIO
-#define MY_LAN_PWR_GPIO 5
+#define MY_LAN_PWR_GPIO -1
 #endif
 
 #ifdef __cplusplus

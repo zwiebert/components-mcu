@@ -14,7 +14,7 @@
 
 /// \brief Kinds of supported PHY hardware.
 enum lanPhy {
-  lanPhyNone, lanPhyLAN8270, lanPhyRTL8201, lanPhyIP101, lanPhyLEN,
+  lanPhyNone, lanPhyLAN8720, lanPhyRTL8201, lanPhyIP101, lanPhyLEN,
 };
 
 /// \brief Ethernet configuration data
