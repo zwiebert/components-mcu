@@ -91,8 +91,8 @@ static httpd_handle_t start_webserver(struct cfg_http *c) {
     ESP_LOGI(TAG, "Error starting server!");
     return NULL;
   }
-
-  hts_register_uri_handlers_cb(server);
+  if (hts_register_uri_handlers_cb)
+    hts_register_uri_handlers_cb(server);
   return server;
 }
 
