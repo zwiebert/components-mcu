@@ -61,7 +61,7 @@ void config_setup_txtio() {
   txtio_setup(&c);
 }
 enum verbosity config_read_verbose() {
-  return static_cast<verbosity>(config_read_item(CB_VERBOSE, 0));
+  return static_cast<verbosity>(config_read_item(CB_VERBOSE, 3));
 }
 #endif
 
