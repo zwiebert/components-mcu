@@ -42,13 +42,25 @@ static int  es_io_getc(void) {
 #endif
 }
 
-static int es_io_putc(char c) {
 
+static int es_io_putc(char c) {
 #ifdef USE_CLI_TASK
   return uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, &c, 1);
 #else
   return putchar(c);
 #endif
+}
+
+
+
+static int es_io_putc_crlf(char c) {
+  if (c == '\r')
+    return 1;
+  if (c == '\n') {
+    if (es_io_putc('\r') < 0)
+      return -1;
+  }
+  return es_io_putc(c);
 }
 
 
@@ -162,7 +174,7 @@ void txtio_mcu_setup(struct cfg_txtio *cfg_txtio) {
 #ifdef USE_CLI_TASK
   initialize_console(cfg_txtio);
 #endif
-  io_putc_fun = es_io_putc;
+  io_putc_fun = es_io_putc_crlf;
   io_getc_fun = es_io_getc;
   con_printf_fun = ets_printf;
 

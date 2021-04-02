@@ -166,7 +166,51 @@ private:
   virtual int priv_write(const char *s, ssize_t len, bool final) const {
     const size_t size = len;
     assert(size < 2046);
+#if 1
+    const char crlf[] = "\r\n";
+    char prev_c = 0;
+    int last_chunk = 0;
+
+    for (size_t i = 0; i < size; ++i) {
+      const char c = s[i];
+      if (c == '\r' || (c == '\n' && prev_c == '\r'))
+        continue;
+
+      if (c == '\n') {
+        const int chunk_len = i - last_chunk;
+        if (chunk_len > 0 && ::write(myFd, s + last_chunk, chunk_len) < 1)
+          return -1;
+        last_chunk = i + 1;
+        if (::write(myFd, crlf, sizeof crlf) < 1)
+          return -1;
+      } else if (i + 1 == size) {
+        const int chunk_len = i - last_chunk + 1;
+        if (chunk_len > 0 && ::write(myFd, s + last_chunk, chunk_len) < 1)
+          return -1;
+        break;
+      }
+      prev_c = c;
+    }
+
+    return len;
+
+#elif 1
+    for (size_t i=0; i < size; ++i) {
+      const char c = s[i];
+      if (c == '\r')
+        continue;
+      if (c == '\n') {
+        char r = '\r';
+        if (::write(myFd, &r, 1) < 1)
+          return -1;
+      }
+      if (::write(myFd, &c, 1) < 1)
+        return -1;
+    }
+    return len;
+#else
     return ::write(myFd, s, size);
+#endif
   }
 private:
   int myFd = STDOUT_FILENO;

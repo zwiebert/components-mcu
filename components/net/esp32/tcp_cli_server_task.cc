@@ -158,13 +158,30 @@ static int tcps_create_server() {
   return (errno);
 }
 
-static void tcpst_putc(int fd, void *c) {
-  if (lwip_write(fd, c, 1) < 0)
+static int tcpst_putc(int fd, char c) {
+  if (lwip_write(fd, &c, 1) < 0) {
     tcps_close_cconn(fd);
+    return -1;
+  }
+  return 1;
+}
+
+static int tcpst_putc_crlf(int fd, char c) {
+  if (c == '\r')
+    return 1;
+  if (c == '\n') {
+    if (tcpst_putc(fd, '\r') < 0)
+      return -1;
+  }
+  return tcpst_putc(fd, c);
+}
+
+static void tcpst_putcp_crlf(int fd, void *c) {
+  tcpst_putc_crlf(fd, *(char *)c);
 }
 
 static void tcpst_putc_all(char c) {
-  foreach_fd(&wait_fds, nfds, tcpst_putc, &c);
+  foreach_fd(&wait_fds, nfds, tcpst_putcp_crlf, &c);
 }
 
 static int selected_fd;
