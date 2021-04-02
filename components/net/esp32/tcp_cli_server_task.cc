@@ -23,13 +23,11 @@
 #include <sys/select.h>
 #include <uout/uo_callbacks.h>
 
+#include <utils_misc/mutex.hh>
+#include <utils_misc/new_malloc.hh>
+#include <app_config/proj_app_cfg.h>
 
 #define TAG "tcps"
-
-#define TCP_HARD_TIMEOUT  (60 * 10)  // terminate connections to avoid dead connections piling up
-#define SERIAL_ECHO 1
-#define SERIAL_INPUT 1
-#define PUTC_LINE_BUFFER 1
 
 #define printf(...) io_printf_v(vrb3, __VA_ARGS__)
 #define perror(s)   io_printf_v(vrb3, "%s: %s\n", s, strerror(errno))
@@ -41,288 +39,349 @@
 #define D(x)
 #endif
 
-
 #ifndef TCPS_TASK_PORT
 #define TCPS_TASK_PORT   7777
 #endif
-#define MAX_BUF   1024
+#ifndef TCPS_TASK_PORT_IA
+#define TCPS_TASK_PORT_IA   -1
+#endif
+
 #define TCPS_CCONN_MAX 5
 
-typedef void (*fd_funT)(int fd, void *args);
-int foreach_fd(fd_set *fdsp, int count, fd_funT fd_fun, void *args);
 static void callback_subscribe();
 static void callback_unsubscribe();
+static int tcps_getc();
 
-static int sockfd = -1;
-fd_set wait_fds;
-int nfds;
-static int cconn_count;
+static TaskHandle_t xHandle = NULL;
+#define STACK_SIZE  3000
 
-static struct cli_buf buf;
+class TcpCliServer {
+public:
+  typedef void (TcpCliServer::*fd_funT)(int fd, void *args);
+public:
+  TcpCliServer(unsigned port = TCPS_TASK_PORT, unsigned port_ia = TCPS_TASK_PORT_IA) :
+      m_port(port), m_port_ia(port_ia) {
 
-
-
-
-#include <utils_misc/mutex.hh>
-#include <app_config/proj_app_cfg.h>
-
-
-static RecMutex tcpCli_mutex;
-
-
-
-
-static void set_sockfd(int fd) {
-  if (fd + 1 > nfds)
-    nfds = fd + 1;
-  sockfd = fd;
-}
-
-static void add_fd(int fd) {
-  FD_SET(fd, &wait_fds);
-  if (fd + 1 > nfds)
-    nfds = fd + 1;
-  if (0 == cconn_count++)
-    callback_subscribe();
-}
-
-static void rm_fd(int fd) {
-  if (!FD_ISSET(fd, &wait_fds)) {
-    D(printf("tcp_cli.rm_fd: fd already removed: %d\n", fd));
-    return; // XXX
   }
-  FD_CLR(fd, &wait_fds);
-  if (fd - 1 == nfds)
-    --nfds;
-
-  if (--cconn_count <= 0) {
-    cconn_count = 0;
-   callback_unsubscribe();
+  ~TcpCliServer() {
+    free(buf.buf);
   }
-}
-
-static void tcps_close_cconn(int fd) {
-  if (lwip_close(fd) < 0) {
-    perror("close");
-    return;
+public:
+  void set_sockfd(int fd) {
+    if (fd + 1 > nfds)
+      nfds = fd + 1;
+    sockfd = fd;
+  }
+  void set_sockfd_ia(int fd) {
+    if (fd + 1 > nfds)
+      nfds = fd + 1;
+    sockfd_ia = fd;
   }
 
-  rm_fd(fd);
-  printf("tcps: disconnected. %d client(s) still connected\n", cconn_count);
-}
+  void add_fd(int fd) {
+    FD_SET(fd, &wait_fds);
+    if (fd + 1 > nfds)
+      nfds = fd + 1;
+    if (0 == cconn_count++)
+      callback_subscribe();
+  }
 
-int foreach_fd(fd_set *fdsp, int count, fd_funT fd_fun, void *args) {
-  for (int i = 0; count && i < nfds; ++i) {
-    if (FD_ISSET(i, fdsp)) {
-      (*fd_fun)(i, args);
-      --count;
+  void rm_fd(int fd) {
+    if (!FD_ISSET(fd, &wait_fds)) {
+      D(printf("tcp_cli.rm_fd: fd already removed: %d\n", fd));
+      return; // XXX
+    }
+    FD_CLR(fd, &wait_fds);
+    if (fd - 1 == nfds)
+      --nfds;
+
+    if (--cconn_count <= 0) {
+      cconn_count = 0;
+      callback_unsubscribe();
     }
   }
-  return count;
-}
 
-static int tcps_create_server() {
-  int fd;
-  static struct sockaddr_in self;
-  /** Create streaming socket */
-  if ((fd = lwip_socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-    perror("Socket");
-    return (errno);
-  }
-  if (lwip_fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
-    perror("fcntl");
-    goto err;
-  }
-  /** Initialize address/port structure */
-  bzero(&self, sizeof(self));
-  self.sin_family = AF_INET;
-  self.sin_port = htons(TCPS_TASK_PORT);
-  self.sin_addr.s_addr = INADDR_ANY;
+  void tcps_close_cconn(int fd) {
+    if (lwip_close(fd) < 0) {
+      perror("close");
+      return;
+    }
 
-  /** Assign a port number to the socket */
-  if (lwip_bind(fd, (struct sockaddr*) &self, sizeof(self)) != 0) {
-    perror("socket:bind()");
-    goto err;
+    rm_fd(fd);
+    printf("tcps: disconnected. %d client(s) still connected\n", cconn_count);
   }
 
-  /** Make it a "listening socket". Limit to 16 connections */
-  if (lwip_listen(fd, TCPS_CCONN_MAX) != 0) {
-    perror("socket:listen()");
-    goto err;
+  int foreach_fd(fd_set *fdsp, int count, fd_funT fd_fun, void *args) {
+    for (int i = 0; count && i < nfds; ++i) {
+      if (FD_ISSET(i, fdsp)) {
+        (this->*fd_fun)(i, args);
+        --count;
+      }
+    }
+    return count;
   }
 
-  set_sockfd(fd);
-  return 0;
+  int tcps_create_server(int port_number) {
+    int fd;
+    struct sockaddr_in self = {};
+    /** Create streaming socket */
+    if ((fd = lwip_socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+      perror("Socket");
+      return (errno);
+    }
+    if (lwip_fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
+      perror("fcntl");
+      goto err;
+    }
+    /** Initialize address/port structure */
+    bzero(&self, sizeof(self));
+    self.sin_family = AF_INET;
+    self.sin_port = htons(port_number);
+    self.sin_addr.s_addr = INADDR_ANY;
 
-  err: lwip_close(fd);
-  return (errno);
-}
+    /** Assign a port number to the socket */
+    if (lwip_bind(fd, (struct sockaddr*) &self, sizeof(self)) != 0) {
+      perror("socket:bind()");
+      goto err;
+    }
 
-static int tcpst_putc(int fd, char c) {
-  if (lwip_write(fd, &c, 1) < 0) {
-    tcps_close_cconn(fd);
+    /** Make it a "listening socket". Limit to 16 connections */
+    if (lwip_listen(fd, TCPS_CCONN_MAX) != 0) {
+      perror("socket:listen()");
+      goto err;
+    }
+
+    return fd;
+
+    err: lwip_close(fd);
     return -1;
   }
-  return 1;
-}
 
-static int tcpst_putc_crlf(int fd, char c) {
-  if (c == '\r')
-    return 1;
-  if (c == '\n') {
-    if (tcpst_putc(fd, '\r') < 0)
-      return -1;
+  int tcps_create_server() {
+    const int fd = tcps_create_server(m_port);
+    if (fd < 0)
+      return (errno);
+
+    set_sockfd(fd);
+    return 0;
   }
-  return tcpst_putc(fd, c);
-}
 
-static void tcpst_putcp_crlf(int fd, void *c) {
-  tcpst_putc_crlf(fd, *(char *)c);
-}
+  int tcps_create_server_ia() {
+    const int fd = tcps_create_server(m_port_ia);
+    if (fd < 0)
+      return (errno);
 
-static void tcpst_putc_all(char c) {
-  foreach_fd(&wait_fds, nfds, tcpst_putcp_crlf, &c);
-}
-
-static int selected_fd;
-static int tcps_getc() {
-  int result = -1;
-  static int fd = -1;
-  if (selected_fd >= 0) {
-    fd = selected_fd;
+    set_sockfd_ia(fd);
+    return 0;
   }
-  char c;
-  int n = lwip_recv(fd, &c, 1, MSG_DONTWAIT);
 
-  if (n == 0) {
-    if (selected_fd >= 0) {
-      // remote socket was closed
+  int tcpst_putc(int fd, char c) {
+    if (lwip_write(fd, &c, 1) < 0) {
       tcps_close_cconn(fd);
+      return -1;
     }
-  } else if (n == 1) {
-    result = c;
-  } else {
-    if (errno == EAGAIN || errno == EWOULDBLOCK) {
+    return 1;
+  }
 
+  int tcpst_putc_crlf(int fd, char c) {
+    if (c == '\r')
+      return 1;
+    if (c == '\n') {
+      if (tcpst_putc(fd, '\r') < 0)
+        return -1;
+    }
+    return tcpst_putc(fd, c);
+  }
+
+  void tcpst_putcp_crlf(int fd, void *c) {
+    tcpst_putc_crlf(fd, *(char*) c);
+  }
+
+  void tcpst_putc_all(char c) {
+    foreach_fd(&wait_fds, nfds, &TcpCliServer::tcpst_putcp_crlf, &c);
+  }
+
+  int tcps_getc() {
+    int result = -1;
+    static int fd = -1;
+    if (selected_fd >= 0) {
+      fd = selected_fd;
+    }
+    char c;
+    int n = lwip_recv(fd, &c, 1, MSG_DONTWAIT);
+
+    if (n == 0) {
+      if (selected_fd >= 0) {
+        // remote socket was closed
+        tcps_close_cconn(fd);
+      }
+    } else if (n == 1) {
+      result = c;
     } else {
-      rm_fd(fd);
+      if (errno == EAGAIN || errno == EWOULDBLOCK) {
+
+      } else {
+        rm_fd(fd);
+      }
     }
+
+    selected_fd = -1;
+    return result;
   }
 
-  selected_fd = -1;
-  return result;
-}
+  int try_accept(int socket_fd) {
+    int fd;
+    struct sockaddr_in client_addr;
+    size_t addrlen = sizeof(client_addr);
 
-static void try_accept() {
-  int fd;
-  struct sockaddr_in client_addr;
-  size_t addrlen = sizeof(client_addr);
-
-  /** accept an incomming connection  */
-  fd = lwip_accept(sockfd, (struct sockaddr*) &client_addr, &addrlen);
-  if (fd >= 0) {
-    add_fd(fd);
-    printf("%s:%d connected (%d clients)\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port), cconn_count);
-  } else if (errno != EAGAIN && errno != EWOULDBLOCK) {
-    perror("tcps: accept");
+    /** accept an incoming connection  */
+    fd = lwip_accept(socket_fd, (struct sockaddr*) &client_addr, &addrlen);
+    if (fd >= 0) {
+      add_fd(fd);
+      printf("%s:%d connected (%d clients)\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port), cconn_count);
+    } else if (errno != EAGAIN && errno != EWOULDBLOCK) {
+      perror("tcps: accept");
+    }
+    return fd;
   }
-}
 
-void handle_input(int fd, void *args) {
-  selected_fd = fd;
-  for (;;) {
-    switch (cli_get_commandline(&buf, tcps_getc)) {
-    case CMDL_DONE:
-      { LockGuard lock(cli_mutex); 
+  void handle_input(int fd, void *args) {
+    selected_fd = fd;
+    for (;;) {
+      switch (cli_get_commandline(&buf, ::tcps_getc)) {
+      case CMDL_DONE: {
+        LockGuard lock(cli_mutex);
         if (buf.buf[0] == '{') {
-          cli_process_json(buf.buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_JSON)});
+          cli_process_json(buf.buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_JSON) });
         } else {
           cli_process_cmdline(buf.buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_TXT) });
         }
       }
-      break;
+        break;
 
-    case CMDL_INCOMPLETE:
-      break;
-    case CMDL_LINE_BUF_FULL:
-      if (cliBuf_enlarge(&buf))
-        continue;
-      break;
-    case CMDL_ERROR:
-      break;
+      case CMDL_INCOMPLETE:
+        break;
+      case CMDL_LINE_BUF_FULL:
+        if (cliBuf_enlarge(&buf))
+          continue;
+        break;
+      case CMDL_ERROR:
+        break;
+      }
+      return;
     }
-    return;
   }
-}
 
+  void wait_for_fd() {
+    fd_set rfds = wait_fds;
+    int n = nfds;
+    //fd_set wfds = wait_fds;
+    //struct timeval tv = { .tv_sec = 10 };
 
-
-void wait_for_fd() {
-  fd_set rfds = wait_fds;
-  int n = nfds;
-  //fd_set wfds = wait_fds;
-  //struct timeval tv = { .tv_sec = 10 };
-
-  FD_SET(sockfd, &rfds);
+    FD_SET(sockfd, &rfds);
+    FD_SET(sockfd_ia, &rfds);
 #ifdef USE_CLI_TASK_EXP
-  FD_SET(STDIN_FILENO, &rfds);
-  if (n <= STDIN_FILENO)
-    n = STDIN_FILENO+1;
-#endif
+     FD_SET(STDIN_FILENO, &rfds);
+     if (n <= STDIN_FILENO)
+       n = STDIN_FILENO+1;
+   #endif
 
-  int count = lwip_select(n, &rfds, NULL, NULL, NULL);
-  if (count < 0) {
-    return;
-  }
-  if (count == 0) {
-    return;
-  }
-  D(printf("select returned. count=%d\n", count));
+    int count = lwip_select(n, &rfds, NULL, NULL, NULL);
+    if (count < 0) {
+      return;
+    }
+    if (count == 0) {
+      return;
+    }
+    D(printf("select returned. count=%d\n", count));
 
-  if (FD_ISSET(sockfd, &rfds)) {
-    try_accept();
-
-    FD_CLR(sockfd, &rfds);
-    --count;
-  }
+    if (FD_ISSET(sockfd, &rfds)) {
+      const int new_fd = try_accept(sockfd);
+      FD_CLR(sockfd, &rfds);
+      --count;
+      if (new_fd >= 0) {
+        const char welcome[] = "Type help; for a list of commands\r\n";
+        ::write(new_fd, welcome, sizeof welcome);
+      }
+    }
+    if (FD_ISSET(sockfd_ia, &rfds)) {
+      const int new_fd = try_accept(sockfd_ia);
+      FD_CLR(sockfd_ia, &rfds);
+      --count;
+      if (new_fd >= 0) {
+        const char welcome[] = "Type help; for a list of commands\r\n";
+        ::write(new_fd, welcome, sizeof welcome);
+      }
+    }
 #ifdef USE_CLI_TASK_EXP
-  if (FD_ISSET(STDIN_FILENO, &rfds)) {
-    cli_loop();
+     if (FD_ISSET(STDIN_FILENO, &rfds)) {
+       cli_loop();
 
-    FD_CLR(STDIN_FILENO, &rfds);
-    --count;
+       FD_CLR(STDIN_FILENO, &rfds);
+       --count;
+     }
+   #endif
+    count = foreach_fd(&rfds, count, &TcpCliServer::handle_input, 0);
+
   }
-#endif
-  count = foreach_fd(&rfds, count, handle_input, 0);
 
+  void tcps_task(void *pvParameters) {
+
+    FD_ZERO(&wait_fds);
+    nfds = 0;
+
+    if (m_port > 0 && tcps_create_server() == 0) {
+      ESP_LOGI(TAG, "tcp server created");
+    }
+    if (m_port_ia > 0 && tcps_create_server_ia() == 0) {
+      ESP_LOGI(TAG, "tcp server created");
+    }
+    for (;;) {
+      wait_for_fd();
+    }
+  }
+
+  void pctChange_cb(const uoCb_msgT msg) {
+    LockGuard lock(tcpCli_mutex);
+
+    if (auto txt = uoCb_txtFromMsg(msg)) {
+      for (; *txt; ++txt)
+        tcpst_putc_all(*txt);
+    }
+    if (auto json = uoCb_jsonFromMsg(msg)) {
+      for (; *json; ++json)
+        tcpst_putc_all(*json);
+      tcpst_putc_all(';');
+      tcpst_putc_all('\n');
+    }
+  }
+
+private:
+  const unsigned m_port;
+  const unsigned m_port_ia;
+  int sockfd = -1;
+  int sockfd_ia = -1;
+  int selected_fd = -1;
+  fd_set wait_fds = { };
+  int nfds = 0;
+  int cconn_count = 0;
+  struct cli_buf buf = { };
+public:
+  RecMutex tcpCli_mutex;
+};
+
+TcpCliServer *tcp_cli_server;
+
+static int tcps_getc() {
+  return tcp_cli_server->tcps_getc();
 }
 
-static void tcps_task(void *pvParameters) {
-
-  FD_ZERO(&wait_fds);
-  nfds = 0;
-
-  if (tcps_create_server() == 0) {
-    ESP_LOGI(TAG, "tcp server created");
-  }
-  for (;;) {
-    wait_for_fd();
-  }
+void tcps_task(void *pvParameters) {
+  tcp_cli_server->tcps_task(pvParameters);
 }
 
-static void pctChange_cb(const uoCb_msgT msg) {
-  LockGuard lock(tcpCli_mutex);
-
-  if (auto txt = uoCb_txtFromMsg(msg)) {
-    for (; *txt; ++txt)
-      tcpst_putc_all(*txt);
-  }
-  if (auto json = uoCb_jsonFromMsg(msg)) {
-    for (; *json; ++json)
-      tcpst_putc_all(*json);
-    tcpst_putc_all(';');
-    tcpst_putc_all('\n');
-  }
+void pctChange_cb(const uoCb_msgT msg) {
+  tcp_cli_server->pctChange_cb(msg);
 }
 
 static uo_flagsT UserFlags;
@@ -344,8 +403,6 @@ static void callback_unsubscribe() {
   uoCb_unsubscribe(pctChange_cb);
 }
 
-static TaskHandle_t xHandle = NULL;
-#define STACK_SIZE  3000
 void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
   static uint8_t ucParameterToPass;
 
@@ -356,12 +413,13 @@ void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
     if (xHandle) {
       vTaskDelete(xHandle);
       xHandle = NULL;
-      free(buf.buf);
-      buf.buf = 0;
+      delete (tcp_cli_server);
+      tcp_cli_server = 0;
     }
     return;
   }
 
+  tcp_cli_server = new TcpCliServer();
   xTaskCreate(tcps_task, "tcp_server", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
   configASSERT( xHandle );
 
