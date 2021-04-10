@@ -351,7 +351,6 @@ public:
     if (auto json = uoCb_jsonFromMsg(msg)) {
       for (; *json; ++json)
         tcpst_putc_all(*json);
-      tcpst_putc_all(';');
       tcpst_putc_all('\n');
     }
   }

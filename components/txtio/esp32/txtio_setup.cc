@@ -148,7 +148,7 @@ static void pctChange_cb(const uoCb_msgT msg) {
   if (auto json = uoCb_jsonFromMsg(msg)) {
 #ifdef USE_CLI_TASK
   uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, json, strlen(json));
-  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, ";\n", 2);
+  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\n", 1);
 #else
   ::write(1, json, strlen(json));
 #endif
