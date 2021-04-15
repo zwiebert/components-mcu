@@ -201,6 +201,19 @@ public:
     foreach_fd(&wait_fds, nfds, &TcpCliServer::tcpst_putcp_crlf, &c);
   }
 
+  void tcpst_writeln(int fd, void *p) {
+    const char *s = (const char *)p;
+    size_t s_len = strlen(s);
+
+    if (lwip_write(fd, s, s_len) < 0) {
+      tcps_close_cconn(fd);
+    }
+  }
+
+  void tcpst_writeln_all(const char *s) {
+    foreach_fd(&wait_fds, nfds, &TcpCliServer::tcpst_writeln, (void*)s);
+  }
+
   int tcps_getc() {
     int result = -1;
     static int fd = -1;
@@ -341,17 +354,29 @@ public:
     }
   }
 
+#define USE_WRITELN
+
   void pctChange_cb(const uoCb_msgT msg) {
     LockGuard lock(tcpCli_mutex);
 
     if (auto txt = uoCb_txtFromMsg(msg)) {
+#ifdef USE_WRITELN
+      tcpst_writeln_all(txt);
+      tcpst_writeln_all("\r\n");
+#else
       for (; *txt; ++txt)
         tcpst_putc_all(*txt);
+#endif
     }
     if (auto json = uoCb_jsonFromMsg(msg)) {
+#ifdef USE_WRITELN
+      tcpst_writeln_all(json);
+      tcpst_writeln_all("\r\n");
+#else
       for (; *json; ++json)
         tcpst_putc_all(*json);
       tcpst_putc_all('\n');
+#endif
     }
   }
 

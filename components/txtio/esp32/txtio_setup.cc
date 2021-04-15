@@ -25,10 +25,54 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>
-
+#include <stdint.h>
 
 #define UART_RX_RINGBUF_SIZE (1024 * 2)
 #define UART_TX_RINGBUF_SIZE (1024 * 1)
+
+typedef int (*writeFn)(const char *, size_t len);
+
+static int my_uart_write(const char *src, size_t len) {
+  return uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, src, len);
+}
+
+static int priv_write(const char *s, size_t len, writeFn wfn) {
+  const size_t size = len;
+  const char crlf[] = "\r\n";
+  const unsigned crlf_len = sizeof crlf - 1;
+  char prev_c = 0;
+  int last_chunk = 0;
+
+  for (size_t i = 0; i < size; ++i) {
+    const char c = s[i];
+    if (c == '\r' || (c == '\n' && prev_c == '\r'))
+      continue;
+
+    if (c == '\n') {
+      const int chunk_len = i - last_chunk;
+      if (chunk_len > 0 && wfn(s + last_chunk, chunk_len) < 1)
+        return -1;
+      last_chunk = i + 1;
+      if (wfn(crlf, crlf_len) < 1)
+        return -1;
+    } else if (i + 1 == size) {
+      const int chunk_len = i - last_chunk + 1;
+      if (chunk_len > 0 && wfn(s + last_chunk, chunk_len) < 1)
+        return -1;
+      break;
+    }
+    prev_c = c;
+  }
+
+  return len;
+}
+
+
+static int my_write(const char *src, size_t len) {
+  return priv_write(src, len, my_uart_write);
+}
+
+
 
 static int  es_io_getc(void) {
 #ifdef USE_CLI_TASK
@@ -45,7 +89,7 @@ static int  es_io_getc(void) {
 
 static int es_io_putc(char c) {
 #ifdef USE_CLI_TASK
-  return uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, &c, 1);
+  return my_write(&c, 1);
 #else
   return putchar(c);
 #endif
@@ -140,15 +184,16 @@ static void pctChange_cb(const uoCb_msgT msg) {
 
   if (auto txt = uoCb_txtFromMsg(msg)) {
 #ifdef USE_CLI_TASK
-  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, txt, strlen(txt));
+    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, txt, strlen(txt));
+    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\r\n", 2);
 #else
   ::write(1, txt, strlen(txt));
 #endif
   }
   if (auto json = uoCb_jsonFromMsg(msg)) {
 #ifdef USE_CLI_TASK
-  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, json, strlen(json));
-  uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\n", 1);
+    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, json, strlen(json));
+    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\r\n", 2);
 #else
   ::write(1, json, strlen(json));
 #endif
