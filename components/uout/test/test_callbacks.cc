@@ -75,7 +75,7 @@ static void t_ipAddr() {
 
   uoCb_publish_ipAddress("192.8.9.10");
 
-  TEST_ASSERT_EQUAL_STRING("tf: ipaddr: 192.8.9.10;\n", MsgTxt);
+  TEST_ASSERT_EQUAL_STRING("tf: ipaddr: 192.8.9.10;", MsgTxt);
   TEST_ASSERT_EQUAL_STRING("{\"mcu\":{\"ipaddr\":\"192.8.9.10\"}}", MsgJson);
 }
 
