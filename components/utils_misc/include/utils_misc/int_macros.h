@@ -12,7 +12,7 @@
 #define MAX( a, b ) ( ((a) > (b)) ? (a) : (b) )
 #endif
 
-#define IS_IN_RANGE(lowLim, val, highLim) (((lowLim) < (val)) && ((val) < (highLim)))
+#define IS_IN_RANGE(lowLim, val, highLim) (((lowLim) <= (val)) && ((val) <= (highLim)))
 
 #define GET_BYTE_0(src) (((src)>>0)&0xff)
 #define GET_BYTE_1(src) (((src)>>8)&0xff)
