@@ -6,7 +6,7 @@
 
 #include "so_target_bits.h"
 
-#define so_jco ((td.tgt() & (SO_TGT_HTTP|SO_TGT_MQTT)) || ((td.tgt() & SO_TGT_CLI) && (td.tgt() & SO_TGT_FLAG_JSON)))
+#define so_jco ((td.tgt() & (SO_TGT_HTTP|SO_TGT_MQTT|SO_TGT_WS)) || ((td.tgt() & SO_TGT_CLI) && (td.tgt() & SO_TGT_FLAG_JSON)))
 #define so_cco ((td.tgt() & SO_TGT_CLI) && (td.tgt() & SO_TGT_FLAG_TXT))
 #define so_mqt ((td.tgt() & SO_TGT_MQTT))
 #define so_ws ((td.tgt() & SO_TGT_WS))
