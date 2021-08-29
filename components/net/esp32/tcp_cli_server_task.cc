@@ -42,8 +42,8 @@
 #ifndef TCPS_TASK_PORT
 #define TCPS_TASK_PORT   7777
 #endif
-#ifndef TCPS_TASK_PORT_IA
-#define TCPS_TASK_PORT_IA   -1
+#ifndef TCPS_TASK_PORT_IA // Interactive TCP Server (Telnet)
+#define TCPS_TASK_PORT_IA   0
 #endif
 
 #define TCPS_CCONN_MAX 5
@@ -344,10 +344,10 @@ public:
     nfds = 0;
 
     if (m_port > 0 && tcps_create_server() == 0) {
-      ESP_LOGI(TAG, "tcp server created");
+      ESP_LOGI(TAG, "tcp server created on port %d", m_port);
     }
     if (m_port_ia > 0 && tcps_create_server_ia() == 0) {
-      ESP_LOGI(TAG, "tcp server created");
+      ESP_LOGI(TAG, "tcp server created on port %d", m_port_ia);
     }
     for (;;) {
       wait_for_fd();
