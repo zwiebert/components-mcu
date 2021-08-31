@@ -18,6 +18,7 @@
 #include "net/ipnet.h"
 #include "net/ethernet_setup.h"
 #include "utils_misc/int_types.h"
+#include "main_loop/main_queue.hh"
 
 extern "C" esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
 
@@ -89,6 +90,8 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
 
     if (ipnet_gotIpAddr_cb)
       ipnet_gotIpAddr_cb();
+
+    mainLoop_callFun(ipnet_connected);
 }
 
 static void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {

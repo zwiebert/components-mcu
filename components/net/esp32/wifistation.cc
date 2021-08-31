@@ -18,6 +18,7 @@
 #include "net/ipnet.h"
 #include "txtio/inout.h"
 #include "utils_misc/int_types.h"
+#include "main_loop/main_queue.hh"
 
 #define printf con_printf_fun
 #ifndef DISTRIBUTION
@@ -78,6 +79,8 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base, i32 event
 static void lost_ip_event_handler(void *arg, esp_event_base_t event_base, i32 event_id, void *event_data) {
   if (ipnet_lostIpAddr_cb)
     ipnet_lostIpAddr_cb();
+
+  mainLoop_callFun(ipnet_disconnected);
 }
 
 static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
@@ -92,6 +95,8 @@ static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
 
     if (ipnet_gotIpAddr_cb)
       ipnet_gotIpAddr_cb();
+
+    mainLoop_callFun(ipnet_connected);
 }
 
 void wifistation_setup(struct cfg_wlan *config)  {
