@@ -13,10 +13,19 @@ bool mainLoop_setup(unsigned queue_length, void *event_group, unsigned event_bit
 }
 
 bool mainLoop_callFun(voidFunT fun) {
-  return false;
+  fun();
+  return true;
 }
 
 bool mainLoop_callFun_fromISR(voidFunT fun) {
+  fun();
+  return true;
+}
+
+void *mainLoop_callFun(voidFunT fun, unsigned delay_ms, bool periodic) {
+  return nullptr;
+}
+bool mainLoop_stopFun(void *tmr) {
   return false;
 }
 

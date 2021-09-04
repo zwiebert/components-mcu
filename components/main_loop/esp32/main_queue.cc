@@ -81,6 +81,21 @@ bool mainLoop_callFun(voidFunT fun) {
   return mainLoop_pushMessage(&msg);
 }
 
+void *mainLoop_callFun(voidFunT fun, unsigned delay_ms, bool periodic) {
+  TimerHandle_t tmr = xTimerCreate("TxWorker", pdMS_TO_TICKS(delay_ms), (periodic ? pdTRUE : pdFALSE), (void*) fun, [](TimerHandle_t xTimer) {
+    voidFunT f = (voidFunT) pvTimerGetTimerID(xTimer);
+    mainLoop_callFun(f);
+  });
+  if (!tmr || xTimerStart(tmr, 10 ) != pdPASS) {
+    return nullptr;
+  }
+
+  return (void *)tmr;
+}
+bool mainLoop_stopFun(void *tmr) {
+  return pdPASS == xTimerStop(tmr, 10);
+}
+
 bool IRAM_ATTR mainLoop_callFun_fromISR(voidFunT fun) {
   mainLoop_msgT_voidFun msg { fun };
   return mainLoop_pushMessage_fromISR(&msg);
