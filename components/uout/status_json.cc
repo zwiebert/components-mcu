@@ -182,6 +182,22 @@ void StatusJsonT::close_root_object() {
   unused_write_out_buf();
 }
 
+bool StatusJsonT::add_value_s(const char *val) {
+  D(db_printf("%s(%s)\n", __func__, val));
+  precond(myBuf_idx > 0); unused_write_out_buf();
+
+  if (not_enough_buffer("---", val))
+    return false;
+
+  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize,  "\"");
+  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, val);
+  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize,  "\",");
+
+  D(db_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+
 bool StatusJsonT::add_value_d(int val) {
   D(db_printf("%s(%d)\n", __func__, val));
   precond(myBuf_idx > 0); unused_write_out_buf();
@@ -197,6 +213,7 @@ bool StatusJsonT::add_value_d(int val) {
   postcond(myBuf_size > myBuf_idx);
   return true;
 }
+
 
 bool StatusJsonT::add_key_value_pair_f(const char *key, float val, int prec) {
   D(db_printf("%s(%s, %f)\n", __func__, key, val));

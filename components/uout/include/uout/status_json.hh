@@ -34,6 +34,7 @@ public:
   bool add_array(const char *key);  ///< \brief  add array  "KEY":[
   void close_array(); ///< \brief close array with ],
   bool add_value_d(int n);  ///< \brief Add number to array: N,
+  bool add_value_s(const char *val); //< \brief Add string to array,
 
 
 
