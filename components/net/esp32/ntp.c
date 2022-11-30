@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include "app_config/proj_app_cfg.h"
+
 #ifdef USE_NTP
 #include "net/ntp_client_setup.h"
 #include "esp_event.h"
@@ -20,8 +21,15 @@
 #include "esp_system.h"
 #include "esp_wifi.h"
 
+#include "esp_system.h"
+#include "esp_event.h"
+#include "esp_log.h"
+#include "esp_attr.h"
+#include "esp_sleep.h"
+#include "esp_sntp.h"
+
 #define printf ets_printf
-#define D(x)
+#define D(x) x
 
 extern ip_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 
@@ -73,20 +81,26 @@ static void set_server_by_config(struct cfg_ntp *cfg_ntp) {
       break;
 #endif
     } else {
+#if SNTP_MAX_SERVERS > 1
       sntp_setservername(server_number, server);
+#else
+      static char *server_name;
+      free(server_name);
+      server_name = strdup(server);
+      sntp_setservername(0, server_name);
+#endif
     }
   }
-  sntp_init();
 }
 
+
 void ntp_setup(struct cfg_ntp *cfg_ntp) {
-  static int once;
-  if (once == 0) {
-    once = 1;
+    sntp_stop();
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     set_server_by_config(cfg_ntp);
+    sntp_init();
     D(ets_printf("server:<%s> <%s> <%s>\n",sntp_getservername(0), sntp_getservername(1), sntp_getservername(2)));
-  }
 }
+
 #endif
 
