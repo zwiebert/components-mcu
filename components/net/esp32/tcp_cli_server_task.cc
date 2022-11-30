@@ -53,7 +53,7 @@ static void callback_unsubscribe();
 static int tcps_getc();
 
 static TaskHandle_t xHandle = NULL;
-#define STACK_SIZE  3000
+#define STACK_SIZE  4096
 
 class TcpCliServer {
 public:
