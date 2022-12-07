@@ -33,6 +33,7 @@ public:
   void print(const char *key, int val) const; ///< forward print of key/val pair
   void print(const char *key, long long val) const; ///< forward print of key/val pair
   void print(const char *key, unsigned val, int base = 10) const; ///< forward print of key/val pair
+  void print(const char *key, unsigned long val, int base = 10) const; ///< forward print of key/val pair
   void print(const char *key, float val, int n) const; ///< forward print of key/val pair
   void print(const char *key, const char *val) const; ///< forward print of key/val pair
 

@@ -5,7 +5,7 @@ idf_component_register(
     INCLUDE_DIRS "./include" 
     REQUIRES  app_config esp_http_server
     PRIV_REQUIRES  cli utils_debug uout
-                    mbedtls #PRIV_ESP_IDF
+                    esp_wifi mbedtls #PRIV_ESP_IDF
  )
  
 component_compile_options(${comp_compile_opts})

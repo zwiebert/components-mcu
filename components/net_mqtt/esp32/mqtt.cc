@@ -37,7 +37,9 @@ constexpr const char *TAG = "mqtt_client";
 
 // implementation interface
 
-static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
+
+static void mqtt_event_handler(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data) {
+esp_mqtt_event_handle_t event = static_cast<esp_mqtt_event_handle_t>(event_data);
   //esp_mqtt_client_handle_t client = event->client;
   //int msg_id;
   // your_context_t *context = event->context;
@@ -137,7 +139,6 @@ static esp_err_t mqtt_event_handler(esp_mqtt_event_handle_t event) {
     D(ESP_LOGI(TAG, "Other event id:%d", event->event_id));
     break;
   }
-  return ESP_OK;
 }
 
 static esp_mqtt_client_handle_t client;
@@ -182,19 +183,15 @@ void io_mqtt_publish(const char *topic, const char *data) {
 }
 
 static void io_mqtt_create_client(struct cfg_mqtt *cmc) {
-  esp_mqtt_client_config_t mqtt_cfg = { .event_handle = mqtt_event_handler, .uri = cmc->url, .client_id = cmc->client_id,
-  //  .host = CONFIG_MQTT_HOST,
-  //  .port = CONFIG_MQTT_PORT,
-      .username = cmc->user, .password = cmc->password,
+  esp_mqtt_client_config_t mqtt_cfg =
+      { .broker = { .address = { .uri = cmc->url}}, .credentials = {  .username = cmc->user, .client_id = cmc->client_id,.authentication = {.password = cmc->password } }  };
 
-  // .user_context = (void *)your_context
-      };
-
-  if (mqtt_cfg.uri && *mqtt_cfg.uri == '\0') {
+  if (mqtt_cfg.broker.address.uri && *mqtt_cfg.broker.address.uri == '\0') {
     io_puts("error: MQTT-URI is configured empty\n");
     return;
   }
 
+  esp_mqtt_client_register_event(client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, NULL);
   client = esp_mqtt_client_init(&mqtt_cfg);
 
 }

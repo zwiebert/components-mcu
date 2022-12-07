@@ -29,7 +29,7 @@
 #include "esp_sntp.h"
 
 #define printf ets_printf
-#define D(x) x
+#define D(x)
 
 extern ip_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 

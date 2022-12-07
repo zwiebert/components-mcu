@@ -101,6 +101,19 @@ void SoOut::print(const char *key, unsigned val, int base) const {
   }
 }
 
+void SoOut::print(const char *key, unsigned long val, int base) const {
+  char buf[20];
+  ltoa(val, buf, base);
+  if (hasOutput_text())
+    myTd.st().cli_out_x_reply_entry(key, buf);
+  if (hasOutput_json()) {
+    if (base == 10)
+      myTd.sj().add_key_value_pair_d(key, val);
+    else
+      myTd.sj().add_key_value_pair_s(key, buf); //no hex in json. use string
+  }
+}
+
 void SoOut::print(const char *key, float val, int n) const {
   char buf[20];
   ftoa(val, buf, n);

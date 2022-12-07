@@ -105,7 +105,7 @@ static void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
     break;
   case lanPhyLAN8720:
   default:
-    ethernet_create_phy = esp_eth_phy_new_lan8720;
+    ethernet_create_phy = esp_eth_phy_new_lan87xx;
     break;
   }
 
@@ -119,8 +119,6 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
 
     esp_netif_config_t cfg = ESP_NETIF_DEFAULT_ETH();
     esp_netif_t *eth_netif = esp_netif_new(&cfg);
-    // Set default handlers to process TCP/IP stuffs
-    ESP_ERROR_CHECK(esp_eth_set_default_handlers(eth_netif));
 
     ESP_ERROR_CHECK(esp_event_handler_instance_register(ETH_EVENT, ESP_EVENT_ANY_ID, &eth_event_handler, NULL, NULL));
     ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL, NULL));
@@ -135,7 +133,11 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
 
     // Setup MAC
     eth_mac_config_t mac_config = ETH_MAC_DEFAULT_CONFIG();
-    esp_eth_mac_t *mac = esp_eth_mac_new_esp32(&mac_config);
+
+    eth_esp32_emac_config_t esp32_emac_config = ETH_ESP32_EMAC_DEFAULT_CONFIG();
+    esp32_emac_config.smi_mdc_gpio_num = GPIO_NUM_23; //TODO
+    esp32_emac_config.smi_mdio_gpio_num = GPIO_NUM_18; //TODO
+    esp_eth_mac_t *mac = esp_eth_mac_new_esp32(&esp32_emac_config, &mac_config);
 
     // Setup PHY
     eth_phy_config_t phy_config = ETH_PHY_DEFAULT_CONFIG();

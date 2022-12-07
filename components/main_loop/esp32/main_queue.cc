@@ -30,7 +30,7 @@ bool mainLoop_setup(unsigned queue_length, void *event_group, unsigned event_bit
 
   const unsigned size = sizeof(struct mainLoop_msgT_voidFun);
 
-  mainLoop_eventGroup = event_group;
+  mainLoop_eventGroup = static_cast<EventGroupHandle_t>(event_group);
   mainLoop_eventBits = BIT(event_bit);
 
   if ((Handle = xQueueCreate(queue_length, size))) {
@@ -93,7 +93,7 @@ void *mainLoop_callFun(voidFunT fun, unsigned delay_ms, bool periodic) {
   return (void *)tmr;
 }
 bool mainLoop_stopFun(void *tmr) {
-  return pdPASS == xTimerStop(tmr, 10);
+  return pdPASS == xTimerStop(static_cast<TimerHandle_t>(tmr), 10);
 }
 
 bool IRAM_ATTR mainLoop_callFun_fromISR(voidFunT fun) {

@@ -23,7 +23,10 @@
 #include <sys/unistd.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+extern "C" {
 #include "esp_log.h"
+}
+
 #include "esp_system.h"
 #include "esp_event.h"
 #include "esp_netif.h"
@@ -88,6 +91,9 @@ esp_err_t _http_event_handler(esp_http_client_event_t *evt)
             break;
         case HTTP_EVENT_DISCONNECTED:
             ESP_LOGI(TAG, "HTTP_EVENT_DISCONNECTED");
+            break;
+
+        case HTTP_EVENT_REDIRECT:  //TODO
             break;
     }
     return ESP_OK;

@@ -108,12 +108,14 @@ SET_GET_DT_FUN(u64);
 
 
 int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb, void *args) {
-  nvs_iterator_t it = nvs_entry_find(CFG_PARTNAME, name_space, type);
+  nvs_iterator_t it = NULL;
+  esp_err_t res = nvs_entry_find(CFG_PARTNAME, name_space, type, &it);
+
   int count = 0;
-  while (it != NULL) {
+  while (res == ESP_OK) {
     nvs_entry_info_t info;
     nvs_entry_info(it, &info);
-    it = nvs_entry_next(it);
+    res = nvs_entry_next(&it);
 
     if (key_match) {
       unsigned len = strlen(key_match);

@@ -47,6 +47,9 @@ static esp_err_t http_event_handler(esp_http_client_event_t *evt)
         case HTTP_EVENT_DISCONNECTED:
             ESP_LOGD(TAG, "HTTP_EVENT_DISCONNECTED");
             break;
+        case HTTP_EVENT_REDIRECT: //TODO
+          break;
+
     }
     return ESP_OK;
 }
@@ -59,7 +62,10 @@ struct task_parm {
 static void simple_ota_example_task(void *pvParameter) {
   auto parm = static_cast<task_parm*>(pvParameter);
 
-  esp_http_client_config_t config = { .url = parm->url, .cert_pem = parm->cert, .event_handler = http_event_handler, };
+
+  esp_http_client_config_t http_config = { .url = parm->url, .cert_pem = parm->cert, .event_handler = http_event_handler, };
+
+  esp_https_ota_config_t config = { .http_config = &http_config, };
 
   state = ota_RUN;
   esp_err_t ret = esp_https_ota(&config);

@@ -245,7 +245,7 @@ public:
   int try_accept(int socket_fd) {
     int fd;
     struct sockaddr_in client_addr;
-    size_t addrlen = sizeof(client_addr);
+    socklen_t addrlen = sizeof(client_addr);
 
     /** accept an incoming connection  */
     fd = lwip_accept(socket_fd, (struct sockaddr*) &client_addr, &addrlen);
