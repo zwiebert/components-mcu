@@ -94,6 +94,7 @@ esp_err_t _http_event_handler(esp_http_client_event_t *evt)
             break;
 
         case HTTP_EVENT_REDIRECT:  //TODO
+          ESP_LOGI(TAG, "HTTP_EVENT_REDIRECT");
             break;
     }
     return ESP_OK;

@@ -135,8 +135,6 @@ void ethernet_setup(struct cfg_lan *cfg_lan) {
     eth_mac_config_t mac_config = ETH_MAC_DEFAULT_CONFIG();
 
     eth_esp32_emac_config_t esp32_emac_config = ETH_ESP32_EMAC_DEFAULT_CONFIG();
-    esp32_emac_config.smi_mdc_gpio_num = GPIO_NUM_23; //TODO
-    esp32_emac_config.smi_mdio_gpio_num = GPIO_NUM_18; //TODO
     esp_eth_mac_t *mac = esp_eth_mac_new_esp32(&esp32_emac_config, &mac_config);
 
     // Setup PHY
