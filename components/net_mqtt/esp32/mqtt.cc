@@ -182,18 +182,26 @@ void io_mqtt_publish(const char *topic, const char *data) {
   }
 }
 
-static void io_mqtt_create_client(struct cfg_mqtt *cmc) {
-  esp_mqtt_client_config_t mqtt_cfg =
-      { .broker = { .address = { .uri = cmc->url}}, .credentials = {  .username = cmc->user, .client_id = cmc->client_id,.authentication = {.password = cmc->password } }  };
+static bool io_mqtt_create_client(struct cfg_mqtt *cmc) {
+  esp_mqtt_client_config_t mqtt_cfg = { .broker = { .address = { .uri = cmc->url } }, .credentials = { .username = cmc->user, .client_id = cmc->client_id,
+      .authentication = { .password = cmc->password } } };
 
   if (mqtt_cfg.broker.address.uri && *mqtt_cfg.broker.address.uri == '\0') {
-    io_puts("error: MQTT-URI is configured empty\n");
-    return;
+    ESP_LOGE(TAG, "MQTT-URI is configured empty");
+    return false;
   }
 
-  esp_mqtt_client_register_event(client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, NULL);
-  client = esp_mqtt_client_init(&mqtt_cfg);
+  if (!(client = esp_mqtt_client_init(&mqtt_cfg))) {
+    ESP_LOGE(TAG, "client_init");
+    return false;
+  }
 
+  if (esp_mqtt_client_register_event(client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, NULL)) {
+    ESP_LOGE(TAG, "register_event");
+    return false;
+  }
+
+  return true;
 }
 
 static void io_mqtt_stop_and_destroy(void) {
@@ -208,7 +216,10 @@ static void io_mqtt_stop_and_destroy(void) {
 static void io_mqtt_create_and_start(struct cfg_mqtt *c) {
   if (client)
     io_mqtt_stop_and_destroy();
-  io_mqtt_create_client(c);
+
+  if (!io_mqtt_create_client(c))
+    return;
+
   esp_mqtt_client_start(client);
 }
 
