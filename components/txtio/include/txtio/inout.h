@@ -47,10 +47,6 @@ void print_array_8_inv(const uint8_t *src, int len);
 #include <stdio.h>
 #define io_printf printf
 #define con_printf printf
-#elif defined MCU_ESP8266
-#include <osapi.h>
-#define io_printf(...)  do { char __buf[120]; if (ets_snprintf(__buf, sizeof __buf, __VA_ARGS__) > 0) io_puts(__buf); } while(0)
-#define  con_printf (*con_printf_fun)
 #else
 #include <stdio.h>
 #define io_printf(...)  do { char __buf[120]; if (snprintf(__buf, sizeof __buf, __VA_ARGS__) > 0) io_puts(__buf); } while(0)

@@ -9,12 +9,7 @@
 extern int unit_testing;
 #define UNIT_TEST (unit_testing+0)
 
-
-#ifdef MCU_ESP8266
-#define assert(x) do { if (x) {} else { con_printf("assert failed: %s at %s:%d\n", __func__, __FILE__, __LINE__);mcu_restart(); }} while(0)
-#else
 #include <assert.h>
-#endif
 
 #if defined MCU_ESP32 && defined DEBUG
 #define db_check_heap()   assert(heap_caps_check_integrity_all(true))

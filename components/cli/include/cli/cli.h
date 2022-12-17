@@ -49,7 +49,7 @@ extern bool (*cli_hook_process_json)(char *json);
 
 
 /**
- * \brief the parse stores the mid option in this global variable (FIXME)
+ * \brief the parser stores the mid option in this global variable (FIXME)
  */
 extern uint16_t cli_msgid;
 

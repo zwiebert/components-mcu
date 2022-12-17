@@ -11,10 +11,8 @@
 
 #pragma once
 
-#if !defined MCU_ESP8266
 #if __has_include("sensitive/defaults.h")
 #define HAVE_USER_DEFAULTS
-#endif
 #endif
 
 #if defined HAVE_USER_DEFAULTS && ! defined DISTRIBUTION
