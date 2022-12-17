@@ -1,6 +1,6 @@
 .PHONY: clean test rebuild  print-help
 
-mcus := esp32 esp8266
+mcus := esp32
 tgts := all
 
 default: print-help
