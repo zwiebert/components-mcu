@@ -192,12 +192,12 @@ static bool io_mqtt_create_client(struct cfg_mqtt *cmc) {
   }
 
   if (!(client = esp_mqtt_client_init(&mqtt_cfg))) {
-    ESP_LOGE(TAG, "client_init");
+    ESP_LOGE(TAG, "client_init failed");
     return false;
   }
 
   if (esp_mqtt_client_register_event(client, static_cast<esp_mqtt_event_id_t>(ESP_EVENT_ANY_ID), mqtt_event_handler, NULL)) {
-    ESP_LOGE(TAG, "register_event");
+    ESP_LOGE(TAG, "register_event failed");
     return false;
   }
 
@@ -213,19 +213,22 @@ static void io_mqtt_stop_and_destroy(void) {
   }
 }
 
-static void io_mqtt_create_and_start(struct cfg_mqtt *c) {
-  if (client)
-    io_mqtt_stop_and_destroy();
-
-  if (!io_mqtt_create_client(c))
-    return;
-
-  esp_mqtt_client_start(client);
+static bool io_mqtt_create_and_start(struct cfg_mqtt *c) {
+  bool ok = false;
+  io_mqtt_stop_and_destroy();
+  io_mqtt_create_client(c);
+  if (client) {
+    if (ESP_OK == esp_mqtt_client_start(client))
+      ok = true;
+  }
+  return ok;
 }
 
 void io_mqtt_setup(struct cfg_mqtt *c) {
   if (c && c->enable) {
-    io_mqtt_create_and_start(c);
+    if (!io_mqtt_create_and_start(c)) {
+      ESP_LOGE(TAG, "setup: create/start client failed)");
+    }
   } else {
     io_mqtt_stop_and_destroy();
   }

@@ -24,7 +24,6 @@ static bool Is_connected;
 
 void ipnet_connected(void) {
   Is_connected = true;
- //XXX soMsg_INET_PRINT_ADDRESS();
 if(ipnet_CONNECTED_cb)
   ipnet_CONNECTED_cb();
 }
