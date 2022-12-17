@@ -14,14 +14,13 @@
 #ifdef TEST_HOST
 #define DB(x)
 #define DB2(x)
-#else
-#define DB(x) do { if (TXTIO_IS_VERBOSE(vrbDebug)) {x;} } while(0)
-#define DB2(x) DB(x)
-#include "spiffs.h"
-#include "storage/esp8266/spiffs_fs.h"
 #endif
 
-#include "storage/esp8266/spiffs_posix.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 
 void spiffs_print_errno() {
   io_printf("errno: IMPLEMENT_ME");
