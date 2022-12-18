@@ -27,11 +27,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-
-
-
-static SemaphoreHandle_t stm32_mutex;
-
 static struct cfg_stm32 stm32_config;
 #define stm32_cfg (&stm32_config)
 
@@ -168,24 +163,6 @@ void stm32_runFirmware() {
   stm32_configSerial(STM32_MODE_FIRMWARE);
 }
 
-
-bool stm32_mutexTake() {
-  if (xSemaphoreTake(stm32_mutex, portMAX_DELAY)) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
-bool stm32_mutexTakeTry() {
-  return 0 != xSemaphoreTake(stm32_mutex, 0);
-}
-
-void stm32_mutexGive() {
-  xSemaphoreGive(stm32_mutex);
-}
-
-
 void stm32_setup(const struct cfg_stm32 *cfg_stm32)
 {
   stm32_config = *cfg_stm32;
@@ -197,8 +174,6 @@ void stm32_setup(const struct cfg_stm32 *cfg_stm32)
   STM32_SET_BOOT_PIN(0);
 
   stm32_configSerial(STM32_MODE_FIRMWARE);
-
-  stm32_mutex = xSemaphoreCreateMutex();
 
    //xTaskCreate(echo_task, "uart_echo_task", 1024, NULL, 10, NULL);
 }

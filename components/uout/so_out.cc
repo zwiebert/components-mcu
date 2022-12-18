@@ -6,8 +6,6 @@
 #include "uout/status_json.hh"
 #include "debug/dbg.h"
 #include "utils_misc/int_macros.h"
-#include "utils_misc/ftoa.h"
-#include "utils_misc/itoa.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -63,7 +61,7 @@ void SoOut::print(const char *key, const char *val) const {
 }
 void SoOut::print(const char *key, int val) const {
   char buf[20];
-  itoa(val, buf, 10);
+  snprintf(buf, sizeof buf, "%d", val);
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json())
@@ -72,7 +70,7 @@ void SoOut::print(const char *key, int val) const {
 
 void SoOut::print(const char *key, long val) const {
   char buf[20];
-  ltoa(val, buf, 10);
+  snprintf(buf, sizeof buf, "%ld", val);
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json())
@@ -81,7 +79,7 @@ void SoOut::print(const char *key, long val) const {
 
 void SoOut::print(const char *key, long long val) const {
   char buf[20];
-  ltoa(val, buf, 10); // XXX: long long
+  snprintf(buf, sizeof buf, "%lld", val);
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json())
@@ -90,7 +88,7 @@ void SoOut::print(const char *key, long long val) const {
 
 void SoOut::print(const char *key, unsigned val, int base) const {
   char buf[20];
-  ltoa(val, buf, base);
+  snprintf(buf, sizeof buf, base == 10 ? "%u" : "%x", val);
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json()) {
@@ -103,7 +101,7 @@ void SoOut::print(const char *key, unsigned val, int base) const {
 
 void SoOut::print(const char *key, unsigned long val, int base) const {
   char buf[20];
-  ltoa(val, buf, base);
+  snprintf(buf, sizeof buf, base == 10 ? "%lu" : "%lx", val);
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json()) {
@@ -116,7 +114,7 @@ void SoOut::print(const char *key, unsigned long val, int base) const {
 
 void SoOut::print(const char *key, float val, int n) const {
   char buf[20];
-  ftoa(val, buf, n);
+  snprintf(buf, sizeof buf, "%f", val);
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json())
