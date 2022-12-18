@@ -21,7 +21,7 @@
 #define CFG_PARTNAME "nvs"
 
 struct kvs_handle {
-nvs_handle handle; // XXX allow more than one handle
+  nvs_handle handle;
 };
 
 #define VP2H(vp)((vp)->handle)

@@ -1,16 +1,10 @@
 /**
  * \file   net/ipnet.h
- * \brief  Getting some info about our IP connection (XXX)
+ * \brief  Getting some info about our IP connection
  */
 #ifdef __cplusplus
   extern "C" {
 #endif
-/*
- * wifi.h
- *
- *  Created on: 20.03.2019
- *      Author: bertw
- */
 
 #pragma once
 
