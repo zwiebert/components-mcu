@@ -1,4 +1,7 @@
 #ifdef __cplusplus
+#define USE_MUTEX
+#include "utils_misc/mutex.hh"
+extern RecMutex stm32_mutex;
   extern "C" {
 #endif
 
