@@ -52,9 +52,9 @@ struct cfg_lan* config_read_ethernet(struct cfg_lan *c);
 int8_t config_read_lan_phy();
 int8_t config_read_lan_pwr_gpio();
 
-void config_setup_txtio();
+void config_setup_txtio(struct uo_flagsT *flags);
 struct cfg_txtio* config_read_txtio(struct cfg_txtio *c);
 enum verbosity config_read_verbose();
 
-void config_setup_cliTcpServer();
+void config_setup_cliTcpServer(struct uo_flagsT *flags);
 

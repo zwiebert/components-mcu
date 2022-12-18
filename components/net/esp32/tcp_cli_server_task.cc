@@ -414,8 +414,6 @@ static uo_flagsT UserFlags;
 static void callback_subscribe() {
   uo_flagsT flags = UserFlags;
   flags.evt.pin_change = true;
-  flags.evt.pct_change = true;
-  flags.evt.rf_msg_received = true;
   flags.evt.gen_app_state_change = true;
   flags.evt.gen_app_error_message = true;
   flags.evt.gen_app_log_message = true;

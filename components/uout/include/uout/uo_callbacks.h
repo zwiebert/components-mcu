@@ -24,11 +24,6 @@ typedef struct uo_flagsT {
       bool ip_address_change :1;
       bool async_http_resp :1;
 
-      bool pct_change :1; ///< XXX: application-specific flag
-      bool timer_change :1; ///< XXX: application-specific flag
-      bool rf_msg_received :1;
-      bool valve_change :1; ///< XXX: application-specific flag
-
       /**
        *  \brief any application state change which would interest user clients
        *   (makes sense with JSON or TXT format)
@@ -47,6 +42,11 @@ typedef struct uo_flagsT {
        */
       bool gen_app_log_message :1;
 
+
+      bool uo_evt_flag_7 :1;
+      bool uo_evt_flag_8 :1;
+      bool uo_evt_flag_9 :1;
+      bool uo_evt_flag_10 :1;
       bool uo_evt_flag_A :1;
       bool uo_evt_flag_B :1;
       bool uo_evt_flag_C :1;

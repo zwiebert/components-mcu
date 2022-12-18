@@ -202,7 +202,6 @@ static void pctChange_cb(const uoCb_msgT msg) {
 
 static void callback_subscribe(uo_flagsT flags) {
   flags.evt.pin_change = true;
-  flags.evt.pct_change = true;
   flags.evt.ip_address_change = true;
   flags.evt.gen_app_state_change = true;
   flags.evt.gen_app_error_message = true;

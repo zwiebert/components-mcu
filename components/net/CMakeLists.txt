@@ -9,7 +9,7 @@ idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     REQUIRES uout
-    PRIV_REQUIRES main_loop app_config utils_misc net_http_server txtio cli utils_debug
+    PRIV_REQUIRES main_loop app_config utils_misc net_http_server txtio cli utils_debug uout
                   esp_netif esp_wifi esp_eth esp_http_client #PRIV_ESP_IDF
  )
 

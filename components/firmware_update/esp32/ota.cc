@@ -6,7 +6,6 @@
 #include "freertos/event_groups.h"
 
 #include "esp_system.h"
-#include "esp_wifi.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_ota_ops.h"
@@ -47,7 +46,8 @@ static esp_err_t http_event_handler(esp_http_client_event_t *evt)
         case HTTP_EVENT_DISCONNECTED:
             ESP_LOGD(TAG, "HTTP_EVENT_DISCONNECTED");
             break;
-        case HTTP_EVENT_REDIRECT: //TODO
+        case HTTP_EVENT_REDIRECT: //TODO? implement HTTP_EVENT_REDIRECT?
+          ESP_LOGD(TAG, "HTTP_EVENT_REDIRECT");
           break;
 
     }
