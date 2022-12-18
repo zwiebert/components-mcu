@@ -113,8 +113,11 @@ void SoOut::print(const char *key, unsigned long val, int base) const {
 }
 
 void SoOut::print(const char *key, float val, int n) const {
+  precond(0 <= n && n <= 9);
   char buf[20];
-  snprintf(buf, sizeof buf, "%f", val);
+  char fmt[] = "%.2f";
+  fmt[2] = '0' + n;
+  snprintf(buf, sizeof buf, fmt, val); //
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, buf);
   if (hasOutput_json())
