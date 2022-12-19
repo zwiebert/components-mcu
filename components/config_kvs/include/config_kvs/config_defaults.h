@@ -124,7 +124,7 @@
 #endif
 
 #ifndef MY_NETWORK_CONNECTION
-#ifdef USE_LAN
+#ifdef CONFIG_APP_USE_LAN
 #define MY_NETWORK_CONNECTION nwLan
 #else
 #define MY_NETWORK_CONNECTION nwWlanAp

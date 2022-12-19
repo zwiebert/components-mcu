@@ -11,7 +11,7 @@
 #define so_mqt ((td.tgt() & SO_TGT_MQTT))
 #define so_ws ((td.tgt() & SO_TGT_WS))
 
-#ifndef USE_JSON
+#ifndef CONFIG_APP_USE_JSON
 #undef so_jco
 #define so_jco false
 #endif

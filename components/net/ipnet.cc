@@ -30,7 +30,7 @@ if(ipnet_CONNECTED_cb)
 
 void ipnet_disconnected(void) {
   Is_connected = false;
-#ifdef USE_HTTP
+#ifdef CONFIG_APP_USE_HTTP
   hts_setup(0);
 #endif
 }

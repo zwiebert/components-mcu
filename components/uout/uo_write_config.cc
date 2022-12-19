@@ -16,7 +16,7 @@
 
 ///////////////////////////////////////////////////////////
 
-#ifdef USE_LAN
+#ifdef CONFIG_APP_USE_LAN
 void soCfg_LAN_PHY(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_LAN_PHY), cfg_args_lanPhy[config_read_lan_phy()]);
 }
@@ -24,7 +24,7 @@ void soCfg_LAN_PWR_GPIO(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_LAN_PWR_GPIO), config_read_lan_pwr_gpio());
 }
 #endif
-#ifdef USE_WLAN
+#ifdef CONFIG_APP_USE_WLAN
 void soCfg_WLAN_SSID(const struct TargetDesc &td) {
   char buf[64];
   td.so().print(settings_get_optKeyStr(CB_WIFI_SSID), config_read_wifi_ssid(buf, sizeof buf));
@@ -34,13 +34,13 @@ void soCfg_WLAN_PASSWORD(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_WIFI_PASSWD), config_read_wifi_passwd(buf, sizeof buf) ? "*" : "");
 }
 #endif
-#ifdef USE_NTP
+#ifdef CONFIG_APP_USE_NTP
 void soCfg_NTP_SERVER(const struct TargetDesc &td) {
   char buf[64];
   td.so().print(settings_get_optKeyStr(CB_NTP_SERVER), config_read_ntp_server(buf, sizeof buf));
 }
 #endif
-#ifdef USE_MQTT
+#ifdef CONFIG_APP_USE_MQTT
 void soCfg_MQTT_ENABLE(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_MQTT_ENABLE), config_read_mqtt_enable());
 }
@@ -66,7 +66,7 @@ void soCfg_MQTT_ROOT_TOPIC(const struct TargetDesc &td) {
 }
 #endif
 
-#ifdef USE_HTTP
+#ifdef CONFIG_APP_USE_HTTP
 void soCfg_HTTP_ENABLE(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_HTTP_ENABLE), config_read_http_enable());
 }

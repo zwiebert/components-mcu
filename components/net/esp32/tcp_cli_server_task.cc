@@ -293,7 +293,7 @@ public:
 
     FD_SET(sockfd, &rfds);
     FD_SET(sockfd_ia, &rfds);
-#ifdef USE_CLI_TASK_EXP
+#ifdef CONFIG_APP_USE_CLI_TASK_EXP
      FD_SET(STDIN_FILENO, &rfds);
      if (n <= STDIN_FILENO)
        n = STDIN_FILENO+1;
@@ -326,7 +326,7 @@ public:
         ::write(new_fd, welcome, sizeof welcome);
       }
     }
-#ifdef USE_CLI_TASK_EXP
+#ifdef CONFIG_APP_USE_CLI_TASK_EXP
      if (FD_ISSET(STDIN_FILENO, &rfds)) {
        cli_loop();
 
@@ -360,7 +360,7 @@ public:
     LockGuard lock(tcpCli_mutex);
 
     if (auto txt = uoCb_txtFromMsg(msg)) {
-#ifdef USE_WRITELN
+#ifdef CONFIG_APP_USE_WRITELN
       tcpst_writeln_all(txt);
       tcpst_writeln_all("\r\n");
 #else
@@ -369,7 +369,7 @@ public:
 #endif
     }
     if (auto json = uoCb_jsonFromMsg(msg)) {
-#ifdef USE_WRITELN
+#ifdef CONFIG_APP_USE_WRITELN
       tcpst_writeln_all(json);
       tcpst_writeln_all("\r\n");
 #else

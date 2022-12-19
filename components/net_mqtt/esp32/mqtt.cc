@@ -30,7 +30,7 @@
 #else
 #define D(x) x
 #endif
-#ifdef USE_MQTT
+#ifdef CONFIG_APP_USE_MQTT
 
 static bool is_connected;
 constexpr const char *TAG = "mqtt_client";

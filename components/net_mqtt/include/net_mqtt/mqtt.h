@@ -48,7 +48,7 @@ bool topic_startsWith(const char *topic, int topic_len, const char *s);
 /// \brief test if TOPIC with TOPIC_LEN ends with string S
 bool topic_endsWith(const char *topic, int topic_len, const char *s);
 
-#if !defined USE_MQTT && !defined HOST_TESTING
+#if !defined CONFIG_APP_USE_MQTT && !defined HOST_TESTING
 inline void io_mqtt_subscribe(const char *topic, int qos) {
 }
 inline void io_mqtt_unsubscribe(const char *topic) {

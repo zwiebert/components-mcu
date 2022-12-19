@@ -146,7 +146,7 @@ void cli_process_cmdline(char *line, const struct TargetDesc &td, process_parm_c
     if (td.so().root_open("tfmcu")) {
       proc_parm(clp.par, n, td);
       td.so().root_close();
-#ifdef USE_WS
+#ifdef CONFIG_APP_USE_WS
       if (so_tgt_test(SO_TGT_WS)) {
         uoCb_publish_wsJson(td.sj().get_json());
       }

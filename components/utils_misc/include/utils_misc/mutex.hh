@@ -25,7 +25,7 @@ public:
 
 #include <mutex>
 
-#ifdef USE_MUTEX
+#ifdef CONFIG_APP_USE_MUTEX
 using RecMutex = MutexRecursive;
 #else
 using RecMutex = MutexDummy;

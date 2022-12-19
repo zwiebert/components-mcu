@@ -1,5 +1,5 @@
 #include "app_config/proj_app_cfg.h"
-#ifdef USE_WLAN
+#ifdef CONFIG_APP_USE_WLAN
 #include "net/wifi_station_setup.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"

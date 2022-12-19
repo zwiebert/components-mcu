@@ -3,7 +3,7 @@
 
 RecMutex cli_mutex;
 
-#ifdef USE_MUTEX
+#ifdef CONFIG_APP_USE_MUTEX
 void cli_mutex_setup() {
 }
 

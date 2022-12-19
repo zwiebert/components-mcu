@@ -75,7 +75,7 @@ static int my_write(const char *src, size_t len) {
 
 
 static int  es_io_getc(void) {
-#ifdef USE_CLI_TASK
+#ifdef CONFIG_APP_USE_CLI_TASK
  return getchar();
 #else
  char c;
@@ -88,7 +88,7 @@ static int  es_io_getc(void) {
 
 
 static int es_io_putc(char c) {
-#ifdef USE_CLI_TASK
+#ifdef CONFIG_APP_USE_CLI_TASK
   return my_write(&c, 1);
 #else
   return putchar(c);
@@ -183,7 +183,7 @@ static void pctChange_cb(const uoCb_msgT msg) {
   LockGuard lock(txtio_mutex);
 
   if (auto txt = uoCb_txtFromMsg(msg)) {
-#ifdef USE_CLI_TASK
+#ifdef CONFIG_APP_USE_CLI_TASK
     uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, txt, strlen(txt));
     uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\r\n", 2);
 #else
@@ -192,7 +192,7 @@ static void pctChange_cb(const uoCb_msgT msg) {
 #endif
   }
   if (auto json = uoCb_jsonFromMsg(msg)) {
-#ifdef USE_CLI_TASK
+#ifdef CONFIG_APP_USE_CLI_TASK
     uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, json, strlen(json));
     uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\r\n", 2);
 #else
@@ -217,7 +217,7 @@ static void callback_subscribe(uo_flagsT flags) {
 extern "C++" void txtio_mcu_setup();
 
 void txtio_mcu_setup(struct cfg_txtio *cfg_txtio) {
-#ifdef USE_CLI_TASK
+#ifdef CONFIG_APP_USE_CLI_TASK
   initialize_console(cfg_txtio);
 #endif
   io_putc_fun = es_io_putc_crlf;

@@ -26,7 +26,7 @@ static void cli_task(void *pvParameters) {
 
 
 void cli_setup_task(bool enable) {
-#if (!defined USE_CLI_TASK_EXP) && defined USE_TCPS_TASK
+#if (!defined CONFIG_APP_USE_CLI_TASK_EXP) && defined CONFIG_APP_USE_TCPS_TASK
   static uint8_t ucParameterToPass;
 
   if (xHandle) {

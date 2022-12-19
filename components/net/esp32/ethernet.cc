@@ -21,7 +21,7 @@
 
 extern "C" esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
 
-#ifdef USE_LAN
+#ifdef CONFIG_APP_USE_LAN
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 
 static esp_eth_phy_t *(*ethernet_create_phy)(const eth_phy_config_t *config);

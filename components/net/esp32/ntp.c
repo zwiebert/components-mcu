@@ -14,7 +14,7 @@
 
 #include "app_config/proj_app_cfg.h"
 
-#ifdef USE_NTP
+#ifdef CONFIG_APP_USE_NTP
 #include "net/ntp_client_setup.h"
 #include "esp_event.h"
 #include "esp_event.h"

@@ -16,7 +16,7 @@
 #include "uout/uo_callbacks.h"
 
 
-#if defined USE_TCPS_TASK || defined USE_TCPS
+#if defined CONFIG_APP_USE_TCPS_TASK || defined CONFIG_APP_USE_TCPS
 #include "net/tcp_cli_server.h"
 void config_setup_cliTcpServer(struct uo_flagsT *flagsPtr) {
   uo_flagsT flags = *flagsPtr;
@@ -26,9 +26,9 @@ void config_setup_cliTcpServer(struct uo_flagsT *flagsPtr) {
   flags.fmt.txt = true;
 
   struct cfg_tcps c { .flags = flags, .enable = true };
-#ifdef USE_TCPS
+#ifdef CONFIG_APP_USE_TCPS
  tcpCli_setup(&c);
-#elif defined USE_TCPS_TASK
+#elif defined CONFIG_APP_USE_TCPS_TASK
  tcpCli_setup_task(&c);
 #endif
 }
@@ -62,7 +62,7 @@ enum verbosity config_read_verbose() {
 }
 #endif
 
-#ifdef USE_LAN
+#ifdef CONFIG_APP_USE_LAN
 #include "net/ethernet_setup.h"
 struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   kvshT h;
@@ -86,7 +86,7 @@ int8_t config_read_lan_pwr_gpio() {
 }
 #endif
 
-#ifdef USE_NTP
+#ifdef CONFIG_APP_USE_NTP
 #include "net/ntp_client_setup.h"
 struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   kvshT h;
@@ -106,7 +106,7 @@ const char* config_read_ntp_server(char *d, unsigned d_size) {
 }
 #endif
 
-#ifdef USE_WLAN
+#ifdef CONFIG_APP_USE_WLAN
 #include "net/wifi_station_setup.h"
 struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   kvshT h;
@@ -130,7 +130,7 @@ const char* config_read_wifi_passwd(char *d, unsigned d_size) {
 }
 #endif
 
-#ifdef USE_MQTT
+#ifdef CONFIG_APP_USE_MQTT
 #include "net_mqtt/mqtt.h"
 struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   kvshT h;
@@ -170,7 +170,7 @@ bool config_read_mqtt_enable() {
 }
 #endif
 
-#ifdef USE_HTTP
+#ifdef CONFIG_APP_USE_HTTP
 #include "net_http_server/http_server_setup.h"
 struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   kvshT h;
