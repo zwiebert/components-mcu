@@ -110,12 +110,12 @@ public:
     lhs.write(buf);
     return lhs;
   }
-  /// \brief  modifier for << opterator (final, line-feed)  XXX?
+  /// \brief  modifier for << operator (final, line-feed)  XXX: currently unused/untested
   struct mod {
     bool fin:1 = false;
     bool lf:1 = false;
   };
-  /// \brief  write to output with modifiers XXX?
+  /// \brief  write to output with modifiers XXX: currently unused/untested
   friend const TargetDesc& operator<<(const TargetDesc &lhs, const std::pair<TargetDesc::mod, const char*> &mod_s) {
     if (mod_s.first.lf)
       lhs.writeln(mod_s.second, -1, mod_s.first.fin);

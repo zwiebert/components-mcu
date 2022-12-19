@@ -44,8 +44,8 @@ public:
   bool cat_to_buf(const char *s); ///< \brief Append some external JSON to this object's buffer
 
   char* get_json() const; ///< \brief  Get this objects JSON as null terminated string (ownership remains to this object)
-  int writeln_json(bool final = true) const; ///< \brief write this objects JSON as line to its Target descriptor (XXX?)
-  int write_json(bool final = true) const; ///< \brief write this objects JSON to its Target descriptor
+  int writeln_json(bool final = true) const; ///< \brief write this objects JSON as line to its Target descriptor
+  int write_json(bool final = true) const; ///< \brief write this objects JSON to its Target descriptor w/o newline
   void free_buffer(); ///<  Destroy this objects JSON buffer (Optional. Destructor will take care of it)
 
 private:

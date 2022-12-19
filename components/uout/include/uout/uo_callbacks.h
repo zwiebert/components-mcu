@@ -73,7 +73,7 @@ typedef struct uo_flagsT {
     struct {
       bool websocket :1; ///< subscriber is a websocket
       bool usart :1; ///< subscriber is an USART console
-      bool tcp_term :1; ///< subscriber is a TCP interactive console or general socket (TODO: maybe we should separate these two?)
+      bool tcp_term :1; ///< subscriber is a TCP interactive console or general socket (TODO: maybe we should separate interactive (Telnet) and general (FHEM) sockets?)
       bool mqtt :1;  ///< subscriber is an MQTT client
     } tgt;
     uint8_t tgt_flags = 0;
@@ -148,14 +148,19 @@ void uoCb_publish_pinChange(const so_arg_pch_t args);
 /// \brief publish ip address to evt.ip_addr_change subscribers
 void uoCb_publish_ipAddress(const char *ip_addr);
 
+
 struct LogMessage {
   const char *tag;
   const char *txt;
   enum WarnLevel : uint8_t { wl_Info, wl_Warn, wl_Fail, wl_Bug };
   WarnLevel warn_level;
 };
-/// \brief publish log message
-void uoCb_publish_logMessage(const LogMessage msg);
+/**
+ *  \brief        publish log message
+ *  \param msg    LogMessage to publish
+ *                XXX NOTE: currently msg.txt should not contain any double quotes
+ */
+void uoCb_publish_logMessage(const LogMessage &msg);
 
 
 // accessing message

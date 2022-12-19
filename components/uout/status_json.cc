@@ -35,7 +35,6 @@ bool StatusJsonT::realloc_buffer(size_t buf_size) {
 
   void *m = realloc(myBuf, buf_size);
 
-  assert(m); //XXX
   if (!m) {
     return false;
     io_puts("ERROR: StatusJsonT::realloc_buffer: out of memory\n");
