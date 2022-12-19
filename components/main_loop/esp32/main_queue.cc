@@ -21,19 +21,19 @@ struct __attribute__ ((packed)) mainLoop_msgT_voidFun {
 static bool mainLoop_pushMessage(const mainLoop_msgT_voidFun *msg);
 static bool mainLoop_pushMessage_fromISR(const mainLoop_msgT_voidFun *msg);
 
-static volatile QueueHandle_t Handle;
+static QueueHandle_t mainLoop_msgQueue;
 static volatile EventGroupHandle_t mainLoop_eventGroup;
 static volatile EventBits_t mainLoop_eventBits;
 
 bool mainLoop_setup(unsigned queue_length, void *event_group, unsigned event_bit) {
-  precond(!Handle);
+  precond(!mainLoop_msgQueue);
 
   const unsigned size = sizeof(struct mainLoop_msgT_voidFun);
 
   mainLoop_eventGroup = static_cast<EventGroupHandle_t>(event_group);
   mainLoop_eventBits = BIT(event_bit);
 
-  if ((Handle = xQueueCreate(queue_length, size))) {
+  if ((mainLoop_msgQueue = xQueueCreate(queue_length, size))) {
     return true;
   }
 
@@ -41,10 +41,10 @@ bool mainLoop_setup(unsigned queue_length, void *event_group, unsigned event_bit
 }
 
 static bool mainLoop_pushMessage(const mainLoop_msgT_voidFun *msg) {
-  precond(Handle);
+  precond(mainLoop_msgQueue);
   precond(msg->voidFun);
 
-  if (xQueueSend(Handle, msg, ( TickType_t ) 10) != pdTRUE)
+  if (xQueueSend(mainLoop_msgQueue, msg, ( TickType_t ) 10) != pdTRUE)
     return false;
 
   if (mainLoop_eventGroup) {
@@ -56,12 +56,12 @@ static bool mainLoop_pushMessage(const mainLoop_msgT_voidFun *msg) {
 }
 
 static bool IRAM_ATTR mainLoop_pushMessage_fromISR(const mainLoop_msgT_voidFun *msg) {
-  precond(Handle);
+  precond(mainLoop_msgQueue);
   precond(msg->voidFun);
 
   BaseType_t xHigherPriorityTaskWoken = pdFALSE;
   BaseType_t xHigherPriorityTaskWoken2 = pdFALSE;
-  if (xQueueSendToFrontFromISR(Handle, msg, &xHigherPriorityTaskWoken ) != pdTRUE)
+  if (xQueueSendToFrontFromISR(mainLoop_msgQueue, msg, &xHigherPriorityTaskWoken ) != pdTRUE)
     return false;
 
   if (mainLoop_eventGroup) {
@@ -102,14 +102,14 @@ bool IRAM_ATTR mainLoop_callFun_fromISR(voidFunT fun) {
 }
 
 unsigned mainLoop_processMessages(unsigned max_count, unsigned time_out_ms) {
-  precond(Handle);
+  precond(mainLoop_msgQueue);
 
   unsigned result = 0;
 
   mainLoop_msgT_voidFun msg;
 
   for (int i = 0; max_count == 0 || i < max_count; ++i) {
-    if (!xQueueReceive(Handle, &msg, (TickType_t) pdMS_TO_TICKS(time_out_ms))) {
+    if (!xQueueReceive(mainLoop_msgQueue, &msg, (TickType_t) pdMS_TO_TICKS(time_out_ms))) {
       break;
     }
     ++result;
