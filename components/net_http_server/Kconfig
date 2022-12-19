@@ -1,0 +1,7 @@
+menu "zwiebert: HTTP Server"
+    
+config APP_USE_HTTP
+  bool "Activate HTTP"
+  default y
+  
+  endmenu

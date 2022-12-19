@@ -1,0 +1,35 @@
+menu "zwiebert: Networking"
+    
+config APP_USE_NETWORK
+  bool "Activate NETWORK"
+  default y
+  
+config APP_USE_LAN
+  bool "Activate LAN"
+  default y
+
+config APP_USE_WLAN
+  bool "Activate WLAN"
+  default y
+
+config APP_USE_WLAN_AP
+  bool "Activate WLAN_AP"
+  default y
+
+config APP_USE_AP_FALLBACK
+  bool "Activate AP_FALLBACK"
+  default y
+  
+config APP_USE_NTP
+  bool "Activate NTP"
+  default y
+  
+config APP_USE_TCPS
+  bool "Activate TCPS (non task)"
+  default n
+    
+config APP_USE_TCPS_TASK
+  bool "Activate TCPS_TASK"
+  default y
+  
+  endmenu

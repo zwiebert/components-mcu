@@ -1,0 +1,7 @@
+menu "zwiebert: MQTT client"
+    
+config APP_USE_MQTT
+  bool "Activate MQTT"
+  default y
+    
+ endmenu
