@@ -3,9 +3,14 @@
 
 #include "cli/cli.h"
 
-// XXX: functions working on a static buffer
+
+/**
+ * \brief   Allocate buffer and read command line into it. A command line is terminated by semicolon.
+ * \note    This function is not reentrant
+ * \return  pointer to null terminated command line without the semicolon
+ */
 char* get_commandline(void);
-void cli_process_cmdline2(char *line, const struct TargetDesc &td, process_parm_cb proc_parm);
+
 int cli_processParameters(clpar p[], int len, const struct TargetDesc &td);
 int cli_parseCommandline(char *cl, struct cli_parm *clp);
 
