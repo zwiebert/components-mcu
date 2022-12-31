@@ -13,6 +13,3 @@
 [submodule "components/test_host/unity"]
 	path = components/test_host/external/unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
-[submodule "components/test_host/external/catch2"]
-	path = components/test_host/external/catch2
-	url = https://github.com/catchorg/Catch2.git
