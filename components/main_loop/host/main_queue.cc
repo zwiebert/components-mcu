@@ -22,10 +22,10 @@ bool mainLoop_callFun_fromISR(voidFunT fun) {
   return true;
 }
 
-void *mainLoop_callFun(voidFunT fun, unsigned delay_ms, bool periodic) {
+void *mainLoop_callFunByTimer(voidFunT fun, unsigned delay_ms, bool periodic) {
   return nullptr;
 }
-bool mainLoop_stopFun(void *tmr) {
+bool mainLoop_stopFun(void *tmr, bool delete_timer) {
   return false;
 }
 

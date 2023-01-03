@@ -81,7 +81,7 @@ bool mainLoop_callFun(voidFunT fun) {
   return mainLoop_pushMessage(&msg);
 }
 
-void *mainLoop_callFun(voidFunT fun, unsigned delay_ms, bool periodic) {
+void *mainLoop_callFunByTimer(voidFunT fun, unsigned delay_ms, bool periodic) {
   TimerHandle_t tmr = xTimerCreate("TxWorker", pdMS_TO_TICKS(delay_ms), (periodic ? pdTRUE : pdFALSE), (void*) fun, [](TimerHandle_t xTimer) {
     voidFunT f = (voidFunT) pvTimerGetTimerID(xTimer);
     mainLoop_callFun(f);
@@ -92,8 +92,14 @@ void *mainLoop_callFun(voidFunT fun, unsigned delay_ms, bool periodic) {
 
   return (void *)tmr;
 }
-bool mainLoop_stopFun(void *tmr) {
-  return pdPASS == xTimerStop(static_cast<TimerHandle_t>(tmr), 10);
+
+
+bool mainLoop_stopFun(void *tmr, bool delete_timer) {
+  const bool hasStopped = (pdPASS == xTimerStop(static_cast<TimerHandle_t>(tmr), 10));
+  if (!delete_timer || !hasStopped)
+    return hasStopped;
+
+  return pdPASS == xTimerDelete(static_cast<TimerHandle_t>(tmr), 10);
 }
 
 bool IRAM_ATTR mainLoop_callFun_fromISR(voidFunT fun) {

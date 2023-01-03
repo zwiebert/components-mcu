@@ -44,13 +44,13 @@ bool mainLoop_callFun_fromISR(voidFunT fun);
  * \param periodic  if true, call the function periodic. the first call is delayed
  * \return          handle of the delay timer (needed to stop a periodic timer). NULL means failure.
  */
-void *mainLoop_callFun(voidFunT fun, unsigned delay_ms, bool periodic = false);
+void *mainLoop_callFunByTimer(voidFunT fun, unsigned delay_ms, bool periodic = false);
 /**
  * \brief           Stop a periodic function call
  * \param tmr       Handle to timer, as returned by mainLoop_callFun
  * \return          success
  */
-bool mainLoop_stopFun(void *tmr);
+bool mainLoop_stopFun(void *tmr, bool delete_timer = true);
 
 /**
  * \brief           Restart MCU from main task.
