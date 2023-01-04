@@ -85,7 +85,7 @@ void unity_testcase_register(test_desc_t* desc);
         // test goes here
     }
 */
-
+#undef TEST_CASE
 #define TEST_CASE(name_, desc_) \
     static void UNITY_TEST_UID(test_func_) (void); \
     static void __attribute__((constructor)) UNITY_TEST_UID(test_reg_helper_) (void) \

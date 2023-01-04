@@ -52,7 +52,7 @@ static void test_config() {
 #define test_mqtt_user "zimbra"
   handle = kvs_open(NS, kvs_WRITE);
   TEST_ASSERT_NOT_NULL(handle);
-  succ = kvs_rw_str(handle, "C_MQTT_CID", "tfmcu_esp8266", 0, true);
+  succ = kvs_rw_str(handle, "C_MQTT_CID", const_cast<char*>("tfmcu_esp8266"), 0, true);
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
