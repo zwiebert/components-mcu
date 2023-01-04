@@ -12,6 +12,8 @@
 #include "utils_misc/int_types.h"
 #include "key_value_store/kvs_wrapper.h"
 
+#include <string.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"

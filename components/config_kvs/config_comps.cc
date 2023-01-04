@@ -53,7 +53,7 @@ void config_setup_txtio(struct uo_flagsT *flagsPtr) {
   flags.fmt.json = true;
   flags.fmt.txt = true;
 
-  struct cfg_txtio c { .flags = flags, .baud = MY_MCU_UART_BAUD_RATE };
+  struct cfg_txtio c { .flags = flags, .baud = CONFIG_APP_UART_BAUD_RATE };
   config_read_txtio(&c);
   txtio_setup(&c);
 }
@@ -74,15 +74,15 @@ struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   return c;
 }
 void config_setup_ethernet() {
-  struct cfg_lan c = { .phy = MY_LAN_PHY, .pwr_gpio = MY_LAN_PWR_GPIO, };
+  struct cfg_lan c = { .phy = lanPhyLAN8720, .pwr_gpio = -1, };
   config_read_ethernet(&c);
   ethernet_setup(&c);
 }
 int8_t config_read_lan_phy() {
-  return config_read_item(CB_LAN_PHY, MY_LAN_PHY);
+  return config_read_item(CB_LAN_PHY, lanPhyLAN8720);
 }
 int8_t config_read_lan_pwr_gpio() {
-  return config_read_item(CB_LAN_PWR_GPIO, MY_LAN_PWR_GPIO);
+  return config_read_item(CB_LAN_PWR_GPIO, -1);
 }
 #endif
 
@@ -97,12 +97,12 @@ struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   return c;
 }
 void config_setup_ntpClient() {
-  struct cfg_ntp c { {.server = MY_NTP_SERVER} };
+  struct cfg_ntp c { {.server = CONFIG_APP_NTP_SERVER} };
   config_read_ntpClient(&c);
   ntp_setup(&c);
 }
 const char* config_read_ntp_server(char *d, unsigned d_size) {
-  return config_read_item(CB_NTP_SERVER, d, d_size, MY_NTP_SERVER);
+  return config_read_item(CB_NTP_SERVER, d, d_size, CONFIG_APP_NTP_SERVER);
 }
 #endif
 
@@ -118,15 +118,15 @@ struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   return c;
 }
 void config_setup_wifiStation() {
-  struct cfg_wlan c { {.SSID = MY_WIFI_SSID}, {.password = MY_WIFI_PASSWORD}, };
+  struct cfg_wlan c { {.SSID = CONFIG_APP_WIFI_SSID}, {.password = CONFIG_APP_WIFI_PASSWORD}, };
   config_read_wifiStation(&c);
   wifistation_setup(&c);
 }
 const char* config_read_wifi_ssid(char *d, unsigned d_size) {
-  return config_read_item(CB_WIFI_SSID, d, d_size, MY_WIFI_SSID);
+  return config_read_item(CB_WIFI_SSID, d, d_size, CONFIG_APP_WIFI_SSID);
 }
 const char* config_read_wifi_passwd(char *d, unsigned d_size) {
-  return config_read_item(CB_WIFI_PASSWD, d, d_size, MY_WIFI_PASSWORD);
+  return config_read_item(CB_WIFI_PASSWD, d, d_size, CONFIG_APP_WIFI_PASSWORD);
 }
 #endif
 
@@ -145,28 +145,28 @@ struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   return c;
 }
 void config_setup_mqttClient() {
-  struct cfg_mqtt c { {.url = MY_MQTT_URL}, {.user = MY_MQTT_USER}, {.password = MY_MQTT_PASSWORD}, { .client_id = MY_MQTT_CLIENT_ID},
-    MY_MQTT_ENABLE };
+  struct cfg_mqtt c { {.url = CONFIG_APP_MQTT_URL}, {.user = CONFIG_APP_MQTT_USER}, {.password = CONFIG_APP_MQTT_PASSWORD}, { .client_id = CONFIG_APP_MQTT_CLIENT_ID},
+    CONFIG_APP_MQTT_ENABLE };
   config_read_mqttClient(&c);
   io_mqtt_setup(&c);
 }
 const char* config_read_mqtt_url(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_URL, d, d_size, MY_MQTT_URL);
+  return config_read_item(CB_MQTT_URL, d, d_size, CONFIG_APP_MQTT_URL);
 }
 const char* config_read_mqtt_user(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_USER, d, d_size, MY_MQTT_USER);
+  return config_read_item(CB_MQTT_USER, d, d_size, CONFIG_APP_MQTT_USER);
 }
 const char* config_read_mqtt_passwd(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_PASSWD, d, d_size, MY_MQTT_PASSWORD);
+  return config_read_item(CB_MQTT_PASSWD, d, d_size, CONFIG_APP_MQTT_PASSWORD);
 }
 const char* config_read_mqtt_client_id(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_CLIENT_ID, d, d_size, MY_MQTT_CLIENT_ID);
+  return config_read_item(CB_MQTT_CLIENT_ID, d, d_size, CONFIG_APP_MQTT_CLIENT_ID);
 }
 const char* config_read_mqtt_root_topic(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_ROOT_TOPIC, d, d_size, MY_MQTT_ROOT_TOPIC);
+  return config_read_item(CB_MQTT_ROOT_TOPIC, d, d_size, CONFIG_APP_MQTT_ROOT_TOPIC);
 }
 bool config_read_mqtt_enable() {
-  return !!config_read_item(CB_MQTT_ENABLE, MY_MQTT_ENABLE);
+  return !!config_read_item(CB_MQTT_ENABLE, CONFIG_APP_MQTT_ENABLE);
 }
 #endif
 
@@ -184,18 +184,18 @@ struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   return c;
 }
 void config_setup_httpServer() {
-  struct cfg_http c { {.user = MY_HTTP_USER}, {.password = MY_HTTP_PASSWORD }, MY_HTTP_ENABLE };
+  struct cfg_http c { {.user = CONFIG_APP_HTTP_USER}, {.password = CONFIG_APP_HTTP_PASSWORD }, CONFIG_APP_HTTP_ENABLE };
   config_read_httpServer(&c);
   hts_setup(&c);
 }
 const char* config_read_http_user(char *d, unsigned d_size) {
-  return config_read_item(CB_HTTP_USER, d, d_size, MY_HTTP_USER);
+  return config_read_item(CB_HTTP_USER, d, d_size, CONFIG_APP_HTTP_USER);
 }
 const char* config_read_http_passwd(char *d, unsigned d_size) {
-  return config_read_item(CB_HTTP_PASSWD, d, d_size, MY_HTTP_PASSWORD);
+  return config_read_item(CB_HTTP_PASSWD, d, d_size, CONFIG_APP_HTTP_PASSWORD);
 }
 
 bool config_read_http_enable() {
-  return !!config_read_item(CB_HTTP_ENABLE, MY_HTTP_ENABLE);
+  return !!config_read_item(CB_HTTP_ENABLE, CONFIG_APP_HTTP_ENABLE);
 }
 #endif

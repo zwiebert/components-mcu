@@ -9,7 +9,7 @@
 
 #include "config_kvs/config.h"
 #include "config_kvs.h"
-#include "config_kvs/config_defaults.h"
+
 
 #include "utils_misc/int_macros.h"
 #include "key_value_store/kvs_wrapper.h"
