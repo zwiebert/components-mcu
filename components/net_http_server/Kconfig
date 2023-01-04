@@ -4,4 +4,5 @@ config APP_USE_HTTP
   bool "Activate HTTP"
   default y
   
-  endmenu
+endmenu
+
