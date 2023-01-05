@@ -12,27 +12,31 @@
 #include <key_value_store/kvs_wrapper.h>
 #include <config_kvs/comp_settings.hh>
 
-#ifndef CONFIG_APP_CFG_NAMESPACE
-#define CONFIG_APP_CFG_NAMESPACE "config"
-#endif
-
-
-
-
 
 unsigned nvsStr(kvshT handle, const char *key, void *dst, size_t dst_len, bool save);
 unsigned nvsBlob(kvshT handle, const char *key, void *dst, size_t dst_len, bool save);
 
-#define nvs_dt(DT, mbit, val) if (GET_BIT(mask,mbit)) { if (write) { kvs_set_##DT(handle, configKvs_keys[mbit], val); } else { val = kvs_get_##DT(handle, configKvs_keys[mbit], val, 0); } }
-#define nvs_i8(mbit, val) nvs_dt(i8, mbit, val)
-#define nvs_u32(mbit, val) nvs_dt(u32, mbit, val)
+template<typename handle_type, typename value_type, typename cb_type>
+void kvsRead_i8(handle_type handle, cb_type cb, value_type &value) {
+  value = static_cast<value_type>(kvs_get_i8(handle, settings_get_kvsKey(cb), static_cast<i8>(value), 0));
+}
 
-#define cfg_get(DT,name) kvs_get_##DT(h, settings_get_kvsKey(CB_##name), MY_##name, 0)
+template<typename handle_type, typename value_type, typename cb_type>
+void kvsRead_u32(handle_type handle, cb_type cb, value_type &value) {
+  value = static_cast<value_type>(kvs_get_u32(handle, settings_get_kvsKey(cb), static_cast<u32>(value), 0));
+}
 
-#define kvsR(DT, cb, val)  do { val = kvs_get_##DT(h, settings_get_kvsKey(cb), (DT)val, 0); } while(0)
-#define kvsRead(DT, VT, cb, val)  do { val = static_cast<VT>(kvs_get_##DT(h, settings_get_kvsKey(cb), static_cast<DT>(val), 0)); } while(0)
-#define kvsW(DT, cb, val)  do { kvs_set_##DT(h,settings_get_kvsKey(cb), val); } while(0)
-#define kvsRs(cb, val)  kvs_rw_str(h, settings_get_kvsKey(cb), val, sizeof val, false)
-#define kvsRb(cb, val)  kvs_rw_blob(h, settings_get_kvsKey(cb), &val, sizeof val, false)
-#define kvsWs(cb, val)  kvs_rw_str(h, settings_get_kvsKey(cb), val, 0, true)
-#define kvsWb(cb, val)  kvs_rw_blob(h, settings_get_kvsKey(cb), &val, sizeof val, true)
+template<typename handle_type, typename value_type, typename cb_type>
+void kvsRead_blob(handle_type h, cb_type cb, value_type &val) {
+  kvs_rw_blob(h, settings_get_kvsKey(cb), &val,sizeof (value_type), false);
+}
+
+template<typename handle_type, typename value_type, typename cb_type>
+void kvsRead_charArray(handle_type h, cb_type cb,  value_type val) {
+  kvs_rw_str(h, settings_get_kvsKey(cb), val, sizeof (value_type), false);
+}
+
+template<typename handle_type, typename value_type, typename cb_type>
+bool kvsWrite_blob(handle_type h, cb_type cb, value_type &val) {
+  return kvs_rw_blob(h, settings_get_kvsKey(cb), &val, sizeof (value_type), true) == sizeof (value_type);
+}

@@ -79,7 +79,7 @@ size_t kvs_rw_blob(kvshT handle, const char *key, void *src_or_dst, unsigned len
   return 0;
 }
 
-
+#if 0
 #define SET_DT_FUN(DT) \
 bool kvs_set_##DT (kvshT handle, const char *key, DT val) { \
   return nvs_set_##DT(VP2H(handle), key, val) == ESP_OK; \
@@ -107,7 +107,138 @@ SET_GET_DT_FUN(i32);
 SET_GET_DT_FUN(u32);
 SET_GET_DT_FUN(i64);
 SET_GET_DT_FUN(u64);
+#else
 
+bool kvs_set_i8(kvshT handle, const char *key, i8 val) {
+  return nvs_set_i8(VP2H(handle), key, val) == ESP_OK;
+}
+i8 kvs_get_i8(kvshT handle, const char *key, i8 default_val, bool *res_success) {
+  i8 temp;
+  if (ESP_OK == nvs_get_i8(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+bool kvs_set_u8(kvshT handle, const char *key, u8 val) {
+  return nvs_set_u8(VP2H(handle), key, val) == ESP_OK;
+}
+u8 kvs_get_u8(kvshT handle, const char *key, u8 default_val, bool *res_success) {
+  u8 temp;
+  if (ESP_OK == nvs_get_u8(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+bool kvs_set_i16(kvshT handle, const char *key, i16 val) {
+  return nvs_set_i16(VP2H(handle), key, val) == ESP_OK;
+}
+i16 kvs_get_i16(kvshT handle, const char *key, i16 default_val, bool *res_success) {
+  i16 temp;
+  if (ESP_OK == nvs_get_i16(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+bool kvs_set_u16(kvshT handle, const char *key, u16 val) {
+  return nvs_set_u16(VP2H(handle), key, val) == ESP_OK;
+}
+u16 kvs_get_u16(kvshT handle, const char *key, u16 default_val, bool *res_success) {
+  u16 temp;
+  if (ESP_OK == nvs_get_u16(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+bool kvs_set_i32(kvshT handle, const char *key, i32 val) {
+  return nvs_set_i32(VP2H(handle), key, val) == ESP_OK;
+}
+i32 kvs_get_i32(kvshT handle, const char *key, i32 default_val, bool *res_success) {
+  i32 temp;
+  if (ESP_OK == nvs_get_i32(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+bool kvs_set_u32(kvshT handle, const char *key, u32 val) {
+  return nvs_set_u32(VP2H(handle), key, val) == ESP_OK;
+}
+u32 kvs_get_u32(kvshT handle, const char *key, u32 default_val, bool *res_success) {
+  u32 temp;
+  if (ESP_OK == nvs_get_u32(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+bool kvs_set_i64(kvshT handle, const char *key, i64 val) {
+  return nvs_set_i64(VP2H(handle), key, val) == ESP_OK;
+}
+i64 kvs_get_i64(kvshT handle, const char *key, i64 default_val, bool *res_success) {
+  i64 temp;
+  if (ESP_OK == nvs_get_i64(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+bool kvs_set_u64(kvshT handle, const char *key, u64 val) {
+  return nvs_set_u64(VP2H(handle), key, val) == ESP_OK;
+}
+u64 kvs_get_u64(kvshT handle, const char *key, u64 default_val, bool *res_success) {
+  u64 temp;
+  if (ESP_OK == nvs_get_u64(VP2H(handle), key, &temp)) {
+    if (res_success)
+      *res_success = true;
+    return temp;
+  }
+  if (res_success)
+    *res_success = false;
+  return default_val;
+}
+;
+;
+
+#endif
 
 int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb, void *args) {
   nvs_iterator_t it = NULL;

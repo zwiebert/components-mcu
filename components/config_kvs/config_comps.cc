@@ -40,7 +40,7 @@ struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     i8 verb = c->verbose;
-    kvsR(i8, CB_VERBOSE, verb);
+    kvsRead_i8(h, CB_VERBOSE, verb);
     c->verbose = static_cast<verbosity>(verb);
     kvs_close(h);
   }
@@ -67,8 +67,8 @@ enum verbosity config_read_verbose() {
 struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
-    kvsRead(i8, lanPhy, CB_LAN_PHY, c->phy);
-    kvsR(i8, CB_LAN_PWR_GPIO, c->pwr_gpio);
+    kvsRead_i8(h, CB_LAN_PHY, c->phy);
+    kvsRead_i8(h, CB_LAN_PWR_GPIO, c->pwr_gpio);
     kvs_close(h);
   }
   return c;
@@ -91,7 +91,7 @@ int8_t config_read_lan_pwr_gpio() {
 struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_NTP_SERVER, c->server);
+    kvsRead_charArray(h, CB_NTP_SERVER, c->server);
     kvs_close(h);
   }
   return c;
@@ -111,8 +111,8 @@ const char* config_read_ntp_server(char *d, unsigned d_size) {
 struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_WIFI_SSID, c->SSID);
-    kvsRs(CB_WIFI_PASSWD, c->password);
+    kvsRead_charArray(h, CB_WIFI_SSID, c->SSID);
+    kvsRead_charArray(h, CB_WIFI_PASSWD, c->password);
     kvs_close(h);
   }
   return c;
@@ -135,11 +135,11 @@ const char* config_read_wifi_passwd(char *d, unsigned d_size) {
 struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_MQTT_URL, c->url);
-    kvsRs(CB_MQTT_USER, c->user);
-    kvsRs(CB_MQTT_PASSWD, c->password);
-    kvsRs(CB_MQTT_CLIENT_ID, c->client_id);
-    kvsR(i8, CB_MQTT_ENABLE, c->enable);
+    kvsRead_charArray(h, CB_MQTT_URL, c->url);
+    kvsRead_charArray(h, CB_MQTT_USER, c->user);
+    kvsRead_charArray(h, CB_MQTT_PASSWD, c->password);
+    kvsRead_charArray(h, CB_MQTT_CLIENT_ID, c->client_id);
+    kvsRead_i8(h, CB_MQTT_ENABLE, c->enable);
     kvs_close(h);
   }
   return c;
@@ -175,9 +175,9 @@ bool config_read_mqtt_enable() {
 struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
-    kvsRs(CB_HTTP_USER, c->user);
-    kvsRs(CB_HTTP_PASSWD, c->password);
-    kvsR(i8, CB_HTTP_ENABLE, c->enable);
+    kvsRead_charArray(h, CB_HTTP_USER, c->user);
+    kvsRead_charArray(h, CB_HTTP_PASSWD, c->password);
+    kvsRead_i8(h, CB_HTTP_ENABLE, c->enable);
 
     kvs_close(h);
   }

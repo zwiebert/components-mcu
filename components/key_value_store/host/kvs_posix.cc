@@ -365,6 +365,7 @@ static int find_key_blob_w(kvshT h, const char *key, unsigned req_size, int *end
   return best_match_pos;
 }
 
+#if 0
 #define SET_DT_FUN(VAL_T) bool kvs_set_##VAL_T(kvshT h, const char *key, VAL_T val) { \
   struct line_info li = { COOKIE }; \
   int pos = find_key_int_w(h, &li, key); \
@@ -392,6 +393,117 @@ SET_GET_DT_FUN(i16);
 SET_GET_DT_FUN(u16);
 SET_GET_DT_FUN(i32);
 SET_GET_DT_FUN(u32);
+#else
+
+bool kvs_set_i8(kvshT h, const char *key, i8 val) {
+  struct line_info li = { COOKIE };
+  int pos = find_key_int_w(h, &li, key);
+li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_i8, .nval = { .val_i8 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
+  int res = kvs_write(h, &li, pos);
+  return res > 0;
+}
+i8 kvs_get_i8(kvshT h, const char *key, i8 default_val, bool *res_success) {
+  struct line_info li = { COOKIE };
+  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_i8);
+  if (res_success)
+    *res_success = pos >= 0;
+  if (pos < 0)
+    return default_val;
+  return li.nval.val_i8;
+}
+;
+;
+bool kvs_set_u8(kvshT h, const char *key, u8 val) {
+  struct line_info li = { COOKIE };
+  int pos = find_key_int_w(h, &li, key);
+li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_u8, .nval = { .val_u8 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
+  int res = kvs_write(h, &li, pos);
+  return res > 0;
+}
+u8 kvs_get_u8(kvshT h, const char *key, u8 default_val, bool *res_success) {
+  struct line_info li = { COOKIE };
+  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_u8);
+  if (res_success)
+    *res_success = pos >= 0;
+  if (pos < 0)
+    return default_val;
+  return li.nval.val_u8;
+}
+;
+;
+bool kvs_set_i16(kvshT h, const char *key, i16 val) {
+  struct line_info li = { COOKIE };
+  int pos = find_key_int_w(h, &li, key);
+li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_i16, .nval = { .val_i16 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
+  int res = kvs_write(h, &li, pos);
+  return res > 0;
+}
+i16 kvs_get_i16(kvshT h, const char *key, i16 default_val, bool *res_success) {
+  struct line_info li = { COOKIE };
+  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_i16);
+  if (res_success)
+    *res_success = pos >= 0;
+  if (pos < 0)
+    return default_val;
+  return li.nval.val_i16;
+}
+;
+;
+bool kvs_set_u16(kvshT h, const char *key, u16 val) {
+  struct line_info li = { COOKIE };
+  int pos = find_key_int_w(h, &li, key);
+li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_u16, .nval = { .val_u16 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
+  int res = kvs_write(h, &li, pos);
+  return res > 0;
+}
+u16 kvs_get_u16(kvshT h, const char *key, u16 default_val, bool *res_success) {
+  struct line_info li = { COOKIE };
+  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_u16);
+  if (res_success)
+    *res_success = pos >= 0;
+  if (pos < 0)
+    return default_val;
+  return li.nval.val_u16;
+}
+;
+;
+bool kvs_set_i32(kvshT h, const char *key, i32 val) {
+  struct line_info li = { COOKIE };
+  int pos = find_key_int_w(h, &li, key);
+li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_i32, .nval = { .val_i32 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
+  int res = kvs_write(h, &li, pos);
+  return res > 0;
+}
+i32 kvs_get_i32(kvshT h, const char *key, i32 default_val, bool *res_success) {
+  struct line_info li = { COOKIE };
+  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_i32);
+  if (res_success)
+    *res_success = pos >= 0;
+  if (pos < 0)
+    return default_val;
+  return li.nval.val_i32;
+}
+;
+;
+bool kvs_set_u32(kvshT h, const char *key, u32 val) {
+  struct line_info li = { COOKIE };
+  int pos = find_key_int_w(h, &li, key);
+li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_u32, .nval = { .val_u32 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
+  int res = kvs_write(h, &li, pos);
+  return res > 0;
+}
+u32 kvs_get_u32(kvshT h, const char *key, u32 default_val, bool *res_success) {
+  struct line_info li = { COOKIE };
+  int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_u32);
+  if (res_success)
+    *res_success = pos >= 0;
+  if (pos < 0)
+    return default_val;
+  return li.nval.val_u32;
+}
+;
+;
+#endif
 
 static unsigned kvs_rw_str_or_blob(kvshT h, const char *key, void *src_or_dst, size_t length, bool do_write, kvs_type_t kvs_type) {
 
