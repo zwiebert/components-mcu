@@ -95,6 +95,9 @@ void *mainLoop_callFunByTimer(voidFunT fun, unsigned delay_ms, bool periodic) {
 
 
 bool mainLoop_stopFun(void *tmr, bool delete_timer) {
+  if (!tmr)
+    return false;
+
   const bool hasStopped = (pdPASS == xTimerStop(static_cast<TimerHandle_t>(tmr), 10));
   if (!delete_timer || !hasStopped)
     return hasStopped;

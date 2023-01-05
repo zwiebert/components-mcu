@@ -47,7 +47,7 @@ bool mainLoop_callFun_fromISR(voidFunT fun);
 void *mainLoop_callFunByTimer(voidFunT fun, unsigned delay_ms, bool periodic = false);
 /**
  * \brief           Stop a periodic function call
- * \param tmr       Handle to timer, as returned by mainLoop_callFun
+ * \param tmr       Handle to timer, as returned by mainLoop_callFun.  Or NULL.
  * \return          success
  */
 bool mainLoop_stopFun(void *tmr, bool delete_timer = true);

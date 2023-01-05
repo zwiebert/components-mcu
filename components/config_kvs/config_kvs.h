@@ -12,8 +12,8 @@
 #include <key_value_store/kvs_wrapper.h>
 #include <config_kvs/comp_settings.hh>
 
-#ifndef CFG_NAMESPACE
-#define CFG_NAMESPACE "config"
+#ifndef CONFIG_APP_CFG_NAMESPACE
+#define CONFIG_APP_CFG_NAMESPACE "config"
 #endif
 
 

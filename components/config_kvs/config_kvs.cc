@@ -43,7 +43,7 @@ unsigned nvsBlob(kvshT handle, const char *key, void *dst, size_t dst_len, bool 
 
 const char* config_read_item_s(const char *key, char *d, unsigned d_size, const char *def) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     if (kvs_rw_str(h, key, d, d_size, false))
       def = d;
     kvs_close(h);
@@ -52,7 +52,7 @@ const char* config_read_item_s(const char *key, char *d, unsigned d_size, const 
 }
 const void* config_read_item_b(const char *key, void *d, unsigned d_size, const void *def) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     if (kvs_rw_blob(h, key, d, d_size, false))
       def = d;
     kvs_close(h);
@@ -62,7 +62,7 @@ const void* config_read_item_b(const char *key, void *d, unsigned d_size, const 
 
 uint32_t config_read_item_u32(const char *key, uint32_t def) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     def = kvs_get_u32(h, key, def, nullptr);
     kvs_close(h);
   }
@@ -71,7 +71,7 @@ uint32_t config_read_item_u32(const char *key, uint32_t def) {
 
 int8_t config_read_item_i8(const char *key, int8_t def) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     def = kvs_get_i8(h, key, def, nullptr);
     kvs_close(h);
   }
@@ -79,7 +79,7 @@ int8_t config_read_item_i8(const char *key, int8_t def) {
 }
 float config_read_item_f(const char *key, float def) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     kvs_rw_blob(h, key, &def, sizeof def, false);
     kvs_close(h);
   }
@@ -94,7 +94,7 @@ float config_read_item_f(const char *key, float def) {
 bool config_save_item_s(const char *key, const char *val) {
   kvshT h;
   bool result = false;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_WRITE))) {
     result = strlen(val) == kvs_rw_str(h, key, (char*)val, 0, true);
     kvs_commit(h);
     kvs_close(h);
@@ -105,7 +105,7 @@ bool config_save_item_s(const char *key, const char *val) {
 bool config_save_item_b(const char *key, const void *val, unsigned size) {
   kvshT h;
   bool result = false;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_WRITE))) {
     result = size == kvs_rw_blob(h, key, (void*)val, size, true);
     kvs_commit(h);
     kvs_close(h);
@@ -127,7 +127,7 @@ bool config_save_item_f(const char *key, const char *val) {
 }
 bool config_save_item_n_u32(const char *key, uint32_t val) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_WRITE))) {
     kvs_set_u32(h,key, val);
     kvs_commit(h);
     kvs_close(h);
@@ -136,7 +136,7 @@ bool config_save_item_n_u32(const char *key, uint32_t val) {
 }
 bool config_save_item_n_i8(const char *key, int8_t val) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_WRITE))) {
     kvs_set_i8(h, key, val);
     kvs_commit(h);
     kvs_close(h);
@@ -145,7 +145,7 @@ bool config_save_item_n_i8(const char *key, int8_t val) {
 }
 bool config_save_item_n_f(const char *key, float val) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_WRITE))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_WRITE))) {
     kvs_rw_blob(h, key, &val, sizeof val, true);
     kvs_commit(h);
     kvs_close(h);

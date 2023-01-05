@@ -38,7 +38,7 @@ void config_setup_cliTcpServer(struct uo_flagsT *flagsPtr) {
 #include "txtio/inout.h"
 struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     i8 verb = c->verbose;
     kvsR(i8, CB_VERBOSE, verb);
     c->verbose = static_cast<verbosity>(verb);
@@ -66,7 +66,7 @@ enum verbosity config_read_verbose() {
 #include "net/ethernet_setup.h"
 struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     kvsRead(i8, lanPhy, CB_LAN_PHY, c->phy);
     kvsR(i8, CB_LAN_PWR_GPIO, c->pwr_gpio);
     kvs_close(h);
@@ -90,7 +90,7 @@ int8_t config_read_lan_pwr_gpio() {
 #include "net/ntp_client_setup.h"
 struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     kvsRs(CB_NTP_SERVER, c->server);
     kvs_close(h);
   }
@@ -110,7 +110,7 @@ const char* config_read_ntp_server(char *d, unsigned d_size) {
 #include "net/wifi_station_setup.h"
 struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     kvsRs(CB_WIFI_SSID, c->SSID);
     kvsRs(CB_WIFI_PASSWD, c->password);
     kvs_close(h);
@@ -134,7 +134,7 @@ const char* config_read_wifi_passwd(char *d, unsigned d_size) {
 #include "net_mqtt/mqtt.h"
 struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     kvsRs(CB_MQTT_URL, c->url);
     kvsRs(CB_MQTT_USER, c->user);
     kvsRs(CB_MQTT_PASSWD, c->password);
@@ -174,7 +174,7 @@ bool config_read_mqtt_enable() {
 #include "net_http_server/http_server_setup.h"
 struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   kvshT h;
-  if ((h = kvs_open(CFG_NAMESPACE, kvs_READ))) {
+  if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
     kvsRs(CB_HTTP_USER, c->user);
     kvsRs(CB_HTTP_PASSWD, c->password);
     kvsR(i8, CB_HTTP_ENABLE, c->enable);
