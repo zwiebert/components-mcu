@@ -10,9 +10,14 @@
 
 #include <stdio.h>
 #include <string.h>
+
 #include <sys/unistd.h>
 #include <sys/stat.h>
 #include <stdbool.h>
+
+#define STRLCPY(dst,src,size) strlcpy((dst),(src),(size))
+#define STRCPY(dst,src) strcpy((dst),(src))
+
 
 #ifdef TEST_HOST
 #define DB(x) x

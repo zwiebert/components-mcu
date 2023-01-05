@@ -21,6 +21,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#include <utils_misc/cstring_utils.hh>
 #include <stdio.h>
 #include <stdint.h>
 #include <assert.h>
@@ -45,18 +46,18 @@ struct kvs_handle {
 #define ERR_CORRUPT_FILE -42
 
 struct line_info {
-  u16 magic;
-  u8 kvs_type : 8;
-  u8 xx;
+  uint16_t magic;
+  uint8_t kvs_type : 8;
+  uint8_t xx;
   union {
-    u8 val_u8;
-    i8 val_i8;
-    u16 val_u16;
-    i16 val_i16;
-    u32 val_u32;
-    i32 val_i32;
+    uint8_t val_u8;
+    int8_t val_i8;
+    uint16_t val_u16;
+    int16_t val_i16;
+    uint32_t val_u32;
+    int32_t val_i32;
     struct {
-    u16 blob_len,  blob_size;
+    uint16_t blob_len,  blob_size;
     } len;
   } nval;
   char key[MAX_KEY_LEN + 1];
@@ -119,7 +120,7 @@ void kvs_destroyHandle(kvshT h) {
 #define VP2H(vp)((vp)->handle)
 
 kvshT kvs_open(const char *name, unsigned flags) {
-  i32 res;
+  int32_t res;
   kvshT h;
   int sf = flags == kvs_READ ? O_RDONLY : (O_CREAT | O_RDWR);
 
@@ -387,22 +388,22 @@ static int find_key_blob_w(kvshT h, const char *key, unsigned req_size, int *end
 
 #define SET_GET_DT_FUN(dt) SET_DT_FUN(dt) GET_DT_FUN(dt);
 
-SET_GET_DT_FUN(i8);
-SET_GET_DT_FUN(u8);
-SET_GET_DT_FUN(i16);
-SET_GET_DT_FUN(u16);
-SET_GET_DT_FUN(i32);
-SET_GET_DT_FUN(u32);
+SET_GET_DT_FUN(int8_t);
+SET_GET_DT_FUN(uint8_t);
+SET_GET_DT_FUN(int16_t);
+SET_GET_DT_FUN(uint16_t);
+SET_GET_DT_FUN(int32_t);
+SET_GET_DT_FUN(uint32_t);
 #else
 
-bool kvs_set_i8(kvshT h, const char *key, i8 val) {
+bool kvs_set_i8(kvshT h, const char *key, int8_t val) {
   struct line_info li = { COOKIE };
   int pos = find_key_int_w(h, &li, key);
 li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_i8, .nval = { .val_i8 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
   int res = kvs_write(h, &li, pos);
   return res > 0;
 }
-i8 kvs_get_i8(kvshT h, const char *key, i8 default_val, bool *res_success) {
+int8_t kvs_get_i8(kvshT h, const char *key, int8_t default_val, bool *res_success) {
   struct line_info li = { COOKIE };
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_i8);
   if (res_success)
@@ -413,14 +414,14 @@ i8 kvs_get_i8(kvshT h, const char *key, i8 default_val, bool *res_success) {
 }
 ;
 ;
-bool kvs_set_u8(kvshT h, const char *key, u8 val) {
+bool kvs_set_u8(kvshT h, const char *key, uint8_t val) {
   struct line_info li = { COOKIE };
   int pos = find_key_int_w(h, &li, key);
 li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_u8, .nval = { .val_u8 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
   int res = kvs_write(h, &li, pos);
   return res > 0;
 }
-u8 kvs_get_u8(kvshT h, const char *key, u8 default_val, bool *res_success) {
+uint8_t kvs_get_u8(kvshT h, const char *key, uint8_t default_val, bool *res_success) {
   struct line_info li = { COOKIE };
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_u8);
   if (res_success)
@@ -431,14 +432,14 @@ u8 kvs_get_u8(kvshT h, const char *key, u8 default_val, bool *res_success) {
 }
 ;
 ;
-bool kvs_set_i16(kvshT h, const char *key, i16 val) {
+bool kvs_set_i16(kvshT h, const char *key, int16_t val) {
   struct line_info li = { COOKIE };
   int pos = find_key_int_w(h, &li, key);
 li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_i16, .nval = { .val_i16 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
   int res = kvs_write(h, &li, pos);
   return res > 0;
 }
-i16 kvs_get_i16(kvshT h, const char *key, i16 default_val, bool *res_success) {
+int16_t kvs_get_i16(kvshT h, const char *key, int16_t default_val, bool *res_success) {
   struct line_info li = { COOKIE };
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_i16);
   if (res_success)
@@ -449,14 +450,14 @@ i16 kvs_get_i16(kvshT h, const char *key, i16 default_val, bool *res_success) {
 }
 ;
 ;
-bool kvs_set_u16(kvshT h, const char *key, u16 val) {
+bool kvs_set_u16(kvshT h, const char *key, uint16_t val) {
   struct line_info li = { COOKIE };
   int pos = find_key_int_w(h, &li, key);
 li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_u16, .nval = { .val_u16 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
   int res = kvs_write(h, &li, pos);
   return res > 0;
 }
-u16 kvs_get_u16(kvshT h, const char *key, u16 default_val, bool *res_success) {
+uint16_t kvs_get_u16(kvshT h, const char *key, uint16_t default_val, bool *res_success) {
   struct line_info li = { COOKIE };
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_u16);
   if (res_success)
@@ -467,14 +468,14 @@ u16 kvs_get_u16(kvshT h, const char *key, u16 default_val, bool *res_success) {
 }
 ;
 ;
-bool kvs_set_i32(kvshT h, const char *key, i32 val) {
+bool kvs_set_i32(kvshT h, const char *key, int32_t val) {
   struct line_info li = { COOKIE };
   int pos = find_key_int_w(h, &li, key);
 li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_i32, .nval = { .val_i32 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
   int res = kvs_write(h, &li, pos);
   return res > 0;
 }
-i32 kvs_get_i32(kvshT h, const char *key, i32 default_val, bool *res_success) {
+int32_t kvs_get_i32(kvshT h, const char *key, int32_t default_val, bool *res_success) {
   struct line_info li = { COOKIE };
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_i32);
   if (res_success)
@@ -485,14 +486,14 @@ i32 kvs_get_i32(kvshT h, const char *key, i32 default_val, bool *res_success) {
 }
 ;
 ;
-bool kvs_set_u32(kvshT h, const char *key, u32 val) {
+bool kvs_set_u32(kvshT h, const char *key, uint32_t val) {
   struct line_info li = { COOKIE };
   int pos = find_key_int_w(h, &li, key);
 li = (struct line_info){.magic = COOKIE, .kvs_type = KVS_TYPE_u32, .nval = { .val_u32 = val }, };   STRLCPY(li.key, key, MAX_KEY_LEN+1);
   int res = kvs_write(h, &li, pos);
   return res > 0;
 }
-u32 kvs_get_u32(kvshT h, const char *key, u32 default_val, bool *res_success) {
+uint32_t kvs_get_u32(kvshT h, const char *key, uint32_t default_val, bool *res_success) {
   struct line_info li = { COOKIE };
   int pos = kvs_find_next(h, &li, 0, key, KVS_TYPE_u32);
   if (res_success)

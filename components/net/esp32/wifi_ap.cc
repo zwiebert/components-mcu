@@ -12,6 +12,8 @@
 #include "net/tcp_cli_server.h"
 
 #include <string.h>
+#include <utils_misc/cstring_utils.hh>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_system.h"
@@ -29,7 +31,7 @@
 static const char *TAG = "wifi softAP";
 
 static void wifi_event_handler(void* arg, esp_event_base_t event_base,
-                                    i32 event_id, void* event_data)
+                                    int32_t event_id, void* event_data)
 {
     if (event_id == WIFI_EVENT_AP_STACONNECTED) {
         wifi_event_ap_staconnected_t* event = (wifi_event_ap_staconnected_t*) event_data;
@@ -53,7 +55,7 @@ void wifiAp_setup(const char *ap_ssid, const char *ap_passwd)
 
     wifi_config_t wifi_config = {
         .ap = {
-            .ssid_len = static_cast<u8>(strlen(ap_ssid)),
+            .ssid_len = static_cast<uint8_t>(strlen(ap_ssid)),
             .authmode = WIFI_AUTH_WPA_WPA2_PSK,
             .max_connection = EXAMPLE_MAX_STA_CONN,
 

@@ -9,6 +9,7 @@
 #include "esp_log.h"
 #include "driver/gpio.h"
 #include "string.h"
+#include <utils_misc/cstring_utils.hh>
 
 #include "esp32/rom/uart.h"
 
@@ -54,7 +55,7 @@ const char *TAG = "wifistation";
 //#define RETRY_RECONNECT (s_retry_num < 255)
 #define RETRY_RECONNECT (1)
 
-static void wifi_event_handler(void *arg, esp_event_base_t event_base, i32 event_id, void *event_data) {
+static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data) {
 
   switch (event_id) {
 
@@ -76,7 +77,7 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base, i32 event
   }
 }
 
-static void lost_ip_event_handler(void *arg, esp_event_base_t event_base, i32 event_id, void *event_data) {
+static void lost_ip_event_handler(void *arg, esp_event_base_t event_base, int32_t event_id, void *event_data) {
   if (ipnet_lostIpAddr_cb)
     ipnet_lostIpAddr_cb();
 
@@ -84,7 +85,7 @@ static void lost_ip_event_handler(void *arg, esp_event_base_t event_base, i32 ev
 }
 
 static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
-        i32 event_id, void* event_data) {
+        int32_t event_id, void* event_data) {
 
     ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
     const esp_netif_ip_info_t *ip_info = &event->ip_info;

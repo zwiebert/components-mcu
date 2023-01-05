@@ -17,7 +17,7 @@
 #include "utils_misc/int_types.h"
 #include <string.h>
 
-u16 cli_msgid;
+uint16_t cli_msgid;
 const struct parm_handlers *cli_parm_handlers;
 const parm_handler* (*cli_parmHandler_find_cb)(const char *key);
 

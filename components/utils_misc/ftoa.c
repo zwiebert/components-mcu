@@ -4,9 +4,9 @@
 
 char* ftoa(float f, char *buf, int n) {
   int i;
-  i32 mult;
-  u32 rop;
-  i16 lop = (i16) f;
+  int32_t mult;
+  uint32_t rop;
+  int16_t lop = (int16_t) f;
   char *s = buf;
 
   itoa(lop, s, 10);
@@ -20,7 +20,7 @@ char* ftoa(float f, char *buf, int n) {
   for (i = 0; i < n; ++i)
     mult *= 10;
 
-  rop = (u32) (f * mult + .5);
+  rop = (uint32_t) (f * mult + .5);
   ltoa(rop, s, 10);
 
   return buf;

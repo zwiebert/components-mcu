@@ -18,12 +18,12 @@ unsigned nvsBlob(kvshT handle, const char *key, void *dst, size_t dst_len, bool 
 
 template<typename handle_type, typename value_type, typename cb_type>
 void kvsRead_i8(handle_type handle, cb_type cb, value_type &value) {
-  value = static_cast<value_type>(kvs_get_i8(handle, settings_get_kvsKey(cb), static_cast<i8>(value), 0));
+  value = static_cast<value_type>(kvs_get_i8(handle, settings_get_kvsKey(cb), static_cast<int8_t>(value), 0));
 }
 
 template<typename handle_type, typename value_type, typename cb_type>
 void kvsRead_u32(handle_type handle, cb_type cb, value_type &value) {
-  value = static_cast<value_type>(kvs_get_u32(handle, settings_get_kvsKey(cb), static_cast<u32>(value), 0));
+  value = static_cast<value_type>(kvs_get_u32(handle, settings_get_kvsKey(cb), static_cast<uint32_t>(value), 0));
 }
 
 template<typename handle_type, typename value_type, typename cb_type>

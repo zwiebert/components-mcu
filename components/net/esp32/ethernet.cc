@@ -25,7 +25,7 @@ extern "C" esp_eth_phy_t *my_esp_eth_phy_new_lan8720(const eth_phy_config_t *con
 extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 
 static esp_eth_phy_t *(*ethernet_create_phy)(const eth_phy_config_t *config);
-static i8 ethernet_phy_power_pin = -1;
+static int8_t ethernet_phy_power_pin = -1;
 
 
 #define DX(x) x
@@ -47,7 +47,7 @@ static const char *TAG = "ethernet";
 
 /** Event handler for Ethernet events */
 static void eth_event_handler(void* arg, esp_event_base_t event_base,
-                              i32 event_id, void* event_data)
+                              int32_t event_id, void* event_data)
 {
     switch (event_id) {
     case ETHERNET_EVENT_CONNECTED:
@@ -71,7 +71,7 @@ static void eth_event_handler(void* arg, esp_event_base_t event_base,
 
 /** Event handler for IP_EVENT_ETH_GOT_IP */
 static void got_ip_event_handler(void* arg, esp_event_base_t event_base,
-                                 i32 event_id, void* event_data)
+                                 int32_t event_id, void* event_data)
 {
     ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
     const esp_netif_ip_info_t* ip_info = &event->ip_info;

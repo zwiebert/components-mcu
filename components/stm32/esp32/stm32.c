@@ -79,15 +79,15 @@ int stm32_write(const char *data, unsigned data_len) {
 int stm32_read(char *buf, unsigned buf_size) {
   if (stm32_mode != STM32_MODE_FIRMWARE)
     return -1;
-	 return uart_read_bytes(UART_NUM_1, (u8 *)buf, buf_size, 20 / portTICK_PERIOD_MS);
+	 return uart_read_bytes(UART_NUM_1, (uint8_t *)buf, buf_size, 20 / portTICK_PERIOD_MS);
 }
 
 int stm32_getc(bool block) {
   if (stm32_mode != STM32_MODE_FIRMWARE)
     return -1;
 
-  u8 buf = 0;
-  if (uart_read_bytes(UART_NUM_1, (u8 *)&buf, 1, block ? (20 / portTICK_PERIOD_MS) : 1) == 1)
+  uint8_t buf = 0;
+  if (uart_read_bytes(UART_NUM_1, (uint8_t *)&buf, 1, block ? (20 / portTICK_PERIOD_MS) : 1) == 1)
     return buf;
 
   return -1;
@@ -101,7 +101,7 @@ int stm32_write_bl(const char *data, unsigned data_len) {
 int stm32_read_bl(char *buf, unsigned buf_size) {
   if (stm32_mode != STM32_MODE_BOOTLOADER)
     return -1;
-   return uart_read_bytes(UART_NUM_1, (u8 *)buf, buf_size, 20 / portTICK_PERIOD_MS);
+   return uart_read_bytes(UART_NUM_1, (uint8_t *)buf, buf_size, 20 / portTICK_PERIOD_MS);
 }
 
 static void stm32_configSerial(stm32_mode_T mode) {

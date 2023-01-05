@@ -223,5 +223,6 @@ static_assert(sizeof(csu) == sizeof(char *));
 
 }
 
-
+#define STRLCPY(dst,src,size) csu_copy((dst),(size),(src))
+#define STRCPY(dst,src) csu_copy((dst),(src))
 

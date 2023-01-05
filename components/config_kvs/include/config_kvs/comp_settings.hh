@@ -13,7 +13,7 @@
 #include "config.h"
 #include <assert.h>
 
-enum configItem : i8 {
+enum configItem : int8_t {
   CBC_NONE = -1,
   CB_VERBOSE,
 #ifdef CONFIG_APP_USE_WLAN
@@ -36,15 +36,15 @@ enum configItem : i8 {
 };
 
 #ifdef CONFIG_APP_USE_MQTT
-  constexpr u32 CBM_mqttClient = BIT(CB_MQTT_ENABLE) | BIT(CB_MQTT_PASSWD) | BIT(CB_MQTT_USER) | BIT(CB_MQTT_URL) | BIT(CB_MQTT_CLIENT_ID);
+  constexpr uint32_t CBM_mqttClient = BIT(CB_MQTT_ENABLE) | BIT(CB_MQTT_PASSWD) | BIT(CB_MQTT_USER) | BIT(CB_MQTT_URL) | BIT(CB_MQTT_CLIENT_ID);
 #endif
 #ifdef CONFIG_APP_USE_HTTP
-  constexpr u32 CBM_httpServer = BIT(CB_HTTP_ENABLE) | BIT(CB_HTTP_PASSWD) | BIT(CB_HTTP_USER);
+  constexpr uint32_t CBM_httpServer = BIT(CB_HTTP_ENABLE) | BIT(CB_HTTP_PASSWD) | BIT(CB_HTTP_USER);
 #endif
 #ifdef CONFIG_APP_USE_LAN
-  constexpr u32 CMB_lan = BIT(CB_LAN_PHY) | BIT(CB_LAN_PWR_GPIO);
+  constexpr uint32_t CMB_lan = BIT(CB_LAN_PHY) | BIT(CB_LAN_PWR_GPIO);
 #endif
-  constexpr u32 CBM_txtio = BIT(CB_VERBOSE);
+  constexpr uint32_t CBM_txtio = BIT(CB_VERBOSE);
 
 
 class CompSettings : public Settings<configItem, CB_size> {

@@ -39,7 +39,7 @@ void config_setup_cliTcpServer(struct uo_flagsT *flagsPtr) {
 struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
-    i8 verb = c->verbose;
+    int8_t verb = c->verbose;
     kvsRead_i8(h, CB_VERBOSE, verb);
     c->verbose = static_cast<verbosity>(verb);
     kvs_close(h);

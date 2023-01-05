@@ -30,7 +30,7 @@ void spiffs_print_errno() {
 bool 
 stor_fileWrite(const char *path, const void *src, size_t len) {
   int file;
-   i32 nmb_written;
+   int32_t nmb_written;
 
 
    if (!path)
@@ -59,7 +59,7 @@ stor_fileWrite(const char *path, const void *src, size_t len) {
 bool 
 stor_fileRead(const char *path, void *dst, size_t len) {
   int file;
-    i32 nmb_read = 0;
+    int32_t nmb_read = 0;
 
     if (!path)
       return false;

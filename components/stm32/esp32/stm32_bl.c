@@ -42,7 +42,7 @@ void stm32Bl_sendCommand(stm32_cmd_T cmd) {
   stm32_write_bl(buf, sizeof buf);
 }
 
-void stm32Bl_sendAddress(u32 addr) {
+void stm32Bl_sendAddress(uint32_t addr) {
   char buf[5] = { GET_BYTE_3(addr), GET_BYTE_2(addr), GET_BYTE_1(addr), GET_BYTE_0(addr)};
   buf[4] = buf[0] ^ buf[1] ^ buf[2] ^ buf[3];
   stm32_write_bl(buf, sizeof buf);
@@ -110,7 +110,7 @@ void stm32Bl_get(void) {
 #define FLASH_PAGE_SIZE 1024
 #define FLASH_START_ADDRESS 0x8000000
 
-bool stm32Bl_doWriteMemory(u32 dst_addr, char *data, unsigned data_len) {
+bool stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsigned data_len) {
   char buf[16];
 
   stm32Bl_sendCommand(STM32_WR);
@@ -125,7 +125,7 @@ bool stm32Bl_doWriteMemory(u32 dst_addr, char *data, unsigned data_len) {
 
   buf[0] = data_len - 1;
   stm32_write_bl(buf, 1);
-  u8 chksum = buf[0];
+  uint8_t chksum = buf[0];
   for (int i = 0; i < data_len; ++i) {
     chksum ^= data[i];
   }
@@ -138,7 +138,7 @@ bool stm32Bl_doWriteMemory(u32 dst_addr, char *data, unsigned data_len) {
   return true;
 }
 
-bool stm32Bl_doEraseFlash(int start_page, u8 page_count) {
+bool stm32Bl_doEraseFlash(int start_page, uint8_t page_count) {
   char buf[16];
 
   stm32Bl_sendCommand(STM32_ERASE);
@@ -148,10 +148,10 @@ bool stm32Bl_doEraseFlash(int start_page, u8 page_count) {
 
   buf[0] = page_count - 1;
   stm32_write_bl(buf, 1);
-  u8 chksum = buf[0];
+  uint8_t chksum = buf[0];
 
   for (int i=0; i < page_count; ++i) {
-    u8 c = start_page + i;
+    uint8_t c = start_page + i;
     chksum ^= c;
     stm32_write_bl((char*)&c, 1);
   }
@@ -166,7 +166,7 @@ bool stm32Bl_doEraseFlash(int start_page, u8 page_count) {
 
 }
 
-bool stm32Bl_doExtEraseFlash(u16 start_page, u16 page_count) {
+bool stm32Bl_doExtEraseFlash(uint16_t start_page, uint16_t page_count) {
   char buf[16];
   stm32Bl_sendCommand(STM32_ERASEN);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
@@ -178,9 +178,9 @@ bool stm32Bl_doExtEraseFlash(u16 start_page, u16 page_count) {
   buf[1] = GET_BYTE_0(page_count-1);
   stm32_write_bl(buf, 2);
 
-  u8 chksum = buf[0] ^ buf[1];
-  for (u16 i=0; i < page_count; ++i) {
-    u16 pn = start_page + i;
+  uint8_t chksum = buf[0] ^ buf[1];
+  for (uint16_t i=0; i < page_count; ++i) {
+    uint16_t pn = start_page + i;
     buf[0] = GET_BYTE_1(pn);
     buf[1] = GET_BYTE_0(pn);
     stm32_write_bl(buf, 2);
@@ -200,8 +200,8 @@ bool stm32Bl_doExtEraseFlash(u16 start_page, u16 page_count) {
 }
 
 
-bool stm32Bl_eraseFlashByFileSize(u32 startAddr, size_t size) {
-  u32 endAddr = startAddr + size;
+bool stm32Bl_eraseFlashByFileSize(uint32_t startAddr, size_t size) {
+  uint32_t endAddr = startAddr + size;
 
   unsigned startPage = (startAddr - FLASH_START_ADDRESS) / FLASH_PAGE_SIZE;
   unsigned endPage = ((endAddr -  FLASH_START_ADDRESS) + (FLASH_PAGE_SIZE - 1)) / FLASH_PAGE_SIZE;
@@ -213,7 +213,7 @@ bool stm32Bl_eraseFlashByFileSize(u32 startAddr, size_t size) {
 }
 
 
-bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, u32 addr) {
+bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, uint32_t addr) {
   struct stat statBuf;
   char buf[256];
   size_t bytesWritten = 0;

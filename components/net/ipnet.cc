@@ -11,11 +11,11 @@
 #include "utils_misc/int_types.h"
 
 extern "C++" void main_setup_ip_dependent(void);
-u32 ip4_address, ip4_gateway_address, ip4_netmask;
+uint32_t ip4_address, ip4_gateway_address, ip4_netmask;
 
-u32 get_ip4addr_local();
-u32 get_ip4addr_gateway();
-u32 get_ip4netmask();
+uint32_t get_ip4addr_local();
+uint32_t get_ip4addr_gateway();
+uint32_t get_ip4netmask();
 
 void (*ipnet_CONNECTED_cb)();
 

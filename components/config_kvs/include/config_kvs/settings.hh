@@ -9,11 +9,11 @@
 #include "config.h"
 #include <assert.h>
 
-enum KvsType : u8 {
+enum KvsType : uint8_t {
   CBT_none, CBT_i8, CBT_u8, CBT_i16, CBT_u16, CBT_i32, CBT_u32, CBT_i64, CBT_u64, CBT_str, CBT_f, CBT_blob, CBT_end
 };
 
-enum StoreFun : u8 {
+enum StoreFun : uint8_t {
   STF_none, STF_direct, STF_direct_hex, STF_direct_bool
 };
 
@@ -101,9 +101,9 @@ template<typename Kvs_Type, typename CfgItem>
 constexpr Kvs_Type config_read_item(CfgItem item, Kvs_Type def) {
   switch (settings_get_kvsType(item)) {
   case CBT_u32:
-    return static_cast<Kvs_Type>(config_read_item_u32(settings_get_kvsKey(item), (u32) def));
+    return static_cast<Kvs_Type>(config_read_item_u32(settings_get_kvsKey(item), (uint32_t) def));
   case CBT_i8:
-    return static_cast<Kvs_Type>(config_read_item_i8(settings_get_kvsKey(item), (i8) def));
+    return static_cast<Kvs_Type>(config_read_item_i8(settings_get_kvsKey(item), (int8_t) def));
   case CBT_f:
     return static_cast<Kvs_Type>(config_read_item_f(settings_get_kvsKey(item), (float) def));
   default:
@@ -130,9 +130,9 @@ template<typename Sett, typename Kvs_Type>
 constexpr bool config_save_item(const Sett &settings, Kvs_Type val) {
   switch (settings_get_s(item)) {
   case CBT_u32:
-    return static_cast<Kvs_Type>(config_read_item_u32(settings_get_kvsKey(item), (u32) def));
+    return static_cast<Kvs_Type>(config_read_item_u32(settings_get_kvsKey(item), (uint32_t) def));
   case CBT_i8:
-    return static_cast<Kvs_Type>(config_read_item_i8(settings_get_kvsKey(item), (i8) def));
+    return static_cast<Kvs_Type>(config_read_item_i8(settings_get_kvsKey(item), (int8_t) def));
   case CBT_f:
     return static_cast<Kvs_Type>(config_read_item_f(settings_get_kvsKey(item), (float) def));
   default:

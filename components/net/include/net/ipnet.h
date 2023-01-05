@@ -9,6 +9,8 @@
 #pragma once
 
 #include "stdbool.h"
+#include <stdint.h>
+
 // interface implemented by mcu specific code
 void ipnet_addr_as_string(char *buf, unsigned buf_len);
 

@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <utils_misc/cstring_utils.hh>
+
 #if 0
 static const char *make_msg(char *buf, int count)  {
     sprintf(buf, "loop_count: %d", count);
@@ -25,7 +27,7 @@ static bool save_restore_item(enum configItem item, int count) {
   switch(item) {
   case CB_VERBOSE:
   {
-     i8 random = abs(rand()) & 0x0f;
+     int8_t random = abs(rand()) & 0x0f;
      C.app_verboseOutput = random;
      save_config_item(item);
      C.app_verboseOutput = 0;
@@ -81,7 +83,7 @@ static void test_config_save_restore() {
 
   for (int i=0; i < LOOP_COUNT; ++i) {
     while(true) {
-    u8 random = abs(rand()) % CB_size;
+    uint8_t random = abs(rand()) % CB_size;
     if (save_restore_item(random, i))
       break;
     }

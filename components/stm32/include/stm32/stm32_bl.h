@@ -44,7 +44,7 @@ void stm32Bl_sendStart(void);
 void stm32Bl_sendCommand(stm32_cmd_T cmd);
 /// \brief        send an address
 /// \param addr   the address to send
-void stm32Bl_sendAddress(u32 addr);
+void stm32Bl_sendAddress(uint32_t addr);
 
 /**
  * \brief              receive data from STM32
@@ -65,26 +65,26 @@ void stm32Bl_get(void);
 /*
  * \brief erase Flash-ROM on STM32
  */
-bool stm32Bl_doEraseFlash(int start_page, u8 page_count);
+bool stm32Bl_doEraseFlash(int start_page, uint8_t page_count);
 
 /*
  * \brief write to memory on STM32
  * \param start_page  start address for erasing as page number
  * \param page_count  size for erasing as page count
  */
-bool stm32Bl_doWriteMemory(u32 dst_addr, char *data, unsigned data_len);
+bool stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsigned data_len);
 
 /*
  * \brief copy file to memory on STM32
  */
-bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, u32 addr);
+bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, uint32_t addr);
 
 /*
  * \brief           erase FLASH-ROM on STM32
  * \param addr      start for erasing as byte address
  * \param size      size for erasing as bytes count
  */
-bool stm32Bl_eraseFlashByFileSize(u32 addr, unsigned size);
+bool stm32Bl_eraseFlashByFileSize(uint32_t addr, unsigned size);
 
 
 #ifdef __cplusplus

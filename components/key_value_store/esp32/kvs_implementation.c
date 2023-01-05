@@ -99,21 +99,21 @@ DT kvs_get_##DT(kvshT handle, const char *key, DT default_val, bool *res_success
 #define SET_GET_DT_FUN(dt) SET_DT_FUN(dt) GET_DT_FUN(dt);
 
 
-SET_GET_DT_FUN(i8);
-SET_GET_DT_FUN(u8);
-SET_GET_DT_FUN(i16);
-SET_GET_DT_FUN(u16);
-SET_GET_DT_FUN(i32);
-SET_GET_DT_FUN(u32);
-SET_GET_DT_FUN(i64);
+SET_GET_DT_FUN(int8_t);
+SET_GET_DT_FUN(uint8_t);
+SET_GET_DT_FUN(int16_t);
+SET_GET_DT_FUN(uint16_t);
+SET_GET_DT_FUN(int32_t);
+SET_GET_DT_FUN(uint32_t);
+SET_GET_DT_FUN(int64_t);
 SET_GET_DT_FUN(u64);
 #else
 
-bool kvs_set_i8(kvshT handle, const char *key, i8 val) {
+bool kvs_set_i8(kvshT handle, const char *key, int8_t val) {
   return nvs_set_i8(VP2H(handle), key, val) == ESP_OK;
 }
-i8 kvs_get_i8(kvshT handle, const char *key, i8 default_val, bool *res_success) {
-  i8 temp;
+int8_t kvs_get_i8(kvshT handle, const char *key, int8_t default_val, bool *res_success) {
+  int8_t temp;
   if (ESP_OK == nvs_get_i8(VP2H(handle), key, &temp)) {
     if (res_success)
       *res_success = true;
@@ -125,11 +125,11 @@ i8 kvs_get_i8(kvshT handle, const char *key, i8 default_val, bool *res_success) 
 }
 ;
 ;
-bool kvs_set_u8(kvshT handle, const char *key, u8 val) {
+bool kvs_set_u8(kvshT handle, const char *key, uint8_t val) {
   return nvs_set_u8(VP2H(handle), key, val) == ESP_OK;
 }
-u8 kvs_get_u8(kvshT handle, const char *key, u8 default_val, bool *res_success) {
-  u8 temp;
+uint8_t kvs_get_u8(kvshT handle, const char *key, uint8_t default_val, bool *res_success) {
+  uint8_t temp;
   if (ESP_OK == nvs_get_u8(VP2H(handle), key, &temp)) {
     if (res_success)
       *res_success = true;
@@ -141,11 +141,11 @@ u8 kvs_get_u8(kvshT handle, const char *key, u8 default_val, bool *res_success) 
 }
 ;
 ;
-bool kvs_set_i16(kvshT handle, const char *key, i16 val) {
+bool kvs_set_i16(kvshT handle, const char *key, int16_t val) {
   return nvs_set_i16(VP2H(handle), key, val) == ESP_OK;
 }
-i16 kvs_get_i16(kvshT handle, const char *key, i16 default_val, bool *res_success) {
-  i16 temp;
+int16_t kvs_get_i16(kvshT handle, const char *key, int16_t default_val, bool *res_success) {
+  int16_t temp;
   if (ESP_OK == nvs_get_i16(VP2H(handle), key, &temp)) {
     if (res_success)
       *res_success = true;
@@ -157,11 +157,11 @@ i16 kvs_get_i16(kvshT handle, const char *key, i16 default_val, bool *res_succes
 }
 ;
 ;
-bool kvs_set_u16(kvshT handle, const char *key, u16 val) {
+bool kvs_set_u16(kvshT handle, const char *key, uint16_t val) {
   return nvs_set_u16(VP2H(handle), key, val) == ESP_OK;
 }
-u16 kvs_get_u16(kvshT handle, const char *key, u16 default_val, bool *res_success) {
-  u16 temp;
+uint16_t kvs_get_u16(kvshT handle, const char *key, uint16_t default_val, bool *res_success) {
+  uint16_t temp;
   if (ESP_OK == nvs_get_u16(VP2H(handle), key, &temp)) {
     if (res_success)
       *res_success = true;
@@ -173,11 +173,11 @@ u16 kvs_get_u16(kvshT handle, const char *key, u16 default_val, bool *res_succes
 }
 ;
 ;
-bool kvs_set_i32(kvshT handle, const char *key, i32 val) {
+bool kvs_set_i32(kvshT handle, const char *key, int32_t val) {
   return nvs_set_i32(VP2H(handle), key, val) == ESP_OK;
 }
-i32 kvs_get_i32(kvshT handle, const char *key, i32 default_val, bool *res_success) {
-  i32 temp;
+int32_t kvs_get_i32(kvshT handle, const char *key, int32_t default_val, bool *res_success) {
+  int32_t temp;
   if (ESP_OK == nvs_get_i32(VP2H(handle), key, &temp)) {
     if (res_success)
       *res_success = true;
@@ -189,11 +189,11 @@ i32 kvs_get_i32(kvshT handle, const char *key, i32 default_val, bool *res_succes
 }
 ;
 ;
-bool kvs_set_u32(kvshT handle, const char *key, u32 val) {
+bool kvs_set_u32(kvshT handle, const char *key, uint32_t val) {
   return nvs_set_u32(VP2H(handle), key, val) == ESP_OK;
 }
-u32 kvs_get_u32(kvshT handle, const char *key, u32 default_val, bool *res_success) {
-  u32 temp;
+uint32_t kvs_get_u32(kvshT handle, const char *key, uint32_t default_val, bool *res_success) {
+  uint32_t temp;
   if (ESP_OK == nvs_get_u32(VP2H(handle), key, &temp)) {
     if (res_success)
       *res_success = true;
@@ -205,11 +205,11 @@ u32 kvs_get_u32(kvshT handle, const char *key, u32 default_val, bool *res_succes
 }
 ;
 ;
-bool kvs_set_i64(kvshT handle, const char *key, i64 val) {
+bool kvs_set_i64(kvshT handle, const char *key, int64_t val) {
   return nvs_set_i64(VP2H(handle), key, val) == ESP_OK;
 }
-i64 kvs_get_i64(kvshT handle, const char *key, i64 default_val, bool *res_success) {
-  i64 temp;
+int64_t kvs_get_i64(kvshT handle, const char *key, int64_t default_val, bool *res_success) {
+  int64_t temp;
   if (ESP_OK == nvs_get_i64(VP2H(handle), key, &temp)) {
     if (res_success)
       *res_success = true;

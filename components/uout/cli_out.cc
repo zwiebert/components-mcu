@@ -6,9 +6,10 @@
 #include "debug/dbg.h"
 #include "utils_misc/int_types.h"
 #include <string.h>
+#include <utils_misc/cstring_utils.hh>
 #include <stdio.h>
 
-extern u16 cli_msgid;
+extern uint16_t cli_msgid;
 
 
 
@@ -82,8 +83,8 @@ void  cli_msg_ready(const struct TargetDesc &td) {
   td.write("\nready:\n");
 }
 
-void  reply_id_message(const struct TargetDesc &td, u16 id, const char *tag, const char *msg) {
-  u16 old_id = cli_msgid;
+void  reply_id_message(const struct TargetDesc &td, uint16_t id, const char *tag, const char *msg) {
+  uint16_t old_id = cli_msgid;
  if (!cli_isInteractive())
     return;
 
@@ -100,7 +101,7 @@ void  reply_id_message(const struct TargetDesc &td, u16 id, const char *tag, con
 #define SET_OBJ_TAG(tag) STRLCPY(Obj_tag, (tag), sizeof Obj_tag)
 #define OBJ_TAG (Obj_tag+0)
 
-extern u16 cli_msgid;
+extern uint16_t cli_msgid;
 
 #define td myTd
 
