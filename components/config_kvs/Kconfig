@@ -1,0 +1,58 @@
+menu "zwiebert: config_kvs"
+
+    config APP_MQTT_CLIENT_ID
+        string "Default ID of MQTT client"
+        default "zb"
+
+    config APP_MQTT_ROOT_TOPIC
+        string "Default root topic of MQTT client"
+        default "root"
+
+    config APP_MQTT_URL
+        string "Default MQTT-server URL"
+        default ""
+
+    config APP_MQTT_ENABLE
+        bool  "Enable MQTT client by default"
+        default n
+
+    config APP_MQTT_USER
+        string "Default login name for MQTT server"
+        default ""
+
+    config APP_MQTT_PASSWORD
+        string "Default login password for MQTT server"
+        default ""
+
+    config APP_HTTP_ENABLE
+        bool  "Enable HTTP server by default"
+        default n
+
+    config APP_HTTP_USER
+        string "Default login name for HTTP server"
+        default ""
+
+    config APP_HTTP_PASSWORD
+        string "Default login password for HTTP server"
+        default ""
+
+    config APP_UART_BAUD_RATE
+        int "Baud rate of serial interface"
+        default 115200
+
+    config APP_NTP_SERVER
+        string "Default NTP server"
+        default "gateway"
+
+    config APP_WIFI_SSID
+        string "Default WIFI/WLAN SSID"
+        default ""
+
+    config APP_WIFI_PASSWORD
+        string "Default WIFI/WLAN password"
+        default ""
+
+
+
+
+endmenu
