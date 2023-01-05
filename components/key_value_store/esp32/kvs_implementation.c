@@ -7,7 +7,7 @@
 
 
 
-#include "app_config/proj_app_cfg.h"
+
 
 #include "utils_misc/int_types.h"
 #include "key_value_store/kvs_wrapper.h"

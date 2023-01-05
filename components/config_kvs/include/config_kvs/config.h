@@ -2,7 +2,7 @@
  * \file config_kvs/config.h
  */
 #pragma once
-#include "app_config/proj_app_cfg.h"
+
 
 #include <utils_misc/int_types.h>
 #include "stdbool.h"

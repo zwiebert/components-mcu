@@ -4,7 +4,7 @@
  *  Created on: 21.04.2020
  *      Author: bertw
  */
-#include "app_config/proj_app_cfg.h"
+
 #include "config_kvs/config.h"
 #include "config_kvs.h"
 #include <txtio/txtio_setup.hh>

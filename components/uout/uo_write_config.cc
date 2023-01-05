@@ -1,4 +1,4 @@
-#include "app_config/proj_app_cfg.h"
+
 #include <uout/so_target_desc.hh>
 #include <config_kvs/comp_settings.hh>
 

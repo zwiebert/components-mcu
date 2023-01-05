@@ -5,7 +5,7 @@ set(srcs status_json.cc callbacks.cc cli_out.cc  so_out.cc so_target_desc.cc uo_
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     PRIV_INCLUDE_DIRS "./include/uout" 
-    PRIV_REQUIRES app_config utils_debug utils_misc txtio cli net net_mqtt config_kvs
+    PRIV_REQUIRES  utils_debug utils_misc txtio cli net net_mqtt config_kvs
 )
 component_compile_options(${comp_compile_opts})
 component_compile_features(${comp_compile_feats})

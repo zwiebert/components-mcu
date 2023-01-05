@@ -6,7 +6,7 @@ idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     REQUIRES ""  
-    PRIV_REQUIRES app_config net utils_debug utils_misc
+    PRIV_REQUIRES  net utils_debug utils_misc
                   spiffs driver esp_rom #PRIV_ESP_IDF
 )
 

@@ -13,8 +13,9 @@ menu "zwiebert: config_kvs"
         default ""
 
     config APP_MQTT_ENABLE
-        bool  "Enable MQTT client by default"
-        default n
+        int  "Enable MQTT client by default"
+        range 0 1
+        default 0
 
     config APP_MQTT_USER
         string "Default login name for MQTT server"
@@ -25,8 +26,9 @@ menu "zwiebert: config_kvs"
         default ""
 
     config APP_HTTP_ENABLE
-        bool  "Enable HTTP server by default"
-        default n
+        int  "Enable HTTP server by default"
+        range 0 1
+        default 0
 
     config APP_HTTP_USER
         string "Default login name for HTTP server"

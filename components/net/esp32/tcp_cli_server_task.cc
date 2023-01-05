@@ -1,7 +1,7 @@
 #include "net/tcp_cli_server_setup.hh"
 #include "net/tcp_cli_server.h"
 
-#include "app_config/proj_app_cfg.h"
+
 #include "cli/cli.h"
 #include "cli/mutex.hh"
 #include "esp_event.h"
@@ -25,7 +25,7 @@
 
 #include <utils_misc/mutex.hh>
 #include <utils_misc/new_malloc.hh>
-#include <app_config/proj_app_cfg.h>
+
 
 #define TAG "tcps"
 

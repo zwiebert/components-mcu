@@ -1,4 +1,4 @@
-#include "app_config/proj_app_cfg.h"
+
 #include "net_mqtt/mqtt.h"
 #include "net_mqtt/mqtt_imp.h"
 #include "cli/cli.h"

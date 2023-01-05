@@ -2,7 +2,7 @@
  * \file main_loop/esp32/main_queue.cc
  *
  */
-#include "app_config/proj_app_cfg.h"
+
 
 #include "main_loop/main_queue.hh"
 #include <debug/dbg.h>

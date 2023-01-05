@@ -3,7 +3,8 @@ set(srcs inout.cc esp32/txtio_setup.cc txtio_mutex.cc)
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include" 
     PRIV_INCLUDE_DIRS "./include/txtio" 
-    PRIV_REQUIRES utils_misc app_config uout
+    REQUIRES utils_misc
+    PRIV_REQUIRES uout
                   driver vfs #PRIV_ESP_IDF
 )
 

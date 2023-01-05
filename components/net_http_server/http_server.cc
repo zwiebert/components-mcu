@@ -4,7 +4,7 @@
  *  Created on: 26.03.2019
  *      Author: bertw
  */
-#include "app_config/proj_app_cfg.h"
+
 #ifdef CONFIG_APP_USE_HTTP
 #include "http_server_impl.h"
 #include "net_http_server/http_server_setup.h"

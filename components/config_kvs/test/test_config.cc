@@ -3,7 +3,7 @@
 #include <test_runner.h>
 #endif
 
-#include "app_config/proj_app_cfg.h"
+
 #include "../include/config_kvs/config.h"
 #include <config_kvs/comp_settings.hh>
 #include "utils_misc/int_types.h"

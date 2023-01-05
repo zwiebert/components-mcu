@@ -2,7 +2,7 @@ set(srcs bcd.c  stof.c  sun.c esp32/itoa.c ftoa.c cstring_utils.cc esp32/mutex.c
 
 
 idf_component_register(SRCS ${srcs}
-    REQUIRES app_config
+    REQUIRES 
     PRIV_REQUIRES utils_debug
     INCLUDE_DIRS "./include" 
 )

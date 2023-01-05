@@ -1,5 +1,5 @@
 
-#include "app_config/proj_app_cfg.h"
+
 #include "net/ipnet.h"
 #include "utils_misc/int_types.h"
 #include "esp_netif_ip_addr.h"

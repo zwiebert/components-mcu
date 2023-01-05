@@ -6,7 +6,7 @@
 #pragma once
 #include "settings.hh"
 
-#include "app_config/proj_app_cfg.h"
+
 #include <app_config/options.hh>
 #include <uout/uo_config.h>
 #include <utils_misc/int_macros.h>

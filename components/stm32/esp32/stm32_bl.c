@@ -19,7 +19,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_spiffs.h"
-#include "app_config/proj_app_cfg.h"
+
 
 
 #include "stm32/stm32.h"

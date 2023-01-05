@@ -1,4 +1,4 @@
-#include "app_config/proj_app_cfg.h"
+
 #include "uout/so_out.h"
 #include <uout/so_target_desc.hh>
 #include <app_config/options.hh>

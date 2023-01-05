@@ -10,7 +10,7 @@
 
 #include <esp_http_server.h>
 
-#include "app_config/proj_app_cfg.h"
+
 
 
 extern httpd_handle_t hts_server; ///< Handle of the HTTP server if started. Or NULL if stopped.

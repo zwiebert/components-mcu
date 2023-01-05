@@ -1,5 +1,5 @@
 
-#include "app_config/proj_app_cfg.h"
+
 #include "../http_server_impl.h"
 #include "net_http_server/http_server_setup.h"
 #include "uout/status_json.hh"

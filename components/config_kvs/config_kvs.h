@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "app_config/proj_app_cfg.h"
+
 #include "config_kvs/config.h"
 #include <key_value_store/kvs_wrapper.h>
 #include <config_kvs/comp_settings.hh>
