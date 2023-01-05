@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 3.16)
 option(HOST_TEST_UNITY "enable Unity test framework" ON)
 option(HOST_TEST_CATCH2 "enable Catch2 test framework" OFF)
 
-add_compile_definitions(HOST TEST_HOST TEST HOST_TESTING UNITY_SUPPORT_TEST_CASES)
+add_compile_definitions(HOST TEST_HOST TEST HOST_TESTING UNITY_SUPPORT_TEST_CASES MCU_TYPE="host" IRAM_ATTR=)
+include_directories(BEFORE ${PROJECT_BINARY_DIR}/config)
+add_compile_options(-include sdkconfig.h)
+
 set(TEST_HOST true)
 set(UNIT_TESTING true)
 set(PLATFORM_HOST true)
@@ -37,12 +40,10 @@ macro(add_tests)
     set(test_name "test.${parent_dir_name}.${test_file_name}")
 
     add_executable(${test_name} ${test_file})
-    target_include_directories(${test_name} PUBLIC ${INC_PATHS})
-    target_include_directories(${test_name} PRIVATE ${PRIV_INC_PATHS})
+    target_include_directories(${test_name} PUBLIC ${INC_PATHS} PRIVATE ${PRIV_INC_PATHS})
   
     set_target_properties(${test_name} PROPERTIES LINK_INTERFACE_MULTIPLICITY 6)
-    target_link_libraries("${test_name}" PUBLIC ${__REQUIRES})
-    target_link_libraries("${test_name}" PRIVATE ${__PRIV_REQUIRES})
+    target_link_libraries("${test_name}" PUBLIC ${__REQUIRES} PRIVATE ${__PRIV_REQUIRES})
 
 
     target_compile_options(${test_name} PRIVATE ${comp_compile_opts})
@@ -125,11 +126,9 @@ macro(add_libs)
   else()
     # message("PUBLIC LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     add_library(${COMPONENT_LIB} STATIC ${__SRCS})
-    target_include_directories(${COMPONENT_LIB} PUBLIC ${INC_PATHS})
-    target_include_directories(${COMPONENT_LIB} PRIVATE ${PRIV_INC_PATHS})
+    target_include_directories(${COMPONENT_LIB} PUBLIC ${INC_PATHS} PRIVATE ${PRIV_INC_PATHS})
      set_target_properties(${COMPONENT_LIB} PROPERTIES LINK_INTERFACE_MULTIPLICITY 6)
-     target_link_libraries("${COMPONENT_LIB}" PUBLIC ${__REQUIRES})
-     target_link_libraries("${COMPONENT_LIB}" PRIVATE ${__PRIV_REQUIRES})
+     target_link_libraries("${COMPONENT_LIB}" PUBLIC ${__REQUIRES} PRIVATE ${__PRIV_REQUIRES})
   endif()
   
 
@@ -178,7 +177,6 @@ function(component_compile_options)
     endif()
   endif()
 endfunction()
-
 
 
 
