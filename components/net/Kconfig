@@ -5,32 +5,61 @@ menu "zwiebert: Networking"
         default y
 
     config APP_USE_LAN
+        depends on APP_USE_NETWORK
         bool "Activate LAN"
         default y
 
     config APP_USE_WLAN
+        depends on APP_USE_NETWORK
         bool "Activate WLAN"
         default y
 
+    config APP_WIFI_SSID
+        depends on APP_USE_WLAN
+        string "Default WIFI/WLAN SSID"
+        default ""
+
+    config APP_WIFI_PASSWORD
+        depends on APP_USE_WLAN
+        string "Default WIFI/WLAN password"
+        default ""
+
     config APP_USE_WLAN_AP
+        depends on APP_USE_NETWORK
         bool "Activate WLAN_AP"
         default y
 
     config APP_USE_AP_FALLBACK
+        depends on APP_USE_WLAN_AP
         bool "Activate AP_FALLBACK"
         default y
 
     config APP_USE_NTP
+        depends on APP_USE_NETWORK
         bool "Activate NTP"
         default y
 
+    config APP_NTP_SERVER
+        depends on APP_USE_NTP
+        string "Default NTP server"
+        default "gateway"
+
     config APP_USE_TCPS
+        depends on APP_USE_NETWORK
         bool "Activate TCPS (non task)"
         default n
 
     config APP_USE_TCPS_TASK
+        depends on APP_USE_NETWORK
         bool "Activate TCPS_TASK"
         default y
+
+    config APP_TCPS_ENABLE
+        depends on APP_USE_TCPS_TASK
+        int  "Enable TCPS server by default"
+        range 0 1
+        default 1
+
 
 endmenu
 

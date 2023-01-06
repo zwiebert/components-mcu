@@ -1,8 +1,18 @@
 menu "zwiebert: HTTP Server"
 
-    config APP_USE_HTTP
-        bool "Activate HTTP"
-        default y
+    config APP_HTTP_ENABLE
+        int  "Enable HTTP server by default"
+        range 0 1
+        default 0
+
+    config APP_HTTP_USER
+        string "Default login name for HTTP server"
+        default ""
+
+    config APP_HTTP_PASSWORD
+        string "Default login password for HTTP server"
+        default ""
+
 
 endmenu
 

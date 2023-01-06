@@ -3,7 +3,42 @@
  * \brief C++ wrapper of MQTT client library
  */
 #pragma once
-#include "mqtt.h"
+
+#include "stdbool.h"
+#include <stdint.h>
+
+struct cfg_mqtt {
+  char url[64] = CONFIG_APP_MQTT_URL;
+  char user[16] = CONFIG_APP_MQTT_USER;
+  char password[31] = CONFIG_APP_MQTT_PASSWORD;
+  char client_id[32] = CONFIG_APP_MQTT_CLIENT_ID;
+  int8_t enable = CONFIG_APP_MQTT_ENABLE;
+};
+
+void io_mqtt_setup(struct cfg_mqtt *cfg_mqt);
+
+// callbacks (in C++ derive from Net_Mqtt class instead)
+extern void (*io_mqtt_connected_cb)(); ///< \brief event callback: MQTT client connected to server
+extern void (*io_mqtt_disconnected_cb)(); ///< \brief event callback: MQTT client disconnected from server
+extern void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len); ///< \brief event callback: TOPIC  has been subscribed
+extern void (*io_mqtt_unsubscribed_cb)(const char *topic, int topic_len); ///< \brief event callback: TOPIC has been unsubscribed
+extern void (*io_mqtt_published_cb)(int msg_id); ///< \brief message with MSG_ID has been published
+
+/**
+ * \brief             event callback: Message has been received
+ * \param topic       non null terminated string containing the topic of the message
+ * \param topic_len   topic string length
+ * \param data        non null terminated string containing the data of the message
+ * \param data_len    data string length
+ */
+extern void (*io_mqtt_received_cb)(const char *topic, int topic_len, const char *data, int data_len);
+
+/// \brief test if TOPIC with TOPIC_LEN starts with string S
+bool topic_startsWith(const char *topic, int topic_len, const char *s);
+/// \brief test if TOPIC with TOPIC_LEN ends with string S
+bool topic_endsWith(const char *topic, int topic_len, const char *s);
+
+
 
 /// \brief C++ class for wrapping and doing call-backs to MQTT client library
 class Net_Mqtt {
@@ -78,17 +113,3 @@ public:
 private:
   static Net_Mqtt *ourDerivedObj;
 };
-
-
-
-
-//////////////////////////in-line implementation ///////////////////////////////////////
-inline void Net_Mqtt::subscribe(const char *topic, int qos) {
-  io_mqtt_subscribe(topic, qos);
-}
-inline void Net_Mqtt::unsubscribe(const char *topic) {
-  io_mqtt_unsubscribe(topic);
-}
-inline void Net_Mqtt::publish(const char *topic, const char *data) {
-  io_mqtt_publish(topic,data);
-}

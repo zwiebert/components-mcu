@@ -1,11 +1,5 @@
-
 #include <uout/so_target_desc.hh>
 #include <config_kvs/comp_settings.hh>
-
-#include "net/ipnet.h"
-#include "net_mqtt/mqtt.h"
-#include "txtio/inout.h"
-#include "uout/status_json.hh"
 
 #include <string.h>
 #include <stdio.h>
@@ -40,6 +34,8 @@ void soCfg_NTP_SERVER(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_NTP_SERVER), config_read_ntp_server(buf, sizeof buf));
 }
 #endif
+
+
 #ifdef CONFIG_APP_USE_MQTT
 void soCfg_MQTT_ENABLE(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_MQTT_ENABLE), config_read_mqtt_enable());
@@ -65,6 +61,7 @@ void soCfg_MQTT_ROOT_TOPIC(const struct TargetDesc &td) {
   td.so().print(settings_get_optKeyStr(CB_MQTT_ROOT_TOPIC), config_read_mqtt_root_topic(buf, sizeof buf));
 }
 #endif
+
 
 #ifdef CONFIG_APP_USE_HTTP
 void soCfg_HTTP_ENABLE(const struct TargetDesc &td) {

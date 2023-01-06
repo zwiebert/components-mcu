@@ -1,14 +1,13 @@
+#include "net_mqtt/mqtt.hh"
 
-
-#include "net_mqtt/mqtt.h"
-#include "net_mqtt/mqtt_imp.h"
-
-#include <string.h>
-#include <stdio.h>
 #include "cli/cli.h"
 #include "cli/mutex.h"
 #include "uout/status_json.hh"
-#include <net_mqtt/mqtt.hh>
+
+#include <string.h>
+#include <stdio.h>
+
+
 
 bool topic_startsWith(const char *topic, int topic_len, const char *s) {
   size_t s_len = strlen(s);

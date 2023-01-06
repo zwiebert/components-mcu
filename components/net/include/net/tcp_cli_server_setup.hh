@@ -14,7 +14,7 @@
  */
 struct cfg_tcps {
   uo_flagsT flags; ///< additional flags for callback
-  bool enable;  ///< enable/disable CLI server task
+  bool enable = CONFIG_APP_TCPS_ENABLE;  ///< enable/disable CLI server task
 };
 
 /**

@@ -1,6 +1,6 @@
 
 #ifdef CONFIG_APP_USE_WLAN
-#include "net/wifi_station_setup.h"
+#include "net/wifi_station_setup.hh"
 #include "freertos/FreeRTOS.h"
 #include "freertos/event_groups.h"
 #include "esp_wifi.h"

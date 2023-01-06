@@ -1,6 +1,6 @@
 
-#include "net_mqtt/mqtt.h"
-#include "net_mqtt/mqtt_imp.h"
+#include "net_mqtt/mqtt.hh"
+
 #include "cli/cli.h"
 #include "txtio/inout.h"
 #include <uout/uo_callbacks.h>
@@ -30,7 +30,6 @@
 #else
 #define D(x) x
 #endif
-#ifdef CONFIG_APP_USE_MQTT
 
 static bool is_connected;
 constexpr const char *TAG = "mqtt_client";
@@ -143,7 +142,7 @@ esp_mqtt_event_handle_t event = static_cast<esp_mqtt_event_handle_t>(event_data)
 
 static esp_mqtt_client_handle_t client;
 
-void io_mqtt_subscribe(const char *topic, int qos) {
+void Net_Mqtt::subscribe(const char *topic, int qos) {
   if (!client || !is_connected)
     return;
 
@@ -156,7 +155,7 @@ void io_mqtt_subscribe(const char *topic, int qos) {
   }
 }
 
-void io_mqtt_unsubscribe(const char *topic) {
+void Net_Mqtt::unsubscribe(const char *topic) {
   if (!client || !is_connected)
     return;
 
@@ -169,7 +168,7 @@ void io_mqtt_unsubscribe(const char *topic) {
   }
 }
 
-void io_mqtt_publish(const char *topic, const char *data) {
+void Net_Mqtt::publish(const char *topic, const char *data) {
   if (!client || !is_connected)
     return;
 
@@ -233,4 +232,4 @@ void io_mqtt_setup(struct cfg_mqtt *c) {
     io_mqtt_stop_and_destroy();
   }
 }
-#endif
+

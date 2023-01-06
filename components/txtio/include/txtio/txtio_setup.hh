@@ -5,7 +5,7 @@
 struct cfg_txtio {
   uo_flagsT flags; ///< additional flags for callback
   enum verbosity verbose;
-  int baud;
+  int baud = CONFIG_APP_UART_BAUD_RATE;
 };
 
 extern struct cfg_txtio *txtio_config;

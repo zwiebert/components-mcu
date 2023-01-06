@@ -11,6 +11,8 @@ set(TEST_HOST true)
 set(UNIT_TESTING true)
 set(PLATFORM_HOST true)
 
+include(${PROJECT_BINARY_DIR}/config/sdkconfig.cmake)
+
 include(CTest)
 
 

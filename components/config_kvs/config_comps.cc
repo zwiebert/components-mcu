@@ -53,7 +53,7 @@ void config_setup_txtio(struct uo_flagsT *flagsPtr) {
   flags.fmt.json = true;
   flags.fmt.txt = true;
 
-  struct cfg_txtio c { .flags = flags, .baud = CONFIG_APP_UART_BAUD_RATE };
+  struct cfg_txtio c { .flags = flags, };
   config_read_txtio(&c);
   txtio_setup(&c);
 }
@@ -107,7 +107,7 @@ const char* config_read_ntp_server(char *d, unsigned d_size) {
 #endif
 
 #ifdef CONFIG_APP_USE_WLAN
-#include "net/wifi_station_setup.h"
+#include <net/wifi_station_setup.hh>
 struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
@@ -118,7 +118,7 @@ struct cfg_wlan *config_read_wifiStation(struct cfg_wlan *c) {
   return c;
 }
 void config_setup_wifiStation() {
-  struct cfg_wlan c { {.SSID = CONFIG_APP_WIFI_SSID}, {.password = CONFIG_APP_WIFI_PASSWORD}, };
+  struct cfg_wlan c;
   config_read_wifiStation(&c);
   wifistation_setup(&c);
 }
@@ -131,7 +131,7 @@ const char* config_read_wifi_passwd(char *d, unsigned d_size) {
 #endif
 
 #ifdef CONFIG_APP_USE_MQTT
-#include "net_mqtt/mqtt.h"
+#include "net_mqtt/mqtt.hh"
 struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
@@ -145,8 +145,7 @@ struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
   return c;
 }
 void config_setup_mqttClient() {
-  struct cfg_mqtt c { {.url = CONFIG_APP_MQTT_URL}, {.user = CONFIG_APP_MQTT_USER}, {.password = CONFIG_APP_MQTT_PASSWORD}, { .client_id = CONFIG_APP_MQTT_CLIENT_ID},
-    CONFIG_APP_MQTT_ENABLE };
+  struct cfg_mqtt c;
   config_read_mqttClient(&c);
   io_mqtt_setup(&c);
 }
@@ -184,7 +183,7 @@ struct cfg_http* config_read_httpServer(struct cfg_http *c) {
   return c;
 }
 void config_setup_httpServer() {
-  struct cfg_http c { {.user = CONFIG_APP_HTTP_USER}, {.password = CONFIG_APP_HTTP_PASSWORD }, CONFIG_APP_HTTP_ENABLE };
+  struct cfg_http c;
   config_read_httpServer(&c);
   hts_setup(&c);
 }

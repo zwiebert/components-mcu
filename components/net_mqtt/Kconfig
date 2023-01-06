@@ -1,8 +1,29 @@
 menu "zwiebert: MQTT client"
 
-    config APP_USE_MQTT
-        bool "Activate MQTT"
-        default y
+    config APP_MQTT_CLIENT_ID
+        string "Default ID of MQTT client"
+        default "zb"
+
+    config APP_MQTT_ROOT_TOPIC
+        string "Default root topic of MQTT client"
+        default "root"
+
+    config APP_MQTT_URL
+        string "Default MQTT-server URL"
+        default ""
+
+    config APP_MQTT_ENABLE
+        int  "Enable MQTT client by default"
+        range 0 1
+        default 0
+
+    config APP_MQTT_USER
+        string "Default login name for MQTT server"
+        default ""
+
+    config APP_MQTT_PASSWORD
+        string "Default login password for MQTT server"
+        default ""
 
 endmenu
 

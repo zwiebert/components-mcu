@@ -18,11 +18,10 @@
 
 /// \brief HTTP server configuration data
 struct cfg_http {
-  char user[16];  ///< Auth user-name or empty string for no auth
-  char password[31]; ///< Auth password or empty string for no auth
-  int8_t enable;  ///< If true, start server. If false, stop server.
+  char user[16] = CONFIG_APP_HTTP_USER;  ///< Auth user-name or empty string for no auth
+  char password[31] = CONFIG_APP_HTTP_PASSWORD; ///< Auth password or empty string for no auth
+  int8_t enable = CONFIG_APP_HTTP_ENABLE;  ///< If true, start server. If false, stop server.
 };
-
 
 /**
  * \brief Start/stop HTTP server
