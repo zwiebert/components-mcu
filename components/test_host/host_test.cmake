@@ -15,12 +15,30 @@ include(${PROJECT_BINARY_DIR}/config/sdkconfig.cmake)
 
 include(CTest)
 
+MACRO(SUBDIRLIST result curdir)
+  FILE(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  SET(dirlist "")
+  FOREACH(child ${children})
+    IF(IS_DIRECTORY ${curdir}/${child})
+      LIST(APPEND dirlist ${child})
+    ENDIF()
+  ENDFOREACH()
+  SET(${result} ${dirlist})
+ENDMACRO()
+
 
 macro(srcs_filter_by_mcu)
-  list(FILTER __SRCS EXCLUDE REGEX "^(esp32|esp8266|atmega*)/.*")
+  list(FILTER __SRCS EXCLUDE REGEX "(esp32|esp8266|atmega*)/.*")
   set(host_dir ${CMAKE_CURRENT_LIST_DIR}/host)
   file(GLOB host_files "${host_dir}/*.cc" "${host_dir}/*.cpp" "${host_dir}/*.c")
-  set(__SRCS ${__SRCS} ${host_files})
+  list(APPEND __SRCS ${host_files})
+
+  SUBDIRLIST(sub_dirs ${CMAKE_CURRENT_LIST_DIR})
+  FOREACH(subdir ${sub_dirs})
+     set(host_dir ${subdir}/host)
+     file(GLOB host_files "${host_dir}/*.cc" "${host_dir}/*.cpp" "${host_dir}/*.c")
+     list(APPEND __SRCS ${host_files})
+  ENDFOREACH()
 endmacro()
 
 
@@ -33,7 +51,7 @@ macro(add_tests)
 
   foreach(test_dir ${__SRC_DIRS})
     file(GLOB test_files "${test_dir}/test_*.cc" "${test_dir}/test_*.cpp" "${test_dir}/test_*.c")
-    set(__SRCS ${__SRCS} ${test_files})
+    list(APPEND __SRCS ${test_files})
   endforeach()
 
   foreach(test_file ${__SRCS})
