@@ -1,9 +1,5 @@
 menu "zwiebert: Networking"
 
-    config APP_USE_NETWORK
-        bool "Activate NETWORK"
-        default y
-
     config APP_USE_LAN
         depends on APP_USE_NETWORK
         bool "Activate LAN"
