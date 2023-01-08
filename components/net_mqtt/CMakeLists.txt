@@ -7,6 +7,6 @@ idf_component_register(
     PRIV_REQUIRES cli uout txtio
                   mqtt lwip #PRIV_ESP_IDF
  )
- 
+
 component_compile_options(${comp_compile_opts})
 component_compile_features(${comp_compile_feats})

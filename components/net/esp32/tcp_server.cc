@@ -249,7 +249,7 @@ static int  tcp_io_getc_buf(void) {
       used = idx = 0;
     }
   }
-  
+
   if (cconn_count == 0)
     return -1;
 #if 1
@@ -277,7 +277,7 @@ static int  tcp_io_getc_buf(void) {
   return -1;
 }
 
- 
+
 void
 tcpCli_loop(void) {
   /** Server run continuously */

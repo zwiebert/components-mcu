@@ -108,7 +108,7 @@ io_print_hex_8(uint8_t n, bool comma) {
   if (comma)
     io_puts(", ");
 }
- 
+
 
 void 
 io_print_hex_16(uint16_t n, bool comma) {
@@ -117,7 +117,7 @@ io_print_hex_16(uint16_t n, bool comma) {
   io_puts((n & 0xFFF0)== 0 ? "0x000" :
           (n & 0xFF00)== 0 ? "0x00" :
           (n & 0xF000)== 0 ? "0x0" : "0x");
-    
+
   io_puts(s);
 
   if (comma)
@@ -136,7 +136,7 @@ io_print_hex_32(uint32_t n, bool comma) {
           (n & 0xFF000000)== 0 ? "0x00" :
           (n & 0xF0000000)== 0 ? "0x0" :
           "0x");
-    
+
   io_puts(s);
 
   if (comma)
@@ -151,7 +151,7 @@ io_print_hex(uint32_t n, bool prefix) {
     io_puts("0x");
   io_puts(s);
 }
-      
+
 void 
 io_print_dec_32(int32_t n, bool comma) {
   char s[12];
@@ -161,7 +161,7 @@ io_print_dec_32(int32_t n, bool comma) {
   if (comma)
     io_puts(", ");
 }
-      
+
 void 
 io_print_dec_16(int16_t n, bool comma) {
   char s[10];
