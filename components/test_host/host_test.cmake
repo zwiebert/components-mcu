@@ -10,6 +10,7 @@ add_compile_options(-include sdkconfig.h)
 set(TEST_HOST true)
 set(UNIT_TESTING true)
 set(PLATFORM_HOST true)
+set(BIN_COMP_ROOT "comp")
 
 include(${PROJECT_BINARY_DIR}/config/sdkconfig.cmake)
 
@@ -100,6 +101,8 @@ macro(add_libs)
     list(APPEND __PRIV_REQUIRES test_host)
   endif()
 
+  #message("CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+  
   list(TRANSFORM __SRCS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/" OUTPUT_VARIABLE my_srcs)
   set(COMPONENT_LIBS_SRCS "${COMPONENT_LIBS_SRCS}" "${my_srcs}"  CACHE INTERNAL "${COMPONENT_LIBS_SRCS}")    
 
@@ -117,7 +120,7 @@ macro(add_libs)
 
 
   set(COMPONENT_LIBS_INC_DIRS "${COMPONENT_LIBS_INC_DIRS}" ${INC_PATHS} # ${PRIV_INC_PATHS}
-  CACHE INTERNAL "${COMPONENT_LIBS_INC_DIRS}")    
+   CACHE INTERNAL "${COMPONENT_LIBS_INC_DIRS}")    
 
   set(COMPONENT_LIBS "${COMPONENT_LIBS}" "${COMPONENT_LIB}"  CACHE INTERNAL "${COMPONENT_LIBS}")
 
@@ -125,18 +128,21 @@ macro(add_libs)
 
   foreach(comp_dir ${COMPONENT_DIRECTORIES})
     foreach(req ${__REQUIRES} ${__PRIV_REQUIRES})
-      if(EXISTS "${PROJECT_SOURCE_DIR}/${comp_dir}/${req}/CMakeLists.txt")
-        if(NOT EXISTS "${PROJECT_BINARY_DIR}/${comp_dir}/${req}")
-          add_subdirectory("${PROJECT_SOURCE_DIR}/${comp_dir}/${req}" "${PROJECT_BINARY_DIR}/${comp_dir}/${req}")
+      #message(STATUS "pro_source_dir ${PROJECT_SOURCE_DIR} // ${PROJECT_BINARY_DIR} //  ${CMAKE_CURRENT_SOURCE_DIR} // ${COMPONENT_LIBS_DIRS}")
+      if(EXISTS "${comp_dir}/${req}/CMakeLists.txt")
+        if(NOT EXISTS "${PROJECT_BINARY_DIR}/${BIN_COMP_ROOT}/${req}")
+          add_subdirectory("${comp_dir}/${req}" "${PROJECT_BINARY_DIR}/${BIN_COMP_ROOT}/${req}")
         endif()
       endif()
     endforeach()
   endforeach()
 
-
+  #message("__REQUIRES: ${__REQUIRES}")
+  #message("COMPONENT_LIBS: ${COMPONENT_LIBS}")
   filter_valid_comps(__REQUIRES COMPONENT_LIBS)
   filter_valid_comps(__PRIV_REQUIRES COMPONENT_LIBS)
-
+  #message("__REQUIRES: ${__REQUIRES}")
+  
   if("${COMP_ACC}" STREQUAL "INTERFACE")
     # message("INTERFACE LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     add_library(${COMPONENT_LIB} INTERFACE ${__SRCS})
@@ -175,6 +181,7 @@ macro(idf_component_register)
   set(COMPONENT_LIB ${COMPONENT_LIB} )
   set(__SRCS ${__SRCS} )
 
+  #message(STATUS "COMPONENT_LIB: ${COMPONENT_LIB}")
   if("test" STREQUAL "${COMPONENT_LIB}")
     add_tests()
   else()
