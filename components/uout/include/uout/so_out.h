@@ -11,11 +11,6 @@
 #define so_mqt ((td.tgt() & SO_TGT_MQTT))
 #define so_ws ((td.tgt() & SO_TGT_WS))
 
-#ifndef CONFIG_APP_USE_JSON
-#undef so_jco
-#define so_jco false
-#endif
-
 /**
  * \brief Format and print output according to the flags in the target descriptor.
  */

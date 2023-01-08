@@ -51,7 +51,6 @@ menu "zwiebert: Networking"
         default y
 
     config APP_TCPS_ENABLE
-        depends on APP_USE_TCPS_TASK
         int  "Enable TCPS server by default"
         range 0 1
         default 1
