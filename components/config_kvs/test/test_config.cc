@@ -44,6 +44,20 @@ static void tst_compSettings() {
     }
     TEST_ASSERT_EQUAL_STRING(buf, "val3");
   }
+
+  {
+    struct {
+    char buf4[4] = "444";
+    char buf8[8] = "8888888";
+    } s;
+    config_save_item_s(settings_get_kvsKey(CB_VERBOSE), "abcd");
+    kvshT h;
+    if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
+      kvsRead_charArray(h, CB_VERBOSE, s.buf4);
+      kvs_close(h);
+    }
+    TEST_ASSERT_EQUAL_STRING("abc", s.buf4);
+  }
 }
 
 TEST_CASE("CompSettings", "[config]")

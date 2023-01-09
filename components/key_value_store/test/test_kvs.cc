@@ -22,7 +22,7 @@ static void test_for_foreach_bug() {
   handle = kvs_open(NS, kvs_WRITE);
   TEST_ASSERT_NOT_NULL(handle);
 
-  succ = kvs_rw_blob(handle, k1, &b, sizeof b, true);
+  succ = kvs_set_blob(handle, k1, &b, sizeof b);
   TEST_ASSERT_TRUE(succ);
   succ = kvs_commit(handle);
   TEST_ASSERT_TRUE(succ);
@@ -36,7 +36,7 @@ static void test_for_foreach_bug() {
   handle = kvs_open(NS, kvs_WRITE);
   TEST_ASSERT_NOT_NULL(handle);
 
-  succ = kvs_rw_blob(handle, k1, &b, sizeof b, true);
+  succ = kvs_set_blob(handle, k1, &b, sizeof b);
   TEST_ASSERT_TRUE(succ);
   succ = kvs_commit(handle);
   TEST_ASSERT_TRUE(succ);
@@ -52,14 +52,14 @@ static void test_config() {
 #define test_mqtt_user "zimbra"
   handle = kvs_open(NS, kvs_WRITE);
   TEST_ASSERT_NOT_NULL(handle);
-  succ = kvs_rw_str(handle, "C_MQTT_CID", const_cast<char*>("tfmcu_esp8266"), 0, true);
+  succ = kvs_set_str(handle, "C_MQTT_CID", "tfmcu_esp8266");
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
   handle = kvs_open(NS, kvs_READ);
   TEST_ASSERT_NOT_NULL(handle);
   strcpy(buf, test_mqtt_user);
-  succ = kvs_rw_str(handle, "C_MQTT_USER", buf, 128, false);
+  succ = kvs_get_str(handle, "C_MQTT_USER", buf, 128);
   TEST_ASSERT_FALSE(succ);
   TEST_ASSERT_EQUAL_STRING(test_mqtt_user, buf);  // original string must be untouched
   kvs_close(handle);
@@ -147,10 +147,46 @@ static void f() {
   g(1,2);
 }
 
+static void test_set_get_arrays() {
+  handle = kvs_open(NS, kvs_READ_WRITE);
+  TEST_ASSERT_NOT_NULL(handle);
+  succ = kvs_erase_key(handle, asdf);
+  succ = kvs_commit(handle);
+  TEST_ASSERT_TRUE(succ);
+
+  int ia[8] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+
+  succ = kvs_set_object(handle, asdf, ia);
+  TEST_ASSERT_TRUE(succ);
+  succ = kvs_commit(handle);
+  TEST_ASSERT_TRUE(succ);
+
+  int ib[8] = { };
+  succ = kvs_get_object(handle, asdf, ib);
+  TEST_ASSERT_TRUE(succ);
+  for (int i = 0; i < 8; ++i)
+    TEST_ASSERT_EQUAL(i, ib[i]);
+
+  int ic[7] = { };
+  succ = kvs_get_object(handle, asdf, ic);
+  TEST_ASSERT_FALSE(succ);
+
+  int id[9] = { };
+  succ = kvs_get_object(handle, asdf, id);
+  TEST_ASSERT_FALSE(succ);
+  for (int i = 0; i < 8; ++i)
+    TEST_ASSERT_EQUAL(i, id[i]);
+  TEST_ASSERT_EQUAL(0, id[8]);
+
+  kvs_close(handle);
+}
+
+
 TEST_CASE("kvs", "[kvs]") {
   test_config();
   test_set_get_default();
   f();
   test_for_foreach_bug();
   test_set_get_default();
+  test_set_get_arrays();
 }

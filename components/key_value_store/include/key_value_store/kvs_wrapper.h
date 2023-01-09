@@ -11,6 +11,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stddef.h>
 #include "stdbool.h"
 
 enum { kvs_READ=1, kvs_WRITE=2, kvs_READ_WRITE=3 };
@@ -25,9 +26,11 @@ void kvs_close(kvshT handle);
 
 bool kvs_erase_key(kvshT handle, const char *key);
 
-unsigned kvs_rw_blob(kvshT handle, const char *key, void *src_or_dst, unsigned length, bool write);
-unsigned kvs_rw_str(kvshT handle, const char *key, char *src_or_dst, unsigned length, bool write);
+bool kvs_set_str(kvshT handle, const char *key, const char *val);
+bool kvs_get_str(kvshT handle, const char *key, char *dst, size_t dst_size);
 
+bool kvs_set_blob(kvshT handle, const char *key, const void *val, size_t val_size);
+bool kvs_get_blob(kvshT handle, const char *key, void *dst, size_t dst_size);
 
 bool kvs_set_i8(kvshT handle, const char *key, int8_t val);
 int8_t kvs_get_i8(kvshT handle, const char *key, int8_t default_val, bool *res_success);
@@ -79,5 +82,18 @@ void kvs_setup(void);
 
 #ifdef __cplusplus
   }
+
+
+template<typename handle_type, typename value_type>
+bool kvs_get_object(handle_type h, const char *key, value_type &val) {
+  return kvs_get_blob(h, key, &val, sizeof val);
+}
+
+template<typename handle_type, typename value_type>
+bool kvs_set_object(handle_type h, const char *key, const value_type &val) {
+  return kvs_set_blob(h, key, &val, sizeof val);
+}
+
+
 #endif
 
