@@ -31,9 +31,9 @@ void kvsRead_blob(handle_type h, cb_type cb, value_type &val) {
   kvs_rw_blob(h, settings_get_kvsKey(cb), &val,sizeof (value_type), false);
 }
 
-template<typename handle_type, typename value_type, typename cb_type>
-void kvsRead_charArray(handle_type h, cb_type cb,  value_type val) {
-  kvs_rw_str(h, settings_get_kvsKey(cb), val, sizeof (value_type), false);
+template<typename handle_type, typename cb_type, size_t dst_size>
+void kvsRead_charArray(handle_type h, cb_type cb, char (&dst)[dst_size]) {
+  kvs_rw_str(h, settings_get_kvsKey(cb), dst, dst_size, false);
 }
 
 template<typename handle_type, typename value_type, typename cb_type>
