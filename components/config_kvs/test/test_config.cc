@@ -5,7 +5,10 @@
 
 
 #include "../include/config_kvs/config.h"
+#include "../config_kvs.h"
 #include <config_kvs/comp_settings.hh>
+#include "key_value_store/kvs_wrapper.h"
+
 #include "utils_misc/int_types.h"
 #include "utils_misc/itoa.h"
 #include <stdlib.h>
@@ -14,107 +17,34 @@
 #include <string.h>
 #include <utils_misc/cstring_utils.hh>
 
-#if 0
-static const char *make_msg(char *buf, int count)  {
-    sprintf(buf, "loop_count: %d", count);
-    return buf;
-}
+static void tst_compSettings() {
 
-#define val "012345678901234567890"
-
-static bool save_restore_item(enum configItem item, int count) {
-
-  switch(item) {
-  case CB_VERBOSE:
+  config_save_item_s("key1", "val1");
   {
-     int8_t random = abs(rand()) & 0x0f;
-     C.app_verboseOutput = random;
-     save_config_item(item);
-     C.app_verboseOutput = 0;
-     read_config_item(item);
-     char buf[80];
-     TEST_ASSERT_EQUAL_MESSAGE(random, C.app_verboseOutput, make_msg(buf, count));
-   }
-  break;
-
-  case CB_WIFI_SSID:
-  {
-     int random = abs(rand()) % sizeof(val);
-     char buf[80];
-     STRLCPY(buf, val, random);
-     buf[random] = '\0';
-     STRCPY(C.wifi.SSID, buf);
-     save_config_item(item);
-     STRCPY (C.wifi.SSID, "------");
-     read_config_item(item);
-     char msg_buf[80];
-     make_msg(msg_buf, count);
-     TEST_ASSERT_EQUAL_STRING_MESSAGE(buf, C.wifi.SSID, msg_buf);
-   }
-  break;
-  case CB_WIFI_PASSWD:
-  {
-     int random = abs(rand()) % sizeof(val);
-     char buf[80];
-     STRLCPY(buf, val, random);
-     buf[random] = '\0';
-     STRCPY(C.wifi.password, buf);
-     save_config_item(item);
-     STRCPY (C.wifi.password, "------");
-     read_config_item(item);
-     char msg_buf[80];
-     make_msg(msg_buf, count);
-     TEST_ASSERT_EQUAL_STRING_MESSAGE(buf, C.wifi.password, msg_buf);
-   }
-  break;
-  default:
-    return false;
-
+    char buf[80] = "---------------";
+    config_read_item_s("key1", buf, sizeof buf, "def1");
+    TEST_ASSERT_EQUAL_STRING(buf, "val1");
   }
-  return true;
-}
 
+  {
+    char buf[80] = "---------------";
+    TEST_ASSERT_EQUAL_STRING("C_VERBOSE", settings_get_kvsKey(CB_VERBOSE));
+    config_save_item_s(settings_get_kvsKey(CB_VERBOSE), "val2");
+    config_read_item_s(settings_get_kvsKey(CB_VERBOSE), buf, sizeof buf, "def2");
+    TEST_ASSERT_EQUAL_STRING(buf, "val2");
+  }
 
-#define LOOP_COUNT 500000
-static void test_config_save_restore() {
-  TEST_ASSERT_EQUAL(sizeof C.app_verboseOutput, sizeof (int) );
-
-
-
-  for (int i=0; i < LOOP_COUNT; ++i) {
-    while(true) {
-    uint8_t random = abs(rand()) % CB_size;
-    if (save_restore_item(random, i))
-      break;
+  {
+    char buf[80] = "---------------";
+    config_save_item_s(settings_get_kvsKey(CB_VERBOSE), "val3");
+    kvshT h;
+    if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
+      kvsRead_charArray(h, CB_VERBOSE, buf);
+      kvs_close(h);
     }
+    TEST_ASSERT_EQUAL_STRING(buf, "val3");
   }
-
 }
-
-
-
-#ifdef TEST_HOST
-
-config C;
-
-TEST_CASE("test config save_restore", "[config]")
-{
-  test_config_save_restore();
-}
-#endif
-#endif
-
-
-constexpr CompSettings compSettings;
-
-
-
-
-void tst_compSettings() {
-
-}
-
-
 
 TEST_CASE("CompSettings", "[config]")
 {
