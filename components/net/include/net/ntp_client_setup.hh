@@ -3,21 +3,11 @@
  * \brief  Create NTP client
  */
 
-#ifdef __cplusplus
-  extern "C" {
-#endif
-/*
- * ntp.h
- *
- *  Created on: 21.03.2020
- *      Author: bertw
- */
-
 #pragma once
 
 /// \brief NTP client configuration data
 struct cfg_ntp {
-  char server[64]; ///< NTP server to connect to. IP-address, or FQDN, or special key word "gateway"
+  char server[64] = CONFIG_APP_NTP_SERVER; ///< NTP server to connect to. IP-address, or FQDN, or special key word "gateway"
 };
 
 /**
@@ -26,7 +16,3 @@ struct cfg_ntp {
  */
 void ntp_setup(struct cfg_ntp *cfg_ntp);
 
-
-#ifdef __cplusplus
-  }
-#endif

@@ -1,6 +1,6 @@
 set(srcs  ipnet.cc
 esp32/ethernet.cc
-esp32/ipnet.c  esp32/ntp.c 
+esp32/ipnet.c  esp32/ntp.cc
 # esp32/tcp_server.cc
   esp32/tcp_cli_server_task.cc esp32/wifi_ap.cc
   esp32/wifistation.cc esp32/http_client.cc) 

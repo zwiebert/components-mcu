@@ -87,7 +87,7 @@ int8_t config_read_lan_pwr_gpio() {
 #endif
 
 #ifdef CONFIG_APP_USE_NTP
-#include "net/ntp_client_setup.h"
+#include "net/ntp_client_setup.hh"
 struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
@@ -97,7 +97,7 @@ struct cfg_ntp* config_read_ntpClient(struct cfg_ntp *c) {
   return c;
 }
 void config_setup_ntpClient() {
-  struct cfg_ntp c { {.server = CONFIG_APP_NTP_SERVER} };
+  struct cfg_ntp c;
   config_read_ntpClient(&c);
   ntp_setup(&c);
 }
