@@ -18,15 +18,6 @@ struct cfg_mqtt {
 
 void io_mqtt_setup(struct cfg_mqtt *cfg_mqt);
 
-/**
- * \brief             event callback: Message has been received
- * \param topic       non null terminated string containing the topic of the message
- * \param topic_len   topic string length
- * \param data        non null terminated string containing the data of the message
- * \param data_len    data string length
- */
-extern void (*io_mqtt_received_cb)(const char *topic, int topic_len, const char *data, int data_len);
-
 /// \brief test if TOPIC with TOPIC_LEN starts with string S
 bool topic_startsWith(const char *topic, int topic_len, const char *s);
 /// \brief test if TOPIC with TOPIC_LEN ends with string S

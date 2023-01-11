@@ -43,6 +43,19 @@ void soCfg_NTP_SERVER(const struct TargetDesc &td) {
 
 #ifdef CONFIG_APP_USE_MQTT
 #include "net_mqtt/mqtt.hh"
+
+void soCfg_MQTT(const struct TargetDesc &td) {
+  cfg_mqtt c;
+  config_read_mqttClient(&c);
+
+  td.so().print(settings_get_optKeyStr(CB_MQTT_URL), c.url);
+  td.so().print(settings_get_optKeyStr(CB_MQTT_USER), c.user);
+  td.so().print(settings_get_optKeyStr(CB_MQTT_PASSWD), *c.password ? "*" : "");
+  td.so().print(settings_get_optKeyStr(CB_MQTT_CLIENT_ID), c.client_id);
+  td.so().print(settings_get_optKeyStr(CB_MQTT_ROOT_TOPIC), c.root_topic);
+  td.so().print(settings_get_optKeyStr(CB_MQTT_ENABLE), c.enable);
+}
+
 void soCfg_MQTT_ENABLE(const struct TargetDesc &td) {
   cfg_mqtt c;
   td.so().print(settings_get_optKeyStr(CB_MQTT_ENABLE), config_read_mqttClient(&c)->enable);
@@ -72,6 +85,15 @@ void soCfg_MQTT_ROOT_TOPIC(const struct TargetDesc &td) {
 
 #ifdef CONFIG_APP_USE_HTTP
 #include "net_http_server/http_server_setup.h"
+void soCfg_HTTP(const struct TargetDesc &td) {
+  cfg_http c;
+  config_read_httpServer(&c);
+
+  td.so().print(settings_get_optKeyStr(CB_HTTP_USER), c.user);
+  td.so().print(settings_get_optKeyStr(CB_HTTP_PASSWD), *c.password ? "*" : "");
+  td.so().print(settings_get_optKeyStr(CB_HTTP_ENABLE), c.enable);
+}
+
 void soCfg_HTTP_ENABLE(const struct TargetDesc &td) {
   cfg_http c;
   td.so().print(settings_get_optKeyStr(CB_HTTP_ENABLE), config_read_httpServer(&c)->enable);
