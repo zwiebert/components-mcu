@@ -168,11 +168,11 @@ void Net_Mqtt::unsubscribe(const char *topic) {
   }
 }
 
-void Net_Mqtt::publish(const char *topic, const char *data) {
+void Net_Mqtt::publish(const char *topic, const char *data, bool retain) {
   if (!client || !is_connected)
     return;
 
-  int msg_id = esp_mqtt_client_publish(client, topic, data, 0, 1, 0);
+  int msg_id = esp_mqtt_client_publish(client, topic, data, 0, 1, retain);
   {
     char buf[128];
     if (sizeof buf >= snprintf(buf, sizeof buf, "publish: msg_id=%d, TOPIC=<%s>, DATA=<%s>", msg_id, topic, data)) {

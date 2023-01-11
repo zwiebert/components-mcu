@@ -26,10 +26,4 @@ void Net_Mqtt::setup(Net_Mqtt *derived_obj) {
   ourDerivedObj = derived_obj ? derived_obj : &My_base_obj;
 }
 
-void (*io_mqtt_connected_cb)();
-void (*io_mqtt_disconnected_cb)();
-void (*io_mqtt_subscribed_cb)(const char *topic, int topic_len);
-void (*io_mqtt_unsubscribed_cb)(const char *topic, int topic_len);
-void (*io_mqtt_published_cb)(int msg_id);
-void (*io_mqtt_received_cb)(const char *topic, int topic_len, const char *data, int data_len);
 
