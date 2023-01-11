@@ -1,0 +1,19 @@
+menu "zwiebert: UOUT"
+
+    config UOUT_PUBLISH_LOG_AS_TXT
+        bool "publish log messages (also) as plain text in terminal"
+        default n
+        help
+            We now publish messages in JSON format.  The plain text format is for backwards
+            compatibility with old versions for FHEM tronferno_mcu module and Android app
+
+    config UOUT_PUBLISH_IP_ADDR_AS_TXT
+        bool "publish IP address (also) as plain text in terminal"
+        default y
+        help
+            We now publish messages in JSON format.  The plain text format is for backwards
+            compatibility with old versions for FHEM tronferno_mcu module and Android app
+
+
+endmenu
+

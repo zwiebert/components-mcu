@@ -128,6 +128,7 @@ void uoCb_publish_ipAddress(const char *ip_addr) {
       uoCb_publish(idxs, buf, flags);
   }
 
+#ifdef CONFIG_UOUT_PUBLISH_IP_ADDR_AS_TXT
   flags.fmt.json = false;
   flags.fmt.txt = true;
   if (auto idxs = uoCb_filter(flags); idxs.size) {
@@ -135,6 +136,7 @@ void uoCb_publish_ipAddress(const char *ip_addr) {
     if (sizeof buf >= snprintf(buf, sizeof buf, "tf: ipaddr: %s;", ip_addr))
       uoCb_publish(idxs, buf, flags);
   }
+#endif
 }
 
 void uoCb_publish_logMessage(const LogMessage &msg) {
@@ -152,6 +154,7 @@ void uoCb_publish_logMessage(const LogMessage &msg) {
     }
   }
 
+#ifdef CONFIG_UOUT_PUBLISH_LOG_AS_TXT
   flags.fmt.json = false;
   flags.fmt.txt = true;
   if (auto idxs = uoCb_filter(flags); idxs.size) {
@@ -160,4 +163,5 @@ void uoCb_publish_logMessage(const LogMessage &msg) {
       uoCb_publish(idxs, buf, flags);
     }
   }
+#endif
 }
