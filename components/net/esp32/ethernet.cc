@@ -15,7 +15,7 @@
 #include "driver/gpio.h"
 #include "debug/dbg.h"
 #include "net/ipnet.h"
-#include "net/ethernet_setup.h"
+#include <net/ethernet_setup.hh>
 #include "utils_misc/int_types.h"
 #include "main_loop/main_queue.hh"
 

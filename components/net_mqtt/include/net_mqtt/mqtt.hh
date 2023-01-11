@@ -12,6 +12,7 @@ struct cfg_mqtt {
   char user[16] = CONFIG_APP_MQTT_USER;
   char password[31] = CONFIG_APP_MQTT_PASSWORD;
   char client_id[32] = CONFIG_APP_MQTT_CLIENT_ID;
+  char root_topic[32] = CONFIG_APP_MQTT_ROOT_TOPIC;
   int8_t enable = CONFIG_APP_MQTT_ENABLE;
 };
 

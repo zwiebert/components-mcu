@@ -63,7 +63,7 @@ enum verbosity config_read_verbose() {
 #endif
 
 #ifdef CONFIG_APP_USE_LAN
-#include "net/ethernet_setup.h"
+#include <net/ethernet_setup.hh>
 struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   kvshT h;
   if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
@@ -74,16 +74,11 @@ struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
   return c;
 }
 void config_setup_ethernet() {
-  struct cfg_lan c = { .phy = lanPhyLAN8720, .pwr_gpio = -1, };
+  struct cfg_lan c;
   config_read_ethernet(&c);
   ethernet_setup(&c);
 }
-int8_t config_read_lan_phy() {
-  return config_read_item(CB_LAN_PHY, lanPhyLAN8720);
-}
-int8_t config_read_lan_pwr_gpio() {
-  return config_read_item(CB_LAN_PWR_GPIO, -1);
-}
+
 #endif
 
 #ifdef CONFIG_APP_USE_NTP
@@ -102,7 +97,7 @@ void config_setup_ntpClient() {
   ntp_setup(&c);
 }
 const char* config_read_ntp_server(char *d, unsigned d_size) {
-  return config_read_item(CB_NTP_SERVER, d, d_size, CONFIG_APP_NTP_SERVER);
+  return config_read_item(CB_NTP_SERVER, d, d_size, cfg_ntp().server);
 }
 #endif
 
@@ -123,10 +118,10 @@ void config_setup_wifiStation() {
   wifistation_setup(&c);
 }
 const char* config_read_wifi_ssid(char *d, unsigned d_size) {
-  return config_read_item(CB_WIFI_SSID, d, d_size, CONFIG_APP_WIFI_SSID);
+  return config_read_item(CB_WIFI_SSID, d, d_size, cfg_wlan().SSID);
 }
 const char* config_read_wifi_passwd(char *d, unsigned d_size) {
-  return config_read_item(CB_WIFI_PASSWD, d, d_size, CONFIG_APP_WIFI_PASSWORD);
+  return config_read_item(CB_WIFI_PASSWD, d, d_size, cfg_wlan().password);
 }
 #endif
 
@@ -139,34 +134,18 @@ struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
     kvsRead_charArray(h, CB_MQTT_USER, c->user);
     kvsRead_charArray(h, CB_MQTT_PASSWD, c->password);
     kvsRead_charArray(h, CB_MQTT_CLIENT_ID, c->client_id);
+    kvsRead_charArray(h, CB_MQTT_ROOT_TOPIC, c->root_topic);
     kvsRead_i8(h, CB_MQTT_ENABLE, c->enable);
     kvs_close(h);
   }
   return c;
 }
-void config_setup_mqttClient() {
+void config_setup_mqttClient(struct cfg_mqtt *cp) {
   struct cfg_mqtt c;
   config_read_mqttClient(&c);
   io_mqtt_setup(&c);
 }
-const char* config_read_mqtt_url(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_URL, d, d_size, CONFIG_APP_MQTT_URL);
-}
-const char* config_read_mqtt_user(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_USER, d, d_size, CONFIG_APP_MQTT_USER);
-}
-const char* config_read_mqtt_passwd(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_PASSWD, d, d_size, CONFIG_APP_MQTT_PASSWORD);
-}
-const char* config_read_mqtt_client_id(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_CLIENT_ID, d, d_size, CONFIG_APP_MQTT_CLIENT_ID);
-}
-const char* config_read_mqtt_root_topic(char *d, unsigned d_size) {
-  return config_read_item(CB_MQTT_ROOT_TOPIC, d, d_size, CONFIG_APP_MQTT_ROOT_TOPIC);
-}
-bool config_read_mqtt_enable() {
-  return !!config_read_item(CB_MQTT_ENABLE, CONFIG_APP_MQTT_ENABLE);
-}
+
 #endif
 
 #ifdef CONFIG_APP_USE_HTTP
@@ -187,14 +166,8 @@ void config_setup_httpServer() {
   config_read_httpServer(&c);
   hts_setup(&c);
 }
-const char* config_read_http_user(char *d, unsigned d_size) {
-  return config_read_item(CB_HTTP_USER, d, d_size, CONFIG_APP_HTTP_USER);
-}
-const char* config_read_http_passwd(char *d, unsigned d_size) {
-  return config_read_item(CB_HTTP_PASSWD, d, d_size, CONFIG_APP_HTTP_PASSWORD);
-}
 
 bool config_read_http_enable() {
-  return !!config_read_item(CB_HTTP_ENABLE, CONFIG_APP_HTTP_ENABLE);
+  return !!config_read_item(CB_HTTP_ENABLE, cfg_http().enable);
 }
 #endif
