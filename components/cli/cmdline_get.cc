@@ -1,7 +1,6 @@
 #include "cli_private.h"
 
 #include "txtio/inout.h"
-#include "stdbool.h"
 #include "cli/cli.h"
 
 typedef int (*getc_funT)(void);

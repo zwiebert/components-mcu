@@ -23,7 +23,6 @@
 
 #include <stddef.h>
 #include <string.h>
-#include <stdbool.h>
 
 #ifdef DISTRIBUTION
 #define D(x)

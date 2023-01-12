@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <malloc.h>
-#include <stdbool.h>
 
 
  char csu_empty_[1];

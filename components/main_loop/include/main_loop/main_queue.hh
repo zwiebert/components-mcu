@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include <stdbool.h>
 
 typedef void (*voidFunT)();
 

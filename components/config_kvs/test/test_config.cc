@@ -13,7 +13,6 @@
 #include "utils_misc/itoa.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
 #include <string.h>
 #include <utils_misc/cstring_utils.hh>
 

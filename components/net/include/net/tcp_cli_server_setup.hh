@@ -7,7 +7,6 @@
 #pragma once
 #include "tcp_cli_server.h"
 #include <uout/uo_callbacks.h>
-#include "stdbool.h"
 
 /**
  * \brief Module Configuration
