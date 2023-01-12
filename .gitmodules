@@ -5,11 +5,11 @@
 	path = components/net_mqtt/esp8266/esp_mqtt
 	url = https://github.com/tuanpmt/esp_mqtt.git
 [submodule "components/jsmn"]
-	path = components/jsmn/jsmn
+	path = jsmn/jsmn
 	url = https://github.com/zserge/jsmn.git
 [submodule "components/nanopb/nanopb"]
-	path = components/nanopb/nanopb
+	path = nanopb/nanopb
 	url = https://github.com/nanopb/nanopb.git
 [submodule "components/test_host/unity"]
-	path = components/test_host/external/unity
+	path = test_host/external/unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
