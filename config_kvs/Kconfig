@@ -1,0 +1,10 @@
+menu "zwiebert: config_kvs"
+
+    config APP_CFG_NAMESPACE
+        string "Namespace for kvs settings storage"
+        default "Settings"
+        help
+            Note: When changed, the previous saved settings data will become inacessible
+
+endmenu
+

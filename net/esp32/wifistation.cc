@@ -116,4 +116,4 @@ void wifistation_setup(struct cfg_wlan *config)  {
 
 
 
-#endif //USE_WLAN
+#endif //CONFIG_APP_USE_WLAN

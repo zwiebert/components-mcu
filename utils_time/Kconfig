@@ -1,0 +1,11 @@
+menu "zwiebert: config_kvs"
+
+    config APP_USE_ESP_GET_TIME
+        bool "Get up-time from esp_timer_get_time()"
+        default y
+        help
+            Don't count up-time in our own timer-ISR.
+            Use esp_timer_get_time() instead
+
+endmenu
+

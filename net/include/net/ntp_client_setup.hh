@@ -1,5 +1,5 @@
 /**
- * \file   net/ntp_client_setup.h
+ * \file   net/ntp_client_setup.hh
  * \brief  Create NTP client
  */
 
