@@ -16,21 +16,13 @@
 #include <utility>
 
 /**
- * \brief   Target descriptor base class.
+ * \brief   Write basic data (strings and numbers) without any formatting
+ *          The derived class can implement the virtual member function priv_write to produce any real output
  */
-struct UoutWriter {
-public:
-  /**
-   * \param tgt    Flags describing the requested format(s) and/or the target.
-   */
-  UoutWriter(so_target_bits tgt = SO_TGT_NONE) :
-      myTgt(tgt) {
-  }
+class UoutRawWriter {
 
-  UoutWriter(const UoutWriter&) = delete;
-  UoutWriter& operator=(const UoutWriter&) = delete;
-  virtual ~UoutWriter() {
-  }
+protected:
+  virtual ~UoutRawWriter() {};
 public:
   /**
    * \brief        write output
@@ -60,7 +52,7 @@ public:
     }
 
     if (ssize_t n = priv_write(s, len, false); n == len)
-      if (write("\n",1,final) == 1)
+      if (write("\n", 1, final) == 1)
         return n + 1;
     return -1;
   }
@@ -71,6 +63,70 @@ public:
   int write(const char c) const {
     return write(&c, 1);
   }
+
+public:
+  /// \brief  write to output (non-final)
+  friend const UoutRawWriter& operator<<(const UoutRawWriter& lhs, const char *s) {
+    lhs.write(s);
+    return lhs;
+  }
+  /// \brief  write to output (non-final)
+  friend const UoutRawWriter& operator<<(const UoutRawWriter& lhs, char c) {
+    lhs.write(c);
+    return lhs;
+  }
+  /// \brief  write to output (non-final)
+  friend const UoutRawWriter& operator<<(const UoutRawWriter& lhs, int n) {
+    char buf[20];
+    itoa(n, buf, 10);
+    lhs.write(buf);
+    return lhs;
+  }
+  /// \brief  modifier for << operator (final, line-feed)  XXX: currently unused/untested
+  struct mod {
+    bool fin:1 = false;
+    bool lf:1 = false;
+  };
+  /// \brief  write to output with modifiers XXX: currently unused/untested
+  friend const UoutRawWriter& operator<<(const UoutRawWriter &lhs, const std::pair<UoutRawWriter::mod, const char*> &mod_s) {
+    if (mod_s.first.lf)
+      lhs.writeln(mod_s.second, -1, mod_s.first.fin);
+    else
+      lhs.write(mod_s.second, -1, mod_s.first.fin);
+    return lhs;
+  }
+private:
+  /**
+   * \brief        do-nothing-stub for a write function to be overridden
+   * \param s,len  string and string length to write
+   * \param final  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
+   * \return   -1
+   */
+  virtual int priv_write(const char *s, ssize_t len, bool final) const {
+    // do nothing
+    return -1;
+  }
+};
+
+/**
+ * \brief   Target descriptor base class.
+ *
+ */
+class UoutWriter : public UoutRawWriter {
+public:
+  /**
+   * \param tgt    Flags describing the requested format(s) and/or the target.
+   */
+  UoutWriter(so_target_bits tgt = SO_TGT_NONE) :
+      myTgt(tgt) {
+  }
+
+  UoutWriter(const UoutWriter&) = delete;
+  UoutWriter& operator=(const UoutWriter&) = delete;
+  virtual ~UoutWriter() {
+  }
+
+public:
 
   /// \brief Get target bit flags
   so_target_bits tgt() const {
@@ -93,48 +149,7 @@ public:
   const class UoutPrinter& so() const {
     return mySo;
   }
-  /// \brief  write to output (non-final)
-  friend const UoutWriter& operator<<(const UoutWriter& lhs, const char *s) {
-    lhs.write(s);
-    return lhs;
-  }
-  /// \brief  write to output (non-final)
-  friend const UoutWriter& operator<<(const UoutWriter& lhs, char c) {
-    lhs.write(c);
-    return lhs;
-  }
-  /// \brief  write to output (non-final)
-  friend const UoutWriter& operator<<(const UoutWriter& lhs, int n) {
-    char buf[20];
-    itoa(n, buf, 10);
-    lhs.write(buf);
-    return lhs;
-  }
-  /// \brief  modifier for << operator (final, line-feed)  XXX: currently unused/untested
-  struct mod {
-    bool fin:1 = false;
-    bool lf:1 = false;
-  };
-  /// \brief  write to output with modifiers XXX: currently unused/untested
-  friend const UoutWriter& operator<<(const UoutWriter &lhs, const std::pair<UoutWriter::mod, const char*> &mod_s) {
-    if (mod_s.first.lf)
-      lhs.writeln(mod_s.second, -1, mod_s.first.fin);
-    else
-      lhs.write(mod_s.second, -1, mod_s.first.fin);
-    return lhs;
-  }
 
-private:
-  /**
-   * \brief        do-nothing-stub for a write function to be overridden
-   * \param s,len  string and string length to write
-   * \param final  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
-   * \return   -1
-   */
-  virtual int priv_write(const char *s, ssize_t len, bool final) const {
-    // do nothing
-    return -1;
-  }
 protected:
   so_target_bits myTgt = SO_TGT_NONE;
   ///////////////////////////////
@@ -221,8 +236,8 @@ private:
 /**
  * \brief  Target descriptor for web-socket
  */
-struct UoutWriterWebsocket final: public UoutWriter {
-  typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
+class UoutWriterWebsocket final: public UoutWriter {
+  using writeReq_fnT = int (*)(void *req, const char *s, ssize_t len, bool final);
 public:
   UoutWriterWebsocket(void *req, so_target_bits tgt, writeReq_fnT writeReq_fn) :
     UoutWriter(tgt), myReq(req), myWriteReqFn(writeReq_fn) {
