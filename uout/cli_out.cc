@@ -13,16 +13,16 @@ extern uint16_t cli_msgid;
 
 
 
-void cli_replySuccess(const struct TargetDesc &td) {
+void cli_replySuccess(const class UoutWriter &td) {
   reply_message(td, 0, "ok");
 }
 
-int cli_replyFailure(const struct TargetDesc &td) {
+int cli_replyFailure(const class UoutWriter &td) {
   reply_message(td, 0, "error");
   return -1;
 }
 
-bool cli_replyResult(const struct TargetDesc &td, bool success) {
+bool cli_replyResult(const class UoutWriter &td, bool success) {
   if (success)
     cli_replySuccess(td);
   else
@@ -31,14 +31,14 @@ bool cli_replyResult(const struct TargetDesc &td, bool success) {
 }
 
 extern int ENR; // error number
-void  print_enr(const struct TargetDesc &td) {
+void  print_enr(const class UoutWriter &td) {
   char buf[64];
   if (int n = snprintf(buf, sizeof buf, "enr: %d\n", ENR); n > 0 && n < sizeof buf) {
     td.write(buf, n);
   }
 }
 
-void msg_print(const struct TargetDesc &td, const char *msg, const char *tag) {
+void msg_print(const class UoutWriter &td, const char *msg, const char *tag) {
   if (!cli_isInteractive())
     return;
   if (msg)
@@ -56,19 +56,19 @@ void msg_print(const struct TargetDesc &td, const char *msg, const char *tag) {
   td.write(": ");
 }
 
-void  cli_warning_optionUnknown(const struct TargetDesc &td, const char *key) {
+void  cli_warning_optionUnknown(const class UoutWriter &td, const char *key) {
  if (!cli_isInteractive())
     return;
   msg_print(td, "warning", "unknown-option"), td.write(key), td.write('\n');
 }
 
-void  cli_reply_print(const struct TargetDesc &td, const char *tag) {
+void  cli_reply_print(const class UoutWriter &td, const char *tag) {
  if (!cli_isInteractive())
     return;
   msg_print(td, "cli_reply", tag);
 }
 
-void  reply_message(const struct TargetDesc &td, const char *tag, const char *msg) {
+void  reply_message(const class UoutWriter &td, const char *tag, const char *msg) {
  if (!cli_isInteractive())
     return;
   cli_reply_print(td, tag);
@@ -77,13 +77,13 @@ void  reply_message(const struct TargetDesc &td, const char *tag, const char *ms
   td.write('\n');
 }
 
-void  cli_msg_ready(const struct TargetDesc &td) {
+void  cli_msg_ready(const class UoutWriter &td) {
  if (!cli_isInteractive())
     return;
   td.write("\nready:\n");
 }
 
-void  reply_id_message(const struct TargetDesc &td, uint16_t id, const char *tag, const char *msg) {
+void  reply_id_message(const class UoutWriter &td, uint16_t id, const char *tag, const char *msg) {
   uint16_t old_id = cli_msgid;
  if (!cli_isInteractive())
     return;
@@ -105,7 +105,7 @@ extern uint16_t cli_msgid;
 
 #define td myTd
 
-void  StatusTxtT::cli_out_start_reply() {
+void  UoutBuilderPlaintext::cli_out_start_reply() {
   char buf[64];
   if (int n = snprintf(buf, sizeof buf, "tf: cli_reply=%d: %s:", (int)cli_msgid, OBJ_TAG); n > 0 && n < sizeof buf) {
     myTd.write(buf, n);
@@ -115,7 +115,7 @@ void  StatusTxtT::cli_out_start_reply() {
 
 const int OUT_MAX_LEN = 80;
 
-void StatusTxtT::cli_out_entry(const char *key, const char *val, int len) {
+void UoutBuilderPlaintext::cli_out_entry(const char *key, const char *val, int len) {
   if (!key || len == -1) {
     if (myLength) {
       myTd << ";\n";
@@ -141,16 +141,16 @@ void StatusTxtT::cli_out_entry(const char *key, const char *val, int len) {
   }
 }
 
-void StatusTxtT::cli_out_set_x(const char *obj_tag) {
+void UoutBuilderPlaintext::cli_out_set_x(const char *obj_tag) {
   SET_OBJ_TAG(obj_tag);
 }
 
-void StatusTxtT::cli_out_x_reply_entry(const char *key, const char *val, int len) {
+void UoutBuilderPlaintext::cli_out_x_reply_entry(const char *key, const char *val, int len) {
   if (!cli_isInteractive())
     return;
   cli_out_entry(key, val, len);
 }
-void StatusTxtT::cli_out_close() {
+void UoutBuilderPlaintext::cli_out_close() {
   cli_out_x_reply_entry(0, 0, 0);
 }
 

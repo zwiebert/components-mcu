@@ -7,26 +7,26 @@
 #include <stdint.h>
 
 
-void cli_warning_optionUnknown(const struct TargetDesc &td, const char *key);
-void reply_id_message(const struct TargetDesc &td, uint16_t id, const char *tag, const char *msg);
-void reply_message(const struct TargetDesc &td, const char *tag, const char *msg);
+void cli_warning_optionUnknown(const class UoutWriter &td, const char *key);
+void reply_id_message(const class UoutWriter &td, uint16_t id, const char *tag, const char *msg);
+void reply_message(const class UoutWriter &td, const char *tag, const char *msg);
 
-bool cli_replyResult(const struct TargetDesc &td, bool success);
-void cli_replySuccess(const struct TargetDesc &td);
-int cli_replyFailure(const struct TargetDesc &td);
-void print_enr(const struct TargetDesc &td);
+bool cli_replyResult(const class UoutWriter &td, bool success);
+void cli_replySuccess(const class UoutWriter &td);
+int cli_replyFailure(const class UoutWriter &td);
+void print_enr(const class UoutWriter &td);
 
 /// print command prompt
-void cli_msg_ready(const struct TargetDesc &td);
+void cli_msg_ready(const class UoutWriter &td);
 
 /**
  * \brief  Print key value pairs as text lines with limited length
  */
-class StatusTxtT {
+class UoutBuilderPlaintext {
   void  cli_out_entry(const char *key, const char *val, int len);
   void cli_out_start_reply();
 public:
-  StatusTxtT(const struct TargetDesc &td): myTd(td) {}
+  UoutBuilderPlaintext(const class UoutWriter &td): myTd(td) {}
 public:
 
   /**
@@ -48,7 +48,7 @@ public:
 
 private:
   int myLength = 0;
-  const struct TargetDesc &myTd;
+  const class UoutWriter &myTd;
   char Obj_tag[16] = "";
 };
 

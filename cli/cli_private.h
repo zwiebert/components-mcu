@@ -11,6 +11,6 @@
  */
 char* get_commandline(void);
 
-int cli_processParameters(clpar p[], int len, const struct TargetDesc &td);
+int cli_processParameters(clpar p[], int len, const class UoutWriter &td);
 int cli_parseCommandline(char *cl, struct cli_parm *clp);
 

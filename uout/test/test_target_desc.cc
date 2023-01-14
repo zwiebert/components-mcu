@@ -7,16 +7,16 @@
 #include <uout/so_target_desc.hh>
 #include <array>
 
-struct TargetDescTest final : public TargetDesc {
+class UoutWriterTest final : public UoutWriter {
   typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
 
 public:
-  TargetDescTest(so_target_bits tgt = (SO_TGT_FLAG_TXT | SO_TGT_FLAG_JSON | SO_TGT_ANY)) :
-      TargetDesc(tgt) {
+  UoutWriterTest(so_target_bits tgt = (SO_TGT_FLAG_TXT | SO_TGT_FLAG_JSON | SO_TGT_ANY)) :
+      UoutWriter(tgt) {
   }
 
-  TargetDescTest(const TargetDescCon&) = delete;
-  virtual ~TargetDescTest() {
+  UoutWriterTest(const UoutWriterConsole&) = delete;
+  virtual ~UoutWriterTest() {
   }
 
 public:
@@ -43,7 +43,7 @@ public:
 };
 
 void test_td() {
-  TargetDescTest td;
+  UoutWriterTest td;
   const char *str = &td.wbuf_[0];
 
   td.write('a');

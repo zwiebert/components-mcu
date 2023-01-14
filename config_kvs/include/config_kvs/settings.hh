@@ -26,7 +26,7 @@ enum StoreFun : uint8_t {
 template<typename CfgItem, size_t Size, size_t Offset = 0>
 class Settings {
 public:
-  using soCfgFunT = void (*)(const TargetDesc &td);
+  using soCfgFunT = void (*)(const UoutWriter &td);
   using storeFunOkT = void (*)(otok key, const char *val);
 public:
   constexpr const char* get_kvsKey(const CfgItem item) const {

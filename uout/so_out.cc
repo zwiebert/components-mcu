@@ -13,14 +13,14 @@
 #define D(x)
 
 /////////////////////////Public////////////////////////////////
-bool SoOut::hasOutput_text() const {
+bool UoutPrinter::hasOutput_text() const {
   return myTd.tgt() & SO_TGT_FLAG_TXT;
 }
-bool SoOut::hasOutput_json() const {
+bool UoutPrinter::hasOutput_json() const {
   return myTd.tgt() & SO_TGT_FLAG_JSON;
 }
 
-void SoOut::x_open(const char *name) const {
+void UoutPrinter::x_open(const char *name) const {
   if (hasOutput_text())
     myTd.st().cli_out_set_x(name);
   if (hasOutput_json()) {
@@ -28,7 +28,7 @@ void SoOut::x_open(const char *name) const {
   }
 }
 
-void SoOut::x_close() const {
+void UoutPrinter::x_close() const {
   if (hasOutput_text())
     myTd.st().cli_out_close();
   if (hasOutput_json()) {
@@ -37,7 +37,7 @@ void SoOut::x_close() const {
   }
 }
 
-bool SoOut::root_open(const char *name) const {
+bool UoutPrinter::root_open(const char *name) const {
   bool error = false;
   if (hasOutput_json() && !myTd.sj().open_root_object(name))
     error = true;
@@ -45,7 +45,7 @@ bool SoOut::root_open(const char *name) const {
   return !error;
 }
 
-void SoOut::root_close() const {
+void UoutPrinter::root_close() const {
   if (hasOutput_text())
     myTd.st().cli_out_close();
   if (hasOutput_json()) {
@@ -53,13 +53,13 @@ void SoOut::root_close() const {
   }
 }
 
-void SoOut::print(const char *key, const char *val) const {
+void UoutPrinter::print(const char *key, const char *val) const {
   if (hasOutput_text())
     myTd.st().cli_out_x_reply_entry(key, val);
   if (hasOutput_json())
     myTd.sj().add_key_value_pair_s(key, val);
 }
-void SoOut::print(const char *key, int val) const {
+void UoutPrinter::print(const char *key, int val) const {
   char buf[20];
   snprintf(buf, sizeof buf, "%d", val);
   if (hasOutput_text())
@@ -68,7 +68,7 @@ void SoOut::print(const char *key, int val) const {
     myTd.sj().add_key_value_pair_d(key, val);
 }
 
-void SoOut::print(const char *key, long val) const {
+void UoutPrinter::print(const char *key, long val) const {
   char buf[20];
   snprintf(buf, sizeof buf, "%ld", val);
   if (hasOutput_text())
@@ -77,7 +77,7 @@ void SoOut::print(const char *key, long val) const {
     myTd.sj().add_key_value_pair_d(key, val);
 }
 
-void SoOut::print(const char *key, long long val) const {
+void UoutPrinter::print(const char *key, long long val) const {
   char buf[20];
   snprintf(buf, sizeof buf, "%lld", val);
   if (hasOutput_text())
@@ -86,7 +86,7 @@ void SoOut::print(const char *key, long long val) const {
     myTd.sj().add_key_value_pair_d(key, val);
 }
 
-void SoOut::print(const char *key, unsigned val, int base) const {
+void UoutPrinter::print(const char *key, unsigned val, int base) const {
   char buf[20];
   snprintf(buf, sizeof buf, base == 10 ? "%u" : "%x", val);
   if (hasOutput_text())
@@ -99,7 +99,7 @@ void SoOut::print(const char *key, unsigned val, int base) const {
   }
 }
 
-void SoOut::print(const char *key, unsigned long val, int base) const {
+void UoutPrinter::print(const char *key, unsigned long val, int base) const {
   char buf[20];
   snprintf(buf, sizeof buf, base == 10 ? "%lu" : "%lx", val);
   if (hasOutput_text())
@@ -112,7 +112,7 @@ void SoOut::print(const char *key, unsigned long val, int base) const {
   }
 }
 
-void SoOut::print(const char *key, float val, int n) const {
+void UoutPrinter::print(const char *key, float val, int n) const {
   precond(0 <= n && n <= 9);
   char buf[20];
   char fmt[] = "%.2f";

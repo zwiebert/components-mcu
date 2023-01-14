@@ -265,9 +265,9 @@ public:
       case CMDL_DONE: {
         LockGuard lock(cli_mutex);
         if (buf.buf[0] == '{') {
-          cli_process_json(buf.buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_JSON) });
+          cli_process_json(buf.buf, UoutWriterConsole { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_JSON) });
         } else {
-          cli_process_cmdline(buf.buf, TargetDescCon { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_TXT) });
+          cli_process_cmdline(buf.buf, UoutWriterConsole { fd, static_cast<so_target_bits>(SO_TGT_CLI | SO_TGT_FLAG_TXT) });
         }
       }
         break;

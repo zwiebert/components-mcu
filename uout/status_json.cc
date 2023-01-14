@@ -29,7 +29,7 @@
 #define myBuf_cursor (myBuf + myBuf_idx)
 
 ///////////////////////////////////////Private/////////////////////////////
-bool StatusJsonT::realloc_buffer(size_t buf_size) {
+bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
   precond(buf_size > myBuf_idx);
   if (buf_size > BUF_MAX_SIZE)
     return false;
@@ -38,7 +38,7 @@ bool StatusJsonT::realloc_buffer(size_t buf_size) {
 
   if (!m) {
     return false;
-    io_puts("ERROR: StatusJsonT::realloc_buffer: out of memory\n");
+    io_puts("ERROR: UoutBuilderJson::realloc_buffer: out of memory\n");
   }
 
   myBuf = static_cast<char*>(m);
@@ -46,7 +46,7 @@ bool StatusJsonT::realloc_buffer(size_t buf_size) {
   return true;
 }
 
-void StatusJsonT::free_buffer() {
+void UoutBuilderJson::free_buffer() {
   precond(myBuf);
   if (!myBuf_isMine)
     return;
@@ -56,7 +56,7 @@ void StatusJsonT::free_buffer() {
   myBuf_size = 0;
 }
 
-bool StatusJsonT::buffer_grow() {
+bool UoutBuilderJson::buffer_grow() {
   if (!myBuf_isMine)
     return false;
 
@@ -71,17 +71,17 @@ bool StatusJsonT::buffer_grow() {
 }
 
 //////////////////////////////////////Public/////////////////////////////////////////////
-StatusJsonT::~StatusJsonT() {
+UoutBuilderJson::~UoutBuilderJson() {
   if (myBuf_isMine)
     free(myBuf);
 }
 
-char* StatusJsonT::get_json() const {
+char* UoutBuilderJson::get_json() const {
   return myBuf;
 }
 
 
-bool StatusJsonT::not_enough_buffer(const char *key, const char *val) {
+bool UoutBuilderJson::not_enough_buffer(const char *key, const char *val) {
   size_t required_size = strlen(key);
   required_size += val ? strlen(val) : 10;
   required_size += 10;
@@ -93,7 +93,7 @@ bool StatusJsonT::not_enough_buffer(const char *key, const char *val) {
   return false;
 }
 
-bool StatusJsonT::copy_to_buf(const char *s) {
+bool UoutBuilderJson::copy_to_buf(const char *s) {
   if (not_enough_buffer(s, 0))
     return false;
   STRCPY(myBuf, s);
@@ -101,7 +101,7 @@ bool StatusJsonT::copy_to_buf(const char *s) {
   return true;
 }
 
-bool StatusJsonT::cat_to_buf(const char *s) {
+bool UoutBuilderJson::cat_to_buf(const char *s) {
   if (not_enough_buffer(s, 0))
     return false;
   strcat(myBuf + myBuf_idx, s);
@@ -109,7 +109,7 @@ bool StatusJsonT::cat_to_buf(const char *s) {
   return true;
 }
 
-bool StatusJsonT::open_root_object(const char *id) {
+bool UoutBuilderJson::open_root_object(const char *id) {
   D(db_printf("%s()\n", __func__));
   myBuf_idx = 0;
   if (not_enough_buffer(id, 0))
@@ -121,7 +121,7 @@ bool StatusJsonT::open_root_object(const char *id) {
   return true;
 }
 
-int StatusJsonT::add_object(const char *key) {
+int UoutBuilderJson::add_object(const char *key) {
   int result = myBuf_idx;
   D(db_printf("%s(%s)\n", __func__, key));
   precond(myBuf_idx > 0);
@@ -135,7 +135,7 @@ int StatusJsonT::add_object(const char *key) {
   return result;
 }
 
-void StatusJsonT::close_object() {
+void UoutBuilderJson::close_object() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);
   precond(myBuf_idx > 0);
@@ -147,7 +147,7 @@ void StatusJsonT::close_object() {
   postcond(myBuf_size > myBuf_idx);
 }
 
-bool StatusJsonT::add_array(const char *key) {
+bool UoutBuilderJson::add_array(const char *key) {
   D(db_printf("%s(%s)\n", __func__, key));
   precond(myBuf_idx > 0); unused_write_out_buf();
   if (not_enough_buffer(key, 0))
@@ -159,7 +159,7 @@ bool StatusJsonT::add_array(const char *key) {
   return true;
 }
 
-void StatusJsonT::close_array() {
+void UoutBuilderJson::close_array() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);
   precond(myBuf_idx > 0);
@@ -170,7 +170,7 @@ void StatusJsonT::close_array() {
   postcond(myBuf_size > myBuf_idx);
 }
 
-void StatusJsonT::close_root_object() {
+void UoutBuilderJson::close_root_object() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);
   precond(myBuf_idx > 0);
@@ -182,7 +182,7 @@ void StatusJsonT::close_root_object() {
   unused_write_out_buf();
 }
 
-bool StatusJsonT::add_value_s(const char *val) {
+bool UoutBuilderJson::add_value_s(const char *val) {
   D(db_printf("%s(%s)\n", __func__, val));
   precond(myBuf_idx > 0); unused_write_out_buf();
 
@@ -198,7 +198,7 @@ bool StatusJsonT::add_value_s(const char *val) {
   return true;
 }
 
-bool StatusJsonT::add_value_d(int val) {
+bool UoutBuilderJson::add_value_d(int val) {
   D(db_printf("%s(%d)\n", __func__, val));
   precond(myBuf_idx > 0); unused_write_out_buf();
   char buf[20];
@@ -215,7 +215,7 @@ bool StatusJsonT::add_value_d(int val) {
 }
 
 
-bool StatusJsonT::add_key_value_pair_f(const char *key, float val, int prec) {
+bool UoutBuilderJson::add_key_value_pair_f(const char *key, float val, int prec) {
   D(db_printf("%s(%s, %f)\n", __func__, key, val));
   precond(myBuf_idx > 0);;
   precond(key); unused_write_out_buf();
@@ -230,7 +230,7 @@ bool StatusJsonT::add_key_value_pair_f(const char *key, float val, int prec) {
   return true;
 }
 
-bool StatusJsonT::add_key_value_pair_d(const char *key, int val) {
+bool UoutBuilderJson::add_key_value_pair_d(const char *key, int val) {
   D(db_printf("%s(%s, %d)\n", __func__, key, val));
   precond(myBuf_idx > 0);
   precond(key); unused_write_out_buf();
@@ -245,7 +245,7 @@ bool StatusJsonT::add_key_value_pair_d(const char *key, int val) {
   return true;
 }
 
-bool StatusJsonT::add_key_value_pair_s(const char *key, const char *val) {
+bool UoutBuilderJson::add_key_value_pair_s(const char *key, const char *val) {
   D(db_printf("%s(%s, %s)\n", __func__, key, val));
   precond(myBuf_idx > 0);
   precond(key); unused_write_out_buf();
@@ -258,7 +258,7 @@ bool StatusJsonT::add_key_value_pair_s(const char *key, const char *val) {
   return true;
 }
 
-int StatusJsonT::writeln_json(bool final) const {
+int UoutBuilderJson::writeln_json(bool final) const {
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
     return -1;
   if (!myBuf_idx) {
@@ -279,7 +279,7 @@ int StatusJsonT::writeln_json(bool final) const {
   return -1;
 }
 
-int StatusJsonT::write_json(bool final) const {
+int UoutBuilderJson::write_json(bool final) const {
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
     return -1;
   if (!myBuf_idx) {

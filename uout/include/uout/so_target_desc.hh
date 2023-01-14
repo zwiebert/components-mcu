@@ -18,18 +18,18 @@
 /**
  * \brief   Target descriptor base class.
  */
-struct TargetDesc {
+struct UoutWriter {
 public:
   /**
    * \param tgt    Flags describing the requested format(s) and/or the target.
    */
-  TargetDesc(so_target_bits tgt = SO_TGT_NONE) :
+  UoutWriter(so_target_bits tgt = SO_TGT_NONE) :
       myTgt(tgt) {
   }
 
-  TargetDesc(const TargetDesc&) = delete;
-  TargetDesc& operator=(const TargetDesc&) = delete;
-  virtual ~TargetDesc() {
+  UoutWriter(const UoutWriter&) = delete;
+  UoutWriter& operator=(const UoutWriter&) = delete;
+  virtual ~UoutWriter() {
   }
 public:
   /**
@@ -81,30 +81,30 @@ public:
     myTgt = static_cast<so_target_bits>(myTgt | flag);
   }
 
-  /// \brief  Get the related StatusJsonT object
-  StatusJsonT& sj() const {
+  /// \brief  Get the related UoutBuilderJson object
+  UoutBuilderJson& sj() const {
     return mySj;
   }
-  /// \brief  Get the related StatusTxtT object
-  StatusTxtT& st() const {
+  /// \brief  Get the related UoutBuilderPlaintext object
+  UoutBuilderPlaintext& st() const {
     return myStxt;
   }
-  /// \brief  Get the related SoOut object
-  const class SoOut& so() const {
+  /// \brief  Get the related UoutPrinter object
+  const class UoutPrinter& so() const {
     return mySo;
   }
   /// \brief  write to output (non-final)
-  friend const TargetDesc& operator<<(const TargetDesc& lhs, const char *s) {
+  friend const UoutWriter& operator<<(const UoutWriter& lhs, const char *s) {
     lhs.write(s);
     return lhs;
   }
   /// \brief  write to output (non-final)
-  friend const TargetDesc& operator<<(const TargetDesc& lhs, char c) {
+  friend const UoutWriter& operator<<(const UoutWriter& lhs, char c) {
     lhs.write(c);
     return lhs;
   }
   /// \brief  write to output (non-final)
-  friend const TargetDesc& operator<<(const TargetDesc& lhs, int n) {
+  friend const UoutWriter& operator<<(const UoutWriter& lhs, int n) {
     char buf[20];
     itoa(n, buf, 10);
     lhs.write(buf);
@@ -116,7 +116,7 @@ public:
     bool lf:1 = false;
   };
   /// \brief  write to output with modifiers XXX: currently unused/untested
-  friend const TargetDesc& operator<<(const TargetDesc &lhs, const std::pair<TargetDesc::mod, const char*> &mod_s) {
+  friend const UoutWriter& operator<<(const UoutWriter &lhs, const std::pair<UoutWriter::mod, const char*> &mod_s) {
     if (mod_s.first.lf)
       lhs.writeln(mod_s.second, -1, mod_s.first.fin);
     else
@@ -138,25 +138,25 @@ private:
 protected:
   so_target_bits myTgt = SO_TGT_NONE;
   ///////////////////////////////
-  mutable StatusJsonT mySj = {this};
-  mutable StatusTxtT myStxt = {*this};
-  const SoOut mySo = {*this};
+  mutable UoutBuilderJson mySj = {this};
+  mutable UoutBuilderPlaintext myStxt = {*this};
+  const UoutPrinter mySo = {*this};
 };
 
 /**
  * \brief Target descriptor for console (e.g. USART, TCP)
  */
-struct TargetDescCon final: public TargetDesc {
+class UoutWriterConsole final: public UoutWriter {
   typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
 public:
-  TargetDescCon(so_target_bits tgt = SO_TGT_NONE) :
-    TargetDesc(tgt) {
+  UoutWriterConsole(so_target_bits tgt = SO_TGT_NONE) :
+    UoutWriter(tgt) {
   }
-  TargetDescCon(int fd, so_target_bits tgt = SO_TGT_NONE) :
-    TargetDesc(tgt), myFd(fd) {
+  UoutWriterConsole(int fd, so_target_bits tgt = SO_TGT_NONE) :
+    UoutWriter(tgt), myFd(fd) {
   }
-  TargetDescCon(const TargetDescCon&) = delete;
-  virtual ~TargetDescCon() {
+  UoutWriterConsole(const UoutWriterConsole&) = delete;
+  virtual ~UoutWriterConsole() {
 
   }
 public:
@@ -221,15 +221,15 @@ private:
 /**
  * \brief  Target descriptor for web-socket
  */
-struct TargetDescWs final: public TargetDesc {
+struct UoutWriterWebsocket final: public UoutWriter {
   typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
 public:
-  TargetDescWs(void *req, so_target_bits tgt, writeReq_fnT writeReq_fn) :
-    TargetDesc(tgt), myReq(req), myWriteReqFn(writeReq_fn) {
+  UoutWriterWebsocket(void *req, so_target_bits tgt, writeReq_fnT writeReq_fn) :
+    UoutWriter(tgt), myReq(req), myWriteReqFn(writeReq_fn) {
   }
 
-  TargetDescWs(const TargetDescWs&) = delete;
-  virtual ~TargetDescWs() {
+  UoutWriterWebsocket(const UoutWriterWebsocket&) = delete;
+  virtual ~UoutWriterWebsocket() {
     mySj.write_json(true); // write all json synchronously and close websocket request
   }
 public:

@@ -9,15 +9,15 @@
 /**
  * \brief Build JSON output gradually by calling member functions (with key/value parameters).
  */
-class StatusJsonT {
+class UoutBuilderJson {
 public:
-  StatusJsonT(char *buf, size_t buf_size, const struct TargetDesc *td = 0) :
+  UoutBuilderJson(char *buf, size_t buf_size, const class UoutWriter *td = 0) :
       myBuf(buf), myBuf_size(buf_size), myBuf_isMine(false), myTd(td) {
   }
-  StatusJsonT(TargetDesc *td = 0) :
+  UoutBuilderJson(UoutWriter *td = 0) :
       myTd(td) {
   }
-  ~StatusJsonT();
+  ~UoutBuilderJson();
 
 public:
   bool open_root_object(const char *id); ///< \brief add root object  {"from":"ID",
@@ -56,7 +56,7 @@ private:
   size_t myBuf_size = 0;
   int myBuf_idx = 0;
   bool myBuf_isMine = true;
-  const struct TargetDesc *myTd = 0;
+  const class UoutWriter *myTd = 0;
 };
 
 

@@ -1,7 +1,9 @@
 /**
  * \file   uout/so_out.h
- * \brief  forwards output according to the flags in target descriptor
+ * \brief  write formatted output to UoutWriter
+ *
  */
+
 #pragma once
 
 #include "so_target_bits.h"
@@ -12,14 +14,15 @@
 #define so_ws ((td.tgt() & SO_TGT_WS))
 
 /**
- * \brief Format and print output according to the flags in the target descriptor.
+ * \brief Format and print output according to the flags  in UoutWriter.
  */
-class SoOut {
+class UoutPrinter {
 public:
   /**
    * \param td       Target descriptor which describes the wanted output formats and may hold a write function to print the output immediately
+   *                 SO_TGT_FLAG_TXT and SO_TGT_FLAG_JSON are supported in td.myTgt
    */
-  SoOut(const struct TargetDesc &td) :
+  UoutPrinter(const class UoutWriter &td) :
       myTd(td) {
   }
 public:
@@ -43,5 +46,5 @@ public:
   bool hasOutput_json() const; ///< test if target descriptor wants output in JSON format
 
 private:
-  const struct TargetDesc &myTd;
+  const class UoutWriter &myTd;
 };

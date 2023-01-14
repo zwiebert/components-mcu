@@ -44,17 +44,17 @@ void cli_loop(void) {
     {
       LockGuard lock(cli_mutex);
       if (cmdline[0] == '{') {
-         TargetDescCon td { SO_TGT_CLI | SO_TGT_FLAG_JSON };
+         UoutWriterConsole td { SO_TGT_CLI | SO_TGT_FLAG_JSON };
         cli_process_json(cmdline, td);
       } else {
-         TargetDescCon td { (SO_TGT_CLI | SO_TGT_FLAG_TXT) };
+         UoutWriterConsole td { (SO_TGT_CLI | SO_TGT_FLAG_TXT) };
         io_putlf();
         cli_process_cmdline(cmdline, td);
         cli_msg_ready(td);
       }
     }
   } else if (!ready) {
-    const TargetDescCon td { (SO_TGT_CLI | SO_TGT_FLAG_TXT)};
+    const UoutWriterConsole td { (SO_TGT_CLI | SO_TGT_FLAG_TXT)};
     cli_msg_ready(td);
     ready = true;
   }

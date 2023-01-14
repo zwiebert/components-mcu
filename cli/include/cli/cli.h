@@ -27,7 +27,7 @@ extern const parm_handler* (*cli_parmHandler_find_cb)(const char *key);
  * \param p,len      parameter list
  * \return           if it returns true, only then the parsed parameters will be processed.
  */
-extern bool (*cli_hook_checkPassword)(clpar p[], int len, const struct TargetDesc &td);
+extern bool (*cli_hook_checkPassword)(clpar p[], int len, const class UoutWriter &td);
 
 /**
  * \brief dispatch the parsed parameter list to its respective handler
@@ -36,7 +36,7 @@ extern bool (*cli_hook_checkPassword)(clpar p[], int len, const struct TargetDes
  * \param td         target descriptor to print any output to
  * \returns          If an error occurs, the result will be -1.
  */
-int cli_processParameters(clpar p[], int len, const struct TargetDesc &td);
+int cli_processParameters(clpar p[], int len, const class UoutWriter &td);
 
 /**
  * \brief Set this to hook into \link cli_process_json \endlink
@@ -75,7 +75,7 @@ enum cli_get_commline_retT cli_get_commandline(struct cli_buf *buf, getc_funT ge
  * \return
  *
  */
-void cli_process_cmdline(char *line, const struct TargetDesc &td, process_parm_cb proc_parm = cli_processParameters);
+void cli_process_cmdline(char *line, const class UoutWriter &td, process_parm_cb proc_parm = cli_processParameters);
 
 /**
  * \brief            Parse a JSON command "line" and process it
@@ -87,7 +87,7 @@ void cli_process_cmdline(char *line, const struct TargetDesc &td, process_parm_c
  * \return
  *
  */
-void cli_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm = cli_processParameters);
+void cli_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm = cli_processParameters);
 
 
 /**

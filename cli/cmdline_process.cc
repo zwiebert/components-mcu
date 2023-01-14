@@ -21,12 +21,12 @@
 
 #define D(x)
 
-bool (*cli_hook_checkPassword)(clpar p[], int len, const struct TargetDesc &td);
+bool (*cli_hook_checkPassword)(clpar p[], int len, const class UoutWriter &td);
 bool (*cli_hook_process_json)(char *json);
 
 /////////////////////////////////private/////////////////////////////////////////////////////////
 static int handle_parm_json(char *json, jsmntok_t *tok, const char *name);
-static void parse_and_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm);
+static void parse_and_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm);
 static char* stringFromToken(char *json, const jsmntok_t *tok);
 
 static int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
@@ -46,7 +46,7 @@ static char* stringFromToken(char *json, const jsmntok_t *tok) {
   json[tok->end] = '\0';
   return json + tok->start;
 }
-static void parse_and_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm) {
+static void parse_and_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm) {
   dbg_vpf(db_printf("process_json: %s\n", json));
 
   jsmn_parser jsp;
@@ -97,7 +97,7 @@ static void parse_and_process_json(char *json, const struct TargetDesc &td, proc
 
 //////////////////////////////public//////////////////////////////////////////////////////
 
-int cli_processParameters(clpar p[], int len, const struct TargetDesc &td) {
+int cli_processParameters(clpar p[], int len, const class UoutWriter &td) {
   precond(len > 0);
 
   if (!cli_parmHandler_find_cb)
@@ -111,7 +111,7 @@ int cli_processParameters(clpar p[], int len, const struct TargetDesc &td) {
   return -1;
 }
 
-void cli_process_json(char *json, const struct TargetDesc &td, process_parm_cb proc_parm) {
+void cli_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm) {
   dbg_vpf(db_printf("process_json: %s\n", json));
 
   if (cli_hook_process_json && cli_hook_process_json(json))
@@ -130,7 +130,7 @@ void cli_process_json(char *json, const struct TargetDesc &td, process_parm_cb p
   }
 }
 
-void cli_process_cmdline(char *line, const struct TargetDesc &td, process_parm_cb proc_parm) {
+void cli_process_cmdline(char *line, const class UoutWriter &td, process_parm_cb proc_parm) {
   dbg_vpf(db_printf("process_cmdline: %s\n", line));
   clpar par[20] = { };
   struct cli_parm clp = { .par = par, .size = 20 };
