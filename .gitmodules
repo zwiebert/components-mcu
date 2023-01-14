@@ -7,9 +7,9 @@
 [submodule "components/jsmn"]
 	path = jsmn/jsmn
 	url = https://github.com/zserge/jsmn.git
-[submodule "components/nanopb/nanopb"]
-	path = nanopb/nanopb
-	url = https://github.com/nanopb/nanopb.git
 [submodule "components/test_host/unity"]
 	path = test_host/external/unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
+[submodule "nanopb/nanopb"]
+	path = nanopb/nanopb
+	url = https://github.com/nanopb/nanopb.git
