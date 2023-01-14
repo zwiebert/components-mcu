@@ -31,13 +31,7 @@ public:
    * \param final  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return       Number of bytes written.  On error returns -1.
    */
-  int write(const char *s, ssize_t len = -1, bool final = false) const {
-    if (len < 0) {
-      len = strlen(s);
-    }
-
-    return priv_write(s, len, final);
-  }
+  int write(const char *s, ssize_t len = -1, bool final = false) const;
 
   /**
    * \brief        write output line
@@ -46,23 +40,12 @@ public:
    * \param final  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return       Number of bytes written.  On error returns -1.
    */
-  int writeln(const char *s, ssize_t len = -1, bool final = false) const {
-    if (len < 0) {
-      len = strlen(s);
-    }
-
-    if (ssize_t n = priv_write(s, len, false); n == len)
-      if (write("\n", 1, final) == 1)
-        return n + 1;
-    return -1;
-  }
+  int writeln(const char *s, ssize_t len = -1, bool final = false) const;
 
   /**
    * \brief   write a single character (non final)
    */
-  int write(const char c) const {
-    return write(&c, 1);
-  }
+  int write(const char c) const;
 
 public:
   /// \brief  write to output (non-final)
@@ -178,56 +161,7 @@ public:
 
 
 private:
-  virtual int priv_write(const char *s, ssize_t len, bool final) const {
-    const size_t size = len;
-    assert(size < 2046);
-#if 1
-    const char crlf[] = "\r\n";
-    const unsigned crlf_len = sizeof crlf - 1;
-    char prev_c = 0;
-    int last_chunk = 0;
-
-    for (size_t i = 0; i < size; ++i) {
-      const char c = s[i];
-      if (c == '\r' || (c == '\n' && prev_c == '\r'))
-        continue;
-
-      if (c == '\n') {
-        const int chunk_len = i - last_chunk;
-        if (chunk_len > 0 && ::write(myFd, s + last_chunk, chunk_len) < 1)
-          return -1;
-        last_chunk = i + 1;
-        if (::write(myFd, crlf, crlf_len) < 1)
-          return -1;
-      } else if (i + 1 == size) {
-        const int chunk_len = i - last_chunk + 1;
-        if (chunk_len > 0 && ::write(myFd, s + last_chunk, chunk_len) < 1)
-          return -1;
-        break;
-      }
-      prev_c = c;
-    }
-
-    return len;
-
-#elif 1
-    for (size_t i=0; i < size; ++i) {
-      const char c = s[i];
-      if (c == '\r')
-        continue;
-      if (c == '\n') {
-        char r = '\r';
-        if (::write(myFd, &r, 1) < 1)
-          return -1;
-      }
-      if (::write(myFd, &c, 1) < 1)
-        return -1;
-    }
-    return len;
-#else
-    return ::write(myFd, s, size);
-#endif
-  }
+  virtual int priv_write(const char *s, ssize_t len, bool final) const;
 private:
   int myFd = STDOUT_FILENO;
 };
@@ -247,16 +181,10 @@ public:
   virtual ~UoutWriterWebsocket() {
     mySj.write_json(true); // write all json synchronously and close websocket request
   }
-public:
-
 
 private:
-  virtual int priv_write(const char *s, ssize_t len, bool final) const {
-    if (myReq && myWriteReqFn) {
-      return myWriteReqFn(myReq, s, len, final);
-    }
-    return -1;
-  }
+  virtual int priv_write(const char *s, ssize_t len, bool final) const;
+
 private:
   void *myReq = nullptr;
   writeReq_fnT myWriteReqFn = nullptr;
