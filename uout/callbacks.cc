@@ -139,6 +139,22 @@ void uoCb_publish_ipAddress(const char *ip_addr) {
 #endif
 }
 
+static void quote_string(char *dst, const char *src) {
+  for (const char *p = src; *p; ++p) {
+    switch (*p) {
+    case '\"':
+      *dst++ = '\\';
+      *dst++ = '\"';
+      break;
+    default:
+      *dst++ = *p;
+      break;
+    }
+  }
+
+  *dst = '\0';
+}
+
 void uoCb_publish_logMessage(const LogMessage &msg) {
   uo_flagsT flags;
   flags.evt.gen_app_log_message = true;
@@ -147,9 +163,11 @@ void uoCb_publish_logMessage(const LogMessage &msg) {
 
   flags.fmt.json = true;
   if (auto idxs = uoCb_filter(flags); idxs.size) {
-    char buf[128];
-    // TODO: Quote any special characters (like double quotes) before putting the msg.txt into JSON string
-    if (int n = snprintf(buf, sizeof buf, "{\"log\":{\"wl\":%d, \"tag\":\"%s\", \"txt\":\"%s\"}}", (int) msg.warn_level, msg.tag, msg.txt); sizeof buf >= n) {
+    char buf[256];
+    char quoted_txt[strlen(msg.txt) * 2 + 1];
+    quote_string(quoted_txt, msg.txt);
+
+    if (int n = snprintf(buf, sizeof buf, "{\"log\":{\"wl\":%d, \"tag\":\"%s\", \"txt\":\"%s\"}}", (int) msg.warn_level, msg.tag, quoted_txt); sizeof buf >= n) {
       uoCb_publish(idxs, buf, flags);
     }
   }
