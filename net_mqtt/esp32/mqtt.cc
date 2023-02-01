@@ -170,11 +170,14 @@ void Net_Mqtt::unsubscribe(const char *topic) {
 void Net_Mqtt::publish(const char *topic, const char *data, bool retain) {
   if (!client || !is_connected)
     return;
+  const int qos = 1;
 
-  int msg_id = esp_mqtt_client_publish(client, topic, data, 0, 1, retain);
+  int msg_id = esp_mqtt_client_publish(client, topic, data, 0, qos, retain);
   {
     char buf[128];
-    if (sizeof buf >= snprintf(buf, sizeof buf, "publish: msg_id=%d, TOPIC=<%s>, DATA=<%s>", msg_id, topic, data)) {
+    if (sizeof buf >= snprintf(buf, sizeof buf, "publish: msg_id=%d, TOPIC=<%s>, DATA=<%s>, QOS=%d, RET=%d", msg_id, topic, data, qos, retain)) {
+      uoCb_publish_logMessage( { .tag = TAG, .txt = buf, .warn_level = LogMessage::wl_Info });
+    } else if (sizeof buf >= snprintf(buf, sizeof buf, "publish: msg_id=%d, TOPIC=<%s>, DATA=<...>, QOS=%d, RET=%d", msg_id, topic, qos, retain)) {
       uoCb_publish_logMessage( { .tag = TAG, .txt = buf, .warn_level = LogMessage::wl_Info });
     }
   }
