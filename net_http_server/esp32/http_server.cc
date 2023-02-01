@@ -81,6 +81,7 @@ static httpd_handle_t start_webserver(struct cfg_http *c) {
 
   httpd_handle_t server = NULL;
   httpd_config_t config = HTTPD_DEFAULT_CONFIG();
+  config.stack_size += 1024;
   config.max_open_sockets = 6;
   config.uri_match_fn = httpd_uri_match_wildcard;
 
