@@ -15,8 +15,6 @@
 class CompSettings final : public Settings<configItem, CB_size> {
 public:
   using Base = Settings<configItem, CB_size>;
-  using Item = configItem;
-  using storeFunT = void (*)(configItem item, const char *val);
 public:
   constexpr CompSettings() {
     initField(CB_VERBOSE, "C_VERBOSE", otok::k_verbose, CBT_i8, soCfg_VERBOSE, STF_direct);
@@ -48,24 +46,7 @@ public:
   }
 };
 
-static CompSettings comp_settings_obj;
-SettingsBase<configItem> &comp_settings = comp_settings_obj;
+static constexpr CompSettings comp_settings_obj;
+const SettingsBase<configItem> &comp_sett = comp_settings_obj;
 
-#if 0
-const char* settings_get_kvsKey(configItem item) {
-  return comp_settings.get_kvsKey(item);
-}
-KvsType settings_get_kvsType(configItem item) {
-  return comp_settings.get_kvsType(item);
-}
-otok settings_get_optKey(configItem item) {
-  return comp_settings.get_optKey(item);
-}
-const char* settings_get_optKeyStr(configItem item) {
-  return comp_settings.get_optKeyStr(item);
-}
 
-CompSettings::Base::soCfgFunT settings_get_soCfgFun(configItem item) {
-  return comp_settings.get_soCfgFun(item);
-}
-#endif

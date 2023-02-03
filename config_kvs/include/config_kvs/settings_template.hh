@@ -13,48 +13,76 @@
  * \param Offset     If enumeration does not start at zero, provide an offset here
  */
 template<typename CfgItem, size_t Size, size_t Offset = 0>
-class Settings : public SettingsBase<CfgItem> {
+class Settings: public SettingsBase<CfgItem> {
 public:
-  using soCfgFunT = void (*)(const UoutWriter &td);
-  using storeFunOkT = void (*)(otok key, const char *val);
+  using Item = CfgItem;
+  using Base = SettingsBase<CfgItem>;
+  using soCfgFunT = Base::soCfgFunT;
+  using storeFunT = void (*)(CfgItem item, const char *val);
 public:
+
+  virtual const SettingsData* get_SettingsData(const CfgItem item) const {
+    if ((int) item < 0)
+      return nullptr;
+
+    return &m_data[item - Offset];
+  }
+
   constexpr const char* get_kvsKey(const CfgItem item) const {
-    return m_kvsKeys[item - Offset];
+    if ((int) item < 0)
+      return nullptr;
+
+    return m_data[item - Offset].kvs_key;
   }
   constexpr KvsType get_kvsType(const CfgItem item) const {
-    return m_kvsTypes[item - Offset];
+    if ((int) item < 0)
+      return CBT_none;
+
+    return m_data[item - Offset].kvs_type;
   }
 
   constexpr otok get_optKey(const CfgItem item) const {
-    return m_optKeys[item - Offset];
+    if ((int) item < 0)
+      return otok::NONE;
+
+    return m_data[item - Offset].opt_key;
   }
   constexpr const char* get_optKeyStr(const CfgItem item) const {
-    return otok_strings[static_cast<otokBaseT>(m_optKeys[item - Offset])];
+    if ((int) item < 0)
+      return nullptr;
+
+    return otok_strings[static_cast<otokBaseT>(m_data[item - Offset].opt_key)];
   }
 
   constexpr soCfgFunT get_soCfgFun(const CfgItem item) const {
-    return m_soCfgFuns[item - Offset];
+    if ((int) item < 0)
+      return nullptr;
+
+    return m_data[item - Offset].so_cfg_fun;
   }
 
   constexpr soCfgFunT get_soCfgFun(const otok optKey) const {
     if (auto idx = otok2idx(optKey); idx >= 0)
-      return m_soCfgFuns[idx];
+      return m_data[idx].so_cfg_fun;
     return nullptr;
   }
 
   constexpr StoreFun get_storeFun(const CfgItem item) const {
-      return m_storeFuns[item - Offset];
+    if ((int) item < 0)
+      return STF_none;
+
+    return m_data[item - Offset].store_fun;
   }
 
   constexpr StoreFun get_storeFun(const otok optKey) const {
     if (auto idx = otok2idx(optKey); idx >= 0)
-      return m_storeFuns[idx];
+      return m_data[idx].store_fun;
     return STF_none;
   }
 
   constexpr CfgItem get_item(const otok optKey) const {
-      if (auto idx = otok2idx(optKey); idx >= 0)
-        return static_cast<CfgItem>(idx + Offset);
+    if (auto idx = otok2idx(optKey); idx >= 0)
+      return static_cast<CfgItem>(idx + Offset);
     return static_cast<CfgItem>(-1);
   }
 
@@ -62,27 +90,20 @@ protected:
   constexpr int otok2idx(const otok optKey) const {
     if (optKey != otok::NONE)
       for (int i = 0; i < Size; ++i) {
-        if (optKey == m_optKeys[i])
+        if (optKey == m_data[i].opt_key)
           return i;
       }
     return -1;
   }
 
 protected:
-  constexpr void initField(const CfgItem ai, const char *const kvsKey, const otok optKey, const KvsType kvsType, soCfgFunT soCfgFun = 0, StoreFun storeFun = STF_none) {
-    unsigned idx = ai - Offset;
-    m_optKeys[idx] = optKey;
-    m_kvsKeys[idx] = kvsKey;
-    m_kvsTypes[idx] = kvsType;
-    m_soCfgFuns[idx] = soCfgFun;
-    m_storeFuns[idx] = storeFun;
+  constexpr void initField(const CfgItem ai, const char *const kvsKey, const otok optKey, const KvsType kvsType, soCfgFunT soCfgFun = 0, StoreFun storeFun =
+      STF_none) {
+    uint8_t idx = ai - Offset;
+    m_data[idx] = SettingsData { .kvs_key = kvsKey, .so_cfg_fun = soCfgFun, .opt_key = optKey, .kvs_type = kvsType, .store_fun = storeFun, .id_bit = idx };
   }
 protected:
-  const char *m_kvsKeys[Size] { };
-  soCfgFunT m_soCfgFuns[Size] { };
-  otok m_optKeys[Size] { };
-  KvsType m_kvsTypes[Size] { };
-  StoreFun m_storeFuns[Size] { };
+  SettingsData m_data[Size];
 };
 
 

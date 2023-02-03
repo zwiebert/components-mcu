@@ -11,6 +11,10 @@
 #include "config.h"
 #include <assert.h>
 
+
+
+
+
 enum configItem : int8_t {
   CBC_NONE = -1,
   CB_VERBOSE,
@@ -33,6 +37,9 @@ enum configItem : int8_t {
   CB_size
 };
 
+extern const SettingsBase<configItem> &comp_sett;
+
+
 #ifdef CONFIG_APP_USE_MQTT
 constexpr uint32_t CBM_mqttClient = BIT(CB_MQTT_ENABLE) | BIT(CB_MQTT_PASSWD) | BIT(CB_MQTT_USER) | BIT(CB_MQTT_URL) | BIT(CB_MQTT_CLIENT_ID) | BIT(CB_MQTT_ROOT_TOPIC);
 #endif
@@ -44,35 +51,24 @@ constexpr uint32_t CBM_mqttClient = BIT(CB_MQTT_ENABLE) | BIT(CB_MQTT_PASSWD) | 
 #endif
   constexpr uint32_t CBM_txtio = BIT(CB_VERBOSE);
 
-extern SettingsBase<configItem> &comp_settings;
-
-#if 0
-const char* settings_get_kvsKey(configItem item);
-KvsType settings_get_kvsType(configItem item);
-otok settings_get_optKey(configItem item);
-const char* settings_get_optKeyStr(configItem item);
-SettingsBase<configItem>::soCfgFunT settings_get_soCfgFun(configItem item);
 
 
-#else
 
-constexpr const char* settings_get_kvsKey(configItem item) {
-  return comp_settings.get_kvsKey(item);
+/// overloaded function for template usage
+constexpr auto settings_get_kvsKey(configItem item) {
+  return comp_sett.get_kvsKey(item);
 }
-constexpr KvsType settings_get_kvsType(configItem item) {
-  return comp_settings.get_kvsType(item);
+/// overloaded function for template usage
+constexpr auto settings_get_kvsType(configItem item) {
+  return comp_sett.get_kvsType(item);
 }
-constexpr otok settings_get_optKey(configItem item) {
-  return comp_settings.get_optKey(item);
+/// overloaded function for template usage
+constexpr auto settings_get_optKey(configItem item) {
+  return comp_sett.get_optKey(item);
 }
-constexpr const char* settings_get_optKeyStr(configItem item) {
-  return comp_settings.get_optKeyStr(item);
+/// overloaded function for template usage
+constexpr auto settings_get_optKeyStr(configItem item) {
+  return comp_sett.get_optKeyStr(item);
 }
-
-constexpr SettingsBase<configItem>::soCfgFunT settings_get_soCfgFun(configItem item) {
-  return comp_settings.get_soCfgFun(item);
-}
-
-#endif
 
 bool config_item_modified(enum configItem item);
