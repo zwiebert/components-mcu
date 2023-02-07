@@ -190,4 +190,27 @@ private:
   writeReq_fnT myWriteReqFn = nullptr;
 };
 
-//#include "so_target_desc_inline.hh"
+/**
+ * \brief Target descriptor for files
+ */
+class UoutWriterFile final: public UoutWriter {
+  typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
+public:
+  UoutWriterFile(so_target_bits tgt = SO_TGT_NONE) :
+    UoutWriter(tgt) {
+  }
+  UoutWriterFile(int fd, so_target_bits tgt = SO_TGT_NONE) :
+    UoutWriter(tgt), myFd(fd) {
+  }
+  UoutWriterFile(const char *file_name, so_target_bits tgt = SO_TGT_NONE);
+  UoutWriterFile(const UoutWriterFile&) = delete;
+  virtual ~UoutWriterFile();
+public:
+
+
+private:
+  virtual int priv_write(const char *s, ssize_t len, bool final) const;
+private:
+  int myFd = STDOUT_FILENO;
+  int m_ofd = -1;
+};

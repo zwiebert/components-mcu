@@ -121,6 +121,20 @@ bool UoutBuilderJson::open_root_object(const char *id) {
   return true;
 }
 
+int UoutBuilderJson::add_object() {
+  int result = myBuf_idx;
+  D(db_printf("%s()\n", __func__));
+  precond(myBuf_idx > 0);
+  if (not_enough_buffer("", 0))
+    return -1;
+
+  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "{");
+  unused_write_out_buf();
+
+  postcond(myBuf_size > myBuf_idx);
+  return result;
+}
+
 int UoutBuilderJson::add_object(const char *key) {
   int result = myBuf_idx;
   D(db_printf("%s(%s)\n", __func__, key));
@@ -293,3 +307,23 @@ int UoutBuilderJson::write_json(bool final) const {
   }
   return -1;
 }
+
+int UoutBuilderJson::write_some_json()  {
+  if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
+    return -1;
+  if (!myBuf_idx) {
+    return 0;
+  }
+
+  if (const char *json = myBuf) {
+    int n = myTd->write(json, myBuf_idx - 1, false);
+    auto last_char = myBuf[myBuf_idx - 1];
+    myBuf[0] = last_char;
+    myBuf_idx = 1;
+    return n;
+  }
+  return -1;
+}
+
+
+

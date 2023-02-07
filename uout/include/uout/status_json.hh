@@ -24,6 +24,7 @@ public:
   void close_root_object(); ///< \brief close the root object with },
 
   int add_object(const char *key); ///< \brief add object "KEY":{
+  int add_object(); ///< \brief add object w/o a key (e.g. in arrays):{
   void close_object();  ///< \brief close object with },
 
   bool add_key_value_pair_s(const char *key, const char *val); ///< \brief  Add key value pair "KEY":"VAL"
@@ -45,6 +46,7 @@ public:
   char* get_json() const; ///< \brief  Get this objects JSON as null terminated string (ownership remains to this object)
   int writeln_json(bool final = true) const; ///< \brief write this objects JSON as line to its Target descriptor
   int write_json(bool final = true) const; ///< \brief write this objects JSON to its Target descriptor w/o newline
+  int write_some_json(); ///< \brief write buffer to its Target (final=false), but leave the last character in the buffer at index 0.
   void free_buffer(); ///<  Destroy this objects JSON buffer (Optional. Destructor will take care of it)
 
 private:
