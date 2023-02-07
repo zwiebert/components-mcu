@@ -51,10 +51,6 @@ static int (*old_io_getc_fun)(void);
 #include <errno.h>
 #endif
 
-#ifndef TCPS_PORT
-#define TCPS_PORT   7777
-#endif
-
 #define MAX_BUF   1024
 #define tcp_io_getc_buf tcp_io_getc
 
@@ -113,7 +109,7 @@ static void tcps_close_current_cconn() {
   tcps_close_cconn(cconn_idx);
 }
 
-int tcps_create_server() {
+int tcps_create_server(const struct cfg_tcps &cfg_tcps) {
 
   /** Create streaming socket */
     if ((sockfd = lwip_socket(AF_INET, SOCK_STREAM, 0)) < 0)
@@ -129,7 +125,7 @@ int tcps_create_server() {
   /** Initialize address/port structure */
   bzero(&self, sizeof(self));
   self.sin_family = AF_INET;
-  self.sin_port = htons(TCPS_PORT);
+  self.sin_port = htons(cfg_tcps.tcp_port);
   self.sin_addr.s_addr = INADDR_ANY;
 
   /** Assign a port number to the socket */
@@ -330,7 +326,7 @@ void tcpCli_setup(const struct cfg_tcps *cfg_tcps) {
   }
 
   // create tcp server
-  if (tcps_create_server() == 0) {
+  if (tcps_create_server(*cfg_tcps) == 0) {
     printf("tcp server created\n");
   }
 }

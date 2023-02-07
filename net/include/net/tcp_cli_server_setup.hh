@@ -12,6 +12,8 @@
  * \brief Module Configuration
  */
 struct cfg_tcps {
+  int tcp_port = CONFIG_APP_TCPS_PORT;
+  int tcp_port_ia = CONFIG_APP_TCPS_PORT_IA;
   uo_flagsT flags; ///< additional flags for callback
   bool enable = CONFIG_APP_TCPS_ENABLE;  ///< enable/disable CLI server task
 };

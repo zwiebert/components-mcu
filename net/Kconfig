@@ -51,10 +51,21 @@ menu "zwiebert: Networking"
         default y
 
     config APP_TCPS_ENABLE
-        int  "Enable TCPS server by default"
+        int  "Enable TCP server by default"
         range 0 1
         default 1
 
+    config APP_TCPS_PORT
+        int  "TCP server port number"
+        default 7777
+
+    config APP_TCPS_PORT_IA
+        int  "Interactive TCP server port number"
+        default 0
+
+    config APP_TCPS_CONNECTIONS_MAX
+        int  "Number of maximal allowed connections to TCP server"
+        default -1
 
 endmenu
 

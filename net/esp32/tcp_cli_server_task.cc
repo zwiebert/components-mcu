@@ -39,14 +39,7 @@
 #define D(x)
 #endif
 
-#ifndef TCPS_TASK_PORT
-#define TCPS_TASK_PORT   7777
-#endif
-#ifndef TCPS_TASK_PORT_IA // Interactive TCP Server (Telnet)
-#define TCPS_TASK_PORT_IA   0
-#endif
-
-#define TCPS_CCONN_MAX 5
+constexpr int TCPS_CCONN_MAX = CONFIG_APP_TCPS_CONNECTIONS_MAX;
 
 static void callback_subscribe();
 static void callback_unsubscribe();
@@ -59,7 +52,7 @@ class TcpCliServer {
 public:
   typedef void (TcpCliServer::*fd_funT)(int fd, void *args);
 public:
-  TcpCliServer(unsigned port = TCPS_TASK_PORT, unsigned port_ia = TCPS_TASK_PORT_IA) :
+  TcpCliServer(unsigned port, unsigned port_ia) :
       m_port(port), m_port_ia(port_ia) {
 
   }
@@ -441,7 +434,7 @@ void tcpCli_setup_task(const struct cfg_tcps *cfg_tcps) {
     return;
   }
 
-  tcp_cli_server = new TcpCliServer();
+  tcp_cli_server = new TcpCliServer(cfg_tcps->tcp_port, cfg_tcps->tcp_port_ia);
   xTaskCreate(tcps_task, "tcp_server", STACK_SIZE, &ucParameterToPass, tskIDLE_PRIORITY, &xHandle);
   configASSERT( xHandle );
 
