@@ -66,11 +66,11 @@ int UoutWriterWebsocket::priv_write(const char *s, ssize_t len, bool final) cons
 
 #include <fcntl.h>
 
-#include "esp_log.h"
+//#include "esp_log.h"
 
 UoutWriterFile::UoutWriterFile(const char *file_name, so_target_bits tgt): UoutWriter(tgt) {
   m_ofd = myFd = ::open(file_name, O_WRONLY | O_CREAT | O_TRUNC);
-  ESP_LOGI("uo_wf", "fd = %d", m_ofd);
+ // ESP_LOGI("uo_wf", "fd = %d", m_ofd);
 }
 
 UoutWriterFile::~UoutWriterFile() {
@@ -81,7 +81,7 @@ int UoutWriterFile::priv_write(const char *s, ssize_t len, bool final) const {
   const size_t size = len;
   assert(size < 2046);
 
-  ESP_LOGI("priv_write", "s=<%*s>, final=%d", len, s, (int)final);
+  //ESP_LOGI("priv_write", "s=<%*s>, final=%d", len, s, (int)final);
 
   const char crlf[] = "\r\n";
   const unsigned crlf_len = sizeof crlf - 1;
