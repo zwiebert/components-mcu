@@ -6,8 +6,6 @@
  */
 
 #include <ctype.h>
-#include <lwip/apps/sntp.h>
-#include <lwip/apps/sntp_opts.h>
 #include <lwip/ip_addr.h>
 #include <esp32/rom/ets_sys.h>
 #include <string.h>
@@ -69,13 +67,13 @@ static void set_server_by_config(struct cfg_ntp *cfg_ntp) {
     bool use_gateway = strcmp(server, "gateway") == 0;
     bool use_ipaddr = isdigit((int )server[0]);
 
-    sntp_servermode_dhcp(use_dhcp);
+    esp_sntp_servermode_dhcp(use_dhcp);
 
     if (use_gateway) {
-      sntp_setserver(server_number, &ip4_gateway_address);
+      esp_sntp_setserver(server_number, &ip4_gateway_address);
     } else if (use_ipaddr) {
       ipaddr_aton(server, &addr[server_number]);
-      sntp_setserver(server_number, &addr[server_number]);
+      esp_sntp_setserver(server_number, &addr[server_number]);
     } else if (use_dhcp) {
 #if SNTP_MAX_SERVERS > 1
       break;
@@ -87,7 +85,7 @@ static void set_server_by_config(struct cfg_ntp *cfg_ntp) {
       static char *server_name;
       free(server_name);
       server_name = strdup(server);
-      sntp_setservername(0, server_name);
+      esp_sntp_setservername(0, server_name);
 #endif
     }
   }
@@ -95,10 +93,10 @@ static void set_server_by_config(struct cfg_ntp *cfg_ntp) {
 
 
 void ntp_setup(struct cfg_ntp *cfg_ntp) {
-    sntp_stop();
-    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    esp_sntp_stop();
+    esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
     set_server_by_config(cfg_ntp);
-    sntp_init();
+    esp_sntp_init();
     D(ets_printf("server:<%s> <%s> <%s>\n",sntp_getservername(0), sntp_getservername(1), sntp_getservername(2)));
 }
 
