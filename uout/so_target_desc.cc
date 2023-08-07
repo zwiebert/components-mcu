@@ -26,7 +26,7 @@ int UoutRawWriter::write(const char c) const {
 
 int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool final) const {
   const size_t size = len;
-  assert(size < 2046);
+  assert(size < 4096);
 
   const char crlf[] = "\r\n";
   const unsigned crlf_len = sizeof crlf - 1;
