@@ -44,13 +44,13 @@ void soCfg_NTP_SERVER(const class UoutWriter &td) {
 #ifdef CONFIG_APP_USE_MQTT
 #include "net_mqtt/mqtt.hh"
 
-void soCfg_MQTT(const class UoutWriter &td) {
+void soCfg_MQTT(const class UoutWriter &td, bool backup) {
   cfg_mqtt c;
   config_read_mqttClient(&c);
 
   td.so().print(settings_get_optKeyStr(CB_MQTT_URL), c.url);
   td.so().print(settings_get_optKeyStr(CB_MQTT_USER), c.user);
-  td.so().print(settings_get_optKeyStr(CB_MQTT_PASSWD), *c.password ? "*" : "");
+  if (!backup) td.so().print(settings_get_optKeyStr(CB_MQTT_PASSWD), *c.password ? "*" : "");
   td.so().print(settings_get_optKeyStr(CB_MQTT_CLIENT_ID), c.client_id);
   td.so().print(settings_get_optKeyStr(CB_MQTT_ROOT_TOPIC), c.root_topic);
   td.so().print(settings_get_optKeyStr(CB_MQTT_ENABLE), c.enable);
