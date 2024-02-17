@@ -11,8 +11,6 @@
 #include "string.h"
 #include <utils_misc/cstring_utils.hh>
 
-#include "esp32/rom/uart.h"
-
 #include "lwip/err.h"
 #include "lwip/sys.h"
 

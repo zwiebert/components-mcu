@@ -27,13 +27,16 @@
 #include <fcntl.h>
 #include <stdint.h>
 
-#define UART_RX_RINGBUF_SIZE (1024 * 2)
-#define UART_TX_RINGBUF_SIZE (1024 * 1)
+static const int UART_RX_RINGBUF_SIZE = (1024 * 2);
+static const int UART_TX_RINGBUF_SIZE = (1024 * 1);
+static const uart_port_t UART_NUM = static_cast<uart_port_t>(CONFIG_ESP_CONSOLE_UART_NUM);
 
 typedef int (*writeFn)(const char *, size_t len);
 
+
+
 static int my_uart_write(const char *src, size_t len) {
-  return uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, src, len);
+  return uart_write_bytes(UART_NUM, src, len);
 }
 
 static int priv_write(const char *s, size_t len, writeFn wfn) {
@@ -140,11 +143,11 @@ static void initialize_console(struct cfg_txtio *cfg_txtio)
            // .rx_flow_ctrl_thresh = 64,
     };
     /* Install UART driver for interrupt-driven reads and writes */
-    ESP_ERROR_CHECK( uart_driver_install(CONFIG_ESP_CONSOLE_UART_NUM, UART_RX_RINGBUF_SIZE, UART_TX_RINGBUF_SIZE, 0, NULL, 0) );
-    ESP_ERROR_CHECK( uart_param_config(CONFIG_ESP_CONSOLE_UART_NUM, &uart_config) );
+    ESP_ERROR_CHECK( uart_driver_install(UART_NUM, UART_RX_RINGBUF_SIZE, UART_TX_RINGBUF_SIZE, 0, NULL, 0) );
+    ESP_ERROR_CHECK( uart_param_config(UART_NUM, &uart_config) );
 
     /* Tell VFS to use UART driver */
-    esp_vfs_dev_uart_use_driver(CONFIG_ESP_CONSOLE_UART_NUM);
+    esp_vfs_dev_uart_use_driver(UART_NUM);
 #if 0
     /* Initialize the console */
     esp_console_config_t console_config = {
@@ -184,8 +187,8 @@ static void pctChange_cb(const uoCb_msgT msg) {
 
   if (auto txt = uoCb_txtFromMsg(msg)) {
 #ifdef CONFIG_APP_USE_CLI_TASK
-    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, txt, strlen(txt));
-    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\r\n", 2);
+    uart_write_bytes(UART_NUM, txt, strlen(txt));
+    uart_write_bytes(UART_NUM, "\r\n", 2);
 #else
   ::write(1, txt, strlen(txt));
   ::write(1, "\r\n", 2);
@@ -193,8 +196,8 @@ static void pctChange_cb(const uoCb_msgT msg) {
   }
   if (auto json = uoCb_jsonFromMsg(msg)) {
 #ifdef CONFIG_APP_USE_CLI_TASK
-    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, json, strlen(json));
-    uart_write_bytes(CONFIG_ESP_CONSOLE_UART_NUM, "\r\n", 2);
+    uart_write_bytes(UART_NUM, json, strlen(json));
+    uart_write_bytes(UART_NUM, "\r\n", 2);
 #else
   ::write(1, json, strlen(json));
   ::write(1, "\r\n", 2);
