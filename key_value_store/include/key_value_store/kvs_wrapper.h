@@ -1,5 +1,5 @@
 #ifdef __cplusplus
-  extern "C" {
+extern "C" {
 #endif
 /*
  * kvs_wrapper.h
@@ -14,11 +14,12 @@
 #include <stddef.h>
 #include "stdbool.h"
 
-enum { kvs_READ=1, kvs_WRITE=2, kvs_READ_WRITE=3 };
+enum {
+  kvs_READ = 1, kvs_WRITE = 2, kvs_READ_WRITE = 3
+};
 
 struct kvs_handle;
 typedef struct kvs_handle *kvshT;
-
 
 kvshT kvs_open(const char *name, unsigned flags);
 bool kvs_commit(kvshT handle);
@@ -52,20 +53,18 @@ int64_t kvs_get_i64(kvshT handle, const char *key, int64_t default_val, bool *re
 bool kvs_set_u64(kvshT handle, const char *key, uint64_t val);
 uint64_t kvs_get_u64(kvshT handle, const char *key, uint64_t default_val, bool *res_success);
 
-
 typedef enum {
-    KVS_TYPE_none  = 0x00,
-    KVS_TYPE_u8    = 0x01,  /*!< Type uint8_t */
-    KVS_TYPE_i8    = 0x11,  /*!< Type int8_t */
-    KVS_TYPE_u16   = 0x02,  /*!< Type uint16_t */
-    KVS_TYPE_i16   = 0x12,  /*!< Type int16_t */
-    KVS_TYPE_u32   = 0x04,  /*!< Type uint32_t */
-    KVS_TYPE_i32   = 0x14,  /*!< Type int32_t */
-    KVS_TYPE_u64   = 0x08,  /*!< Type uint64_t */
-    KVS_TYPE_i64   = 0x18,  /*!< Type int64_t */
-    KVS_TYPE_STR   = 0x21,  /*!< Type string */
-    KVS_TYPE_BLOB  = 0x42,  /*!< Type blob */
-    KVS_TYPE_ANY   = 0xff   /*!< Must be last */
+  KVS_TYPE_none = 0x00, KVS_TYPE_u8 = 0x01, /*!< Type uint8_t */
+  KVS_TYPE_i8 = 0x11, /*!< Type int8_t */
+  KVS_TYPE_u16 = 0x02, /*!< Type uint16_t */
+  KVS_TYPE_i16 = 0x12, /*!< Type int16_t */
+  KVS_TYPE_u32 = 0x04, /*!< Type uint32_t */
+  KVS_TYPE_i32 = 0x14, /*!< Type int32_t */
+  KVS_TYPE_u64 = 0x08, /*!< Type uint64_t */
+  KVS_TYPE_i64 = 0x18, /*!< Type int64_t */
+  KVS_TYPE_STR = 0x21, /*!< Type string */
+  KVS_TYPE_BLOB = 0x42, /*!< Type blob */
+  KVS_TYPE_ANY = 0xff /*!< Must be last */
 } kvs_type_t;
 
 typedef enum {
@@ -74,15 +73,20 @@ typedef enum {
 
 typedef kvs_cbrT (*kvs_foreach_cbT)(const char *key, kvs_type_t type, void *args);
 
-int kvs_foreach(const char *name_space, kvs_type_t, const char*key_match, kvs_foreach_cbT, void *args);
-
+#ifndef __cplusplus
+int kvs_foreach(const char *name_space, kvs_type_t, const char *key_starts_with, kvs_foreach_cbT, void *args);
+#endif
 
 void kvs_setup(void);
 
-
 #ifdef __cplusplus
-  }
+}
 
+#ifdef MCU_ESP32
+#include "../../esp32/kvs_templates.hh"
+#else
+#include "../../host/kvs_templates.hh"
+#endif
 
 template<typename handle_type, typename value_type>
 bool kvs_get_object(handle_type h, const char *key, value_type &val) {
@@ -93,7 +97,6 @@ template<typename handle_type, typename value_type>
 bool kvs_set_object(handle_type h, const char *key, const value_type &val) {
   return kvs_set_blob(h, key, &val, sizeof val);
 }
-
 
 #endif
 

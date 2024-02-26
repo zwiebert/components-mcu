@@ -10,6 +10,7 @@
 
 
 #include "utils_misc/int_types.h"
+#include "utils_misc/cstring_utils.h"
 #include "key_value_store/kvs_wrapper.h"
 
 #include <string.h>
@@ -19,8 +20,6 @@
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "nvs.h"
-
-#define CFG_PARTNAME "nvs"
 
 struct kvs_handle {
   nvs_handle handle;
@@ -125,42 +124,11 @@ SET_GET_DT_FUN(uint32_t, _u32);
 SET_GET_DT_FUN(int64_t, _i64);
 SET_GET_DT_FUN(uint64_t, _u64);
 
-
-int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb, void *args) {
-  nvs_iterator_t it = NULL;
-  esp_err_t res = nvs_entry_find(CFG_PARTNAME, name_space, (nvs_type_t)type, &it);
-
-  int count = 0;
-  while (res == ESP_OK) {
-    nvs_entry_info_t info;
-    nvs_entry_info(it, &info);
-    res = nvs_entry_next(&it);
-
-    if (key_match) {
-      unsigned len = strlen(key_match);
-      if (strlen(info.key) < len)
-        continue;
-      if (0 != strncmp(info.key, key_match, len))
-        continue;
-    }
-
-    if (cb) {
-      switch (cb(info.key, (kvs_type_t)info.type, args)) {
-      case kvsCb_match:
-        ++count;
-        break;
-      case kvsCb_done:
-        ++count;
-        return count;
-      case kvsCb_noMatch:
-        break;
-      }
-    } else {
-      ++count;
-    }
-  }
-  return count;
+int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, kvs_foreach_cbT cb, void *cb_args) {
+  return kvs_foreach(name_space, type, csu_startsWith, key_match, cb, cb_args);
 }
+
+
 
 void kvs_setup(void) {
   esp_err_t err = nvs_flash_init();

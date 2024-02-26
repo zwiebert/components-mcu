@@ -4,6 +4,7 @@
 #endif
 #include "key_value_store/kvs_wrapper.h"
 #include <string.h>
+#include "utils_misc/cstring_utils.h"
 
 kvshT handle;
 bool succ;
@@ -30,7 +31,7 @@ static void test_for_foreach_bug() {
 
   return;
 
-  res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0, 0);
+  res = kvs_foreach(NS, KVS_TYPE_BLOB, csu_startsWith, k1);
   TEST_ASSERT_EQUAL(1, res);
   //-------------------------------
   handle = kvs_open(NS, kvs_WRITE);
@@ -42,7 +43,7 @@ static void test_for_foreach_bug() {
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
-  res = kvs_foreach(NS, KVS_TYPE_BLOB, k1, 0, 0);
+  res = kvs_foreach(NS, KVS_TYPE_BLOB, csu_startsWith, k1);
   TEST_ASSERT_EQUAL(1, res);
   //--------------------------------
 }
@@ -111,13 +112,13 @@ static void g(uint8_t g, uint8_t m) {
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdf, 0, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, csu_startsWith, asdf);
   TEST_ASSERT_EQUAL(2, res);
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdfg, 0, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, csu_startsWith, asdfg);
   TEST_ASSERT_EQUAL(1, res);
-  res = kvs_foreach(NS, KVS_TYPE_u8, asdfg, 0, 0);
+  res = kvs_foreach(NS, KVS_TYPE_u8, csu_startsWith, asdfg);
   TEST_ASSERT_EQUAL_MESSAGE(0, res, "wrong type");
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdfge, 0, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, csu_startsWith, asdfge);
   TEST_ASSERT_EQUAL_MESSAGE(0, res, "match string longer than key");
 
   handle = kvs_open(NS, kvs_WRITE);
@@ -128,7 +129,7 @@ static void g(uint8_t g, uint8_t m) {
   TEST_ASSERT_TRUE(succ);
   kvs_close(handle);
 
-  res = kvs_foreach(NS, KVS_TYPE_i8, asdf, 0, 0);
+  res = kvs_foreach(NS, KVS_TYPE_i8, csu_startsWith, asdf);
   TEST_ASSERT_EQUAL(2, res);
 
   handle = kvs_open(NS, kvs_WRITE);

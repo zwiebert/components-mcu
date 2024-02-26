@@ -1,3 +1,4 @@
+
 /*
  * kvs_posix.c
  *
@@ -34,45 +35,6 @@
 #define D(x)
 #define DT(x)
 
-struct kvs_handle {
-  char *buf;
-  int fd;
-  unsigned file_size :14;
-  unsigned in_use :1;
-};
-
-#define MAX_KEY_LEN 14
-#define COOKIE 0xbeef
-#define ERR_CORRUPT_FILE -42
-
-struct line_info {
-  uint16_t magic;
-  uint8_t kvs_type : 8;
-  uint8_t xx;
-  union {
-    uint8_t val_u8;
-    int8_t val_i8;
-    uint16_t val_u16;
-    int16_t val_i16;
-    uint32_t val_u32;
-    int32_t val_i32;
-    int64_t val_i64;
-    uint64_t val_u64;
-    struct {
-    uint16_t blob_len,  blob_size;
-    } len;
-  } nval;
-  char key[MAX_KEY_LEN + 1];
-
-#define li_size(li) (sizeof(*li) + ((li->kvs_type & 0x60) ? li->nval.len.blob_size : 0))
-#define li_typeInt(li) (0 == ((li)->kvs_type & 0x60) && ((li)->kvs_type & 0x07))
-#define li_typeBs(li) (!li_typeInt(li))
-#define li_isUsed(li) (0 == ((li)->kvs_type & 0x80) && ((li)->kvs_type != 0))
-#define li_matchKey(li,key) (li_isUsed(li) && strncmp(li->key, key, MAX_KEY_LEN) == 0)
-};
-
-#define HANDLE_COUNT 4
-static struct kvs_handle handles[HANDLE_COUNT];
 
 bool kvs_checkMagicCookie(struct line_info *lip, int pos) {
 

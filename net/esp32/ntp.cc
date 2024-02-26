@@ -80,7 +80,7 @@ static void set_server_by_config(struct cfg_ntp *cfg_ntp) {
 #endif
     } else {
 #if SNTP_MAX_SERVERS > 1
-      sntp_setservername(server_number, server);
+      esp_sntp_setservername(server_number, server);
 #else
       static char *server_name;
       free(server_name);
