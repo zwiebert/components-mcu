@@ -84,8 +84,3 @@ int kvs_foreach(const char *name_space, kvs_type_t type, cmp_fun_type cmp, cmp_a
   return count;
 }
 
-/// just count matching keys. no callback
-template<typename cmp_fun_type, typename cmp_arg_type>
-int kvs_foreach(const char *name_space, kvs_type_t type, cmp_fun_type cmp, cmp_arg_type &&cmp_arg) {
-  return kvs_foreach(name_space, type, cmp, cmp_arg, static_cast<kvs_foreach_cbT>(nullptr), nullptr);
-}

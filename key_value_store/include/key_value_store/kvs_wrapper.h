@@ -88,6 +88,12 @@ void kvs_setup(void);
 #include "../../host/kvs_templates.hh"
 #endif
 
+/// just count matching keys. no callback
+template<typename cmp_fun_type, typename cmp_arg_type>
+int kvs_foreach(const char *name_space, kvs_type_t type, cmp_fun_type cmp, cmp_arg_type &&cmp_arg) {
+  return kvs_foreach(name_space, type, cmp, cmp_arg, static_cast<kvs_foreach_cbT>(nullptr), nullptr);
+}
+
 template<typename handle_type, typename value_type>
 bool kvs_get_object(handle_type h, const char *key, value_type &val) {
   return kvs_get_blob(h, key, &val, sizeof val);
