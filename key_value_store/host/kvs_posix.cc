@@ -394,7 +394,7 @@ static unsigned kvs_write_str_or_blob(kvshT h, const char *key, const void *src,
         found_existing = false;
       }
     }
-    struct line_info li = { .magic = COOKIE, .kvs_type = kvs_type, .nval = { .len = { .blob_len = length, .blob_size = size } } };
+    struct line_info li = { .magic = COOKIE, .kvs_type = kvs_type, .nval = { .len = { .blob_len = (uint16_t)length, .blob_size = (uint16_t)size } } };
     STRLCPY(li.key, key, MAX_KEY_LEN + 1);
 
     int res = kvs_write(h, &li, pos); //XXX

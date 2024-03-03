@@ -10,8 +10,17 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
 
-bool httpClient_downloadFile(const char *srcUrl, const char *dstFile);
+/**
+ * \brief    Download data from url to file
+ */
+bool httpClient_downloadFile(const char *url, const char *file_name);
+
+/**
+ * \brief  Get data from url to buffer
+ */
+bool httpClient_getToBuffer(const char *url, char *buf, size_t buf_size);
 
 #ifdef __cplusplus
   }

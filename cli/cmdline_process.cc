@@ -42,6 +42,12 @@ static int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
   return 0;
 }
 
+/**
+ * \brief            Get value of token as string (will null-terminate the string in place)
+ * \param    json    the json data which was parsed (will be modified)
+ * \param    tok     the parsed token
+ * \return           the value of the token as null terminated string (in place)
+ */
 static char* stringFromToken(char *json, const jsmntok_t *tok) {
   json[tok->end] = '\0';
   return json + tok->start;
@@ -87,7 +93,7 @@ static void parse_and_process_json(char *json, const class UoutWriter &td, proce
             par[pi].val = stringFromToken(json, &tok[i]);
             ++pi;
             --n_childs;
-          }D(db_printf("proc_parm: %s\n", par->key));
+          } D(db_printf("proc_parm: %s\n", par->key));
           proc_parm(par, pi, td);
         }
       }
