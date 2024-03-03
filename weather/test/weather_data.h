@@ -1,0 +1,2 @@
+const char *json = "{\"coord\":{\"lon\":13.4105,\"lat\":52.5244},\"weather\":[{\"id\":800,\"main\":\"Clear\",\"description\":\"clear sky\",\"icon\":\"01d\"}],\"base\":\"stations\",\"main\":{\"temp\":285.09,\"feels_like\":284.3,\"temp_min\":284.16,\"temp_max\":285.92,\"pressure\":988,\"humidity\":75},\"visibility\":10000,\"wind\":{\"speed\":3.6,\"deg\":110},\"clouds\":{\"all\":34},\"dt\":1709397735,\"sys\":{\"type\":2,\"id\":2011538,\"country\":\"DE\",\"sunrise\":1709358611,\"sunset\":1709398022},\"timezone\":3600,\"id\":2950159,\"name\":\"Berlin\",\"cod\":200}"
+;
