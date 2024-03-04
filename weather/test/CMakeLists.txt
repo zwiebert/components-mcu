@@ -1,5 +1,6 @@
 idf_component_register(SRC_DIRS "."
                        INCLUDE_DIRS "." "../include"
+                       PRIV_INCLUDE_DIRS ".." 
                        REQUIRES unity weather jsmn)
 
 component_compile_options(${comp_compile_opts})
