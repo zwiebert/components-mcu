@@ -1,0 +1,20 @@
+name: Host tests
+
+on: [push]
+
+jobs:
+  build:
+  
+    runs-on: ubuntu-latest
+     
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+         
+       
+      #Compile
+      - name: compile and run all host tests
+        run:
+          make host-test-all  
+
