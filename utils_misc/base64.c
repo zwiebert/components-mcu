@@ -55,7 +55,7 @@
 
 #if defined(MBEDTLS_BASE64_C)
 
-#include "utils_misc/base64.h"
+#include "base64.h"
 
 #include <stdint.h>
 

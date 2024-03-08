@@ -1,7 +1,7 @@
 /**
  * \file     jsmn_iterate.hh
  * \brief    helper class to iterate the JSMN token array and extract data
- * \author   Bert Winkelmann (zwiebert@github)
+ * \author   Bert Winkelmann (github.com/zwiebert)
  */
 
 #pragma once
