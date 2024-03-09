@@ -14,7 +14,7 @@ message("proj_src_dir: ${proj_src_dir}")
 
 add_compile_definitions(USE_JSON)
 
-set(COMPONENT_DIRECTORIES ../components-mcu _test_/components)
+set(COMPONENT_DIRECTORIES . _test_/components)
 list(TRANSFORM COMPONENT_DIRECTORIES PREPEND   "${proj_src_dir}/")
 
 set(comp_compile_feats cxx_std_20)
@@ -31,7 +31,7 @@ if(ASAN)
   add_compile_options(-fsanitize=address -fstack-protector-all)
 endif()
 
-include(${proj_src_dir}/../components-mcu/test_host/host_test.cmake)
+include(${proj_src_dir}/test_host/host_test.cmake)
 
 add_subdirectory(${proj_src_dir}/_test_/components/main ${CMAKE_BINARY_DIR}/${BIN_COMP_ROOT}/main)
 

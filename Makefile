@@ -13,14 +13,6 @@ clean : esp32-test-clean esp32-fullclean
 help:
 	@less _test_/make_help.txt
 
-#PROXY (env: MCU_IP_ADDR, PROXY_TCP_PORT)
-#==========================================
-.PHONY: http_proxy http_clean
-http_proxy:
-	cd comp/app/app_webapp && make BUILD_DIR=$(BUILD_BASE)/app_webapp proxy
-http_clean:
-	cd comp/app/app_webapp && make BUILD_DIR=$(BUILD_BASE)/app_webapp clean
-
 
 ####### ESP32 build command ############
 PORT ?= /dev/ttyUSB1
@@ -150,7 +142,7 @@ host-test-all:
 
 
 ############# Doxygen ###################
-DOXY_BUILD_PATH=$(THIS_ROOT)/build/doxy
+DOXY_BUILD_PATH=$(THIS_ROOT)/_doxy_/build/doxy
 
 .PHONY: FORCE
 .PHONY: doxy-usr-view  doxy-dev-view  doxy-api-view
@@ -159,6 +151,7 @@ DOXY_BUILD_PATH=$(THIS_ROOT)/build/doxy
 $(DOXY_BUILD_PATH)/%/html/index.html: /tmp/doxy_%_file
 	mkdir -p $(dir $@)
 	doxygen $^
+
 
 
 doxy-usr-build: $(DOXY_BUILD_PATH)/usr/html/index.html FORCE
@@ -174,15 +167,15 @@ doxy-api-view: doxy-api-build
 	xdg-open $(DOXY_BUILD_PATH)/api/html/index.html
 
 
-/tmp/doxy_%_file: ./Doxyfile_% /tmp/doxy_input_%
+/tmp/doxy_%_file: ./_doxy_/Doxyfile_% /tmp/doxy_input_%
 	cat $^ > $@
 
 /tmp/doxy_input_dev: FORCE
 	git ls-files '*.h' '*.c' '*.hh' '*.cc' '*.cpp' | sed "s~^~INPUT += $(THIS_ROOT)/~" > $@
-	cd comp/components-mcu && git ls-files '*.h' '*.c' '*.hh' '*.cc' '*.cpp' | sed "s~^~INPUT += $(THIS_ROOT)/comp/components-mcu/~" >> $@
+	cd . && git ls-files '*.h' '*.c' '*.hh' '*.cc' '*.cpp' | sed "s~^~INPUT += $(THIS_ROOT)/~" >> $@
 /tmp/doxy_input_api: FORCE
 	git ls-files '*.h' '*.hh' | fgrep include | sed "s~^~INPUT += $(THIS_ROOT)/~" > $@
-	cd comp/components-mcu && git ls-files '*.h' '*.hh' | fgrep include | sed "s~^~INPUT += $(THIS_ROOT)/comp/components-mcu/~" >> $@
+	cd . && git ls-files '*.h' '*.hh' | fgrep include | sed "s~^~INPUT += $(THIS_ROOT)/~" >> $@
 
 /tmp/doxy_input_usr: FORCE
 	echo "" > $@
@@ -193,8 +186,3 @@ doxy-%-view: doxy-%-build FORCE
 
 FORCE:
 
-############# CLI Terminal ##############
-MCU_IP_ADDR ?= 192.168.1.69
-
-telnet:
-	telnet $(MCU_IP_ADDR) 7777
