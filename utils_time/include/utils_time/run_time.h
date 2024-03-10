@@ -12,8 +12,9 @@
 #include <stdint.h>
 
 #if defined TEST_HOST
-  uint32_t run_time_ts();
-  uint32_t run_time_s();
+
+  uint32_t run_time_ts(); ///< \brief get s/10 since MCU startup
+  uint32_t run_time_s(); ///< \brief get seconds since MCU startup
 
 #elif defined CONFIG_APP_USE_ESP_GET_TIME
 #include <esp_timer.h>
@@ -28,12 +29,6 @@ extern volatile uint32_t run_time_ts_;
 #error
 #endif
 
-
-/// \brief get s/10 since MCU startup
-#define get_now_time_ts() run_time_ts()
-
-/// \brief get seconds since MCU startup
-#define get_now_time_s() run_time_s()
 
 #ifdef __cplusplus
   }

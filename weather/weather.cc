@@ -18,8 +18,6 @@
 
 #include "parse_json.hh"
 
-static const char *TAG = "Weather";
-
 bool weather_fetch_weather_data(weather_data &data, const char *url) {
   const size_t buf_size = 750; // current content_length is 471
   char buf[buf_size];
