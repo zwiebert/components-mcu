@@ -18,7 +18,7 @@ public:
   float get_temp_celsius() const {
     return main.temp - 273.15;
   }
-  float get_relative_humidity_percent() const {
+  unsigned get_relative_humidity_percent() const {
     return main.humidity;
   }
   float get_wind_speed_kph() const {
