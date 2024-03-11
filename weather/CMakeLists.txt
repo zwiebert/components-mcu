@@ -1,8 +1,9 @@
-set(srcs esp32/weather.cc weather.cc parse_json.cc)
+set(srcs esp32/weather.cc weather.cc openweathermap.cc)
 
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include"
-    PRIV_REQUIRES jsmn esp_http_client net
+    REQUIRES net
+    PRIV_REQUIRES jsmn esp_http_client key_value_store
 )
 
 component_compile_options(${comp_compile_opts})

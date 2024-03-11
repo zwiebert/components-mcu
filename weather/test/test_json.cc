@@ -4,8 +4,8 @@
 #endif
 
 #include "weather_data.h"
-#include "../parse_json.hh"
-#include "weather/weather.hh"
+#include "../openweathermap.hh"
+#include "weather/weather_data.hh"
 
 void test_json() {
   weather_data w;

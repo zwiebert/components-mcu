@@ -24,7 +24,8 @@
 #include <string.h>
 
 
-#include "../parse_json.hh"
+
+#if 0
 
 static const char *TAG = "Weather";
 
@@ -64,18 +65,5 @@ void weather_initialise_weather_data_retrieval_task(unsigned long period) {
 }
 
 
-bool weather_getWeatherData(weather_data *data, const char *url) {
-  const size_t buf_size = 512;
-  char buf[buf_size];
 
-  if (!url)
-    url = URL;
-
-  if (httpClient_getToBuffer(url, buf, buf_size))
-    if (weather_process_json(buf, *data)) {
-      return true;
-    }
-
-  return false;
-}
-
+#endif

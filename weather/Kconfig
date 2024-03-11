@@ -7,5 +7,11 @@ config OPENWEATHERMAP_URL_STRING
 	  This URL contains location and API key obtained from 'https://home.openweathermap.org/' site.
 		
 		You need to set up a free account on this site first.
+		
+config HOST_SAVE_FOLDER
+    string "Folder to save periodic retrieved weather data"
+  default "/tmp"
+  help
+    For simulation whiel developing, or should I better use the simulated kvs-storage?
 
 endmenu
