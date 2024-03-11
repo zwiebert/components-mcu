@@ -5,6 +5,7 @@
 #include "key_value_store/kvs_wrapper.h"
 #include <string.h>
 #include "utils_misc/cstring_utils.h"
+#include <iostream>
 
 kvshT handle;
 bool succ;
@@ -182,8 +183,53 @@ static void test_set_get_arrays() {
   kvs_close(handle);
 }
 
+static void test_save_restore_blob() {
+  const char blob_src[64] = "this is my blob for testingasfwoksldfjpoaijsdfsafoijk";
+  int err = 0;
+
+  for (int wday = 0; wday < 7; ++wday)
+    for (int hour = 0; hour < 24; ++hour) {
+      char key[64];
+      auto n = snprintf(key, sizeof key, "pastwd%d%d", wday, hour);
+      TEST_ASSERT_FALSE(n == sizeof key);
+
+      handle = kvs_open(NS, kvs_WRITE);
+      TEST_ASSERT_NOT_NULL(handle);
+
+      TEST_ASSERT_TRUE_MESSAGE(kvs_set_blob(handle, key, blob_src, sizeof blob_src), "Save blob_src");
+
+      kvs_close(handle);
+
+      handle = kvs_open(NS, kvs_READ);
+      TEST_ASSERT_NOT_NULL(handle);
+      char blob_dst[64];
+      TEST_ASSERT_TRUE_MESSAGE(kvs_get_blob(handle, key, blob_dst, sizeof blob_dst), "Restore blob_src to blob_dst");
+
+      TEST_ASSERT_EQUAL_MEMORY_MESSAGE(blob_src, blob_dst, sizeof blob_src, "Compare restored data against saved");
+
+      kvs_close(handle);
+    }
+
+  for (int wday = 0; wday < 7; ++wday)
+    for (int hour = 0; hour < 24; ++hour) {
+      char key[64];
+      auto n = snprintf(key, sizeof key, "pastwd%d%d", wday, hour);
+      TEST_ASSERT_FALSE(n == sizeof key);
+
+      handle = kvs_open(NS, kvs_READ);
+      TEST_ASSERT_NOT_NULL(handle);
+      char blob_dst[64];
+      TEST_ASSERT_TRUE_MESSAGE(kvs_get_blob(handle, key, blob_dst, sizeof blob_dst), "Restore blob_src to blob_dst");
+      //std::cout << blob_dst <<"\n";
+      TEST_ASSERT_EQUAL_MEMORY_MESSAGE(blob_src, blob_dst, sizeof blob_src, "Compare restored data against saved");
+
+      kvs_close(handle);
+    }
+}
+
 
 TEST_CASE("kvs", "[kvs]") {
+  test_save_restore_blob();
   test_config();
   test_set_get_default();
   f();

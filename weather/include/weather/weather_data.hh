@@ -15,6 +15,8 @@ struct weather_data {
   } clouds;
 
 public:
+  operator bool() const {return main.temp != 0; }
+public:
   float get_temp_celsius() const {
     return main.temp - 273.15;
   }

@@ -48,6 +48,7 @@ bool kvs_checkMagicCookie(struct line_info *lip, int pos) {
   fflush(stdout);
   abort();
 #endif
+  return false;
 }
 
 

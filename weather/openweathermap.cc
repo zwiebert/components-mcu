@@ -1,4 +1,4 @@
-#include "weather/weather_owm.hh"
+#include "include/weather/weather_provider_owm.hh"
 #include "jsmn/jsmn_iterate.hh"
 #include "net/http_client.h"
 

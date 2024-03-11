@@ -74,7 +74,7 @@ public:
   }
   /// content length from HTTP response
   unsigned get_body_length() const {
-    return  m_body_size;
+    return m_body_size;
   }
   /// content from HTTP response (null terminated hopefully)
   const char* get_body() const {
@@ -87,7 +87,7 @@ public:
    * \param  buffer_size  size of buffer
    * \return pointer to content body.  null on failure
    */
-  char* fetch(const char *url, const char *accept_content="application/json", char *buffer = nullptr, size_t buffer_size = 0) {
+  char* fetch(const char *url, const char *accept_content = "application/json", char *buffer = nullptr, size_t buffer_size = 0) {
     auto &rb = *this;
     char *result = nullptr;
 
@@ -101,22 +101,27 @@ public:
       if (rb.open_connection()) {
         D(std::cout << "connection opened\n");
 
-        if (rb.build_request_GET(accept_content) && rb.send_request()) {
-          D(std::cout << "request build and send\n");
-          if (rb.get_response() && rb.separate_header_and_body()) {
-            rb.close_connection();
+        if (rb.build_request_GET(accept_content)) {
+          D(std::cout << "request build\n");
+          if (rb.send_request()) {
+            D(std::cout << "request sent\n");
+            if (rb.get_response()) {
+              D(std::cout << "got response\n");
+              if (rb.separate_header_and_body()) {
+                D(std::cout << "separated headers and content\n");
+                rb.close_connection();
 #ifdef DEBUG
             cout << "Headers:\n" << rb.m_header << "\n";
             cout << "Body:\n" << rb.m_body << "\n";
             cout << "BodySize: " << rb.m_body_size << "\n";
 #endif
-            result = m_body;
-
+                result = m_body;
+              }
+            }
           }
         }
       }
     }
-
     // switch back to internal buffer
     if (buffer) {
       m_resp_buf = m_buf;
@@ -170,6 +175,7 @@ public:
    * \brief   Buildd a GET request based on previously parsed URL
    */
   bool build_request_GET(const char *hdr_accept = "application/json") {
+    m_buf_idx = 0;
     put("GET ");
     put(m_url_data);
     put("  HTTP/1.1\r\n"
@@ -204,7 +210,7 @@ public:
         p += ct;
         *p = '\0';
       } else {
-        return ct == 0;
+        return ct == 0 && m_resp_buf_idx;
       }
     }
     return true;
@@ -212,6 +218,13 @@ public:
 
   ///  find where the content starts in response and null terminate headers
   bool separate_header_and_body() {
+    const char *ok_string ="HTTP/1.1 200 OK\r\n";
+    if (0 != strncmp(m_resp_buf, ok_string, strlen(ok_string))) {
+      m_header = m_resp_buf;
+      m_body = nullptr;
+      return false;
+    }
+
     if (auto sep = strstr(m_resp_buf, "\r\n\r\n"); sep) {
       m_header = m_resp_buf;
       sep[2] = '\0';
