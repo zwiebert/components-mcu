@@ -4,7 +4,7 @@
 #include <string.h>
 
 bool httpClient_getToBuffer(const char *url, char *buf, size_t buf_size) {
-  static rbuf<1024 * 1024> rb; // buffer for headers + content
+  static rbuf<1024 * 10> rb; // buffer for headers + content
   if (auto body = rb.fetch(url, "*/*"); body != nullptr) {
     size_t len = rb.get_body_length();
     if (len >= buf_size)

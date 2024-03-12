@@ -6,7 +6,6 @@
 #include <time.h>
 #include <iostream>
 
-
 // old simple method used in home-server script
 // the average points are calculated by the rvpt of a single day, and
 // only the hours from 9 to 21 are used
@@ -33,3 +32,53 @@ float wdd2rvpt_avg(const weather_data wdd[24], unsigned from_hour, unsigned to_h
 
   return n ? sum / n : 0.0;
 }
+
+float Weather_Irrigation::get_simple_irrigation_factor(int hours) const {
+   if (hours > 24 * 7)
+     hours = 24 *7;
+
+  const unsigned from_hour = 9, to_hour = 21;
+
+  const auto dh = get_wday_hour();
+  const int nmb_days = hours / 24;
+  const int nmb_hours = hours % 24;
+
+  int n = 0;
+  float sum = 0.0;
+  for (int wday = dh.wday;; wday = (wday + 6) % 7)
+    for (int hour = dh.hour;; hour = (hour + 23) % 24) {
+      if (hours-- <= 0)
+        return n ? sum / n : 0.0;
+      if (from_hour <= hour && hour <= to_hour) {
+        if (auto &wd = get_past_weather_data(wday, hour); wd) {
+          sum += wd2rvpt(wd);
+          ++n;
+        }
+      }
+    }
+
+  return 0.0;
+}
+
+#if 0
+
+
+Faktor: 1.0 = normal  für T20, W0, Humi=50, Clouds=50
+T+ = F-
+T- = F+
+W+ = F-
+H+ = F+
+H- = F-
+C+ = F+
+C- = F-
+
+Formel:
+
+float d_temp = 0.1, d_wind = 0.1, d_humi = 0.1, d_clouds = 0.1;
+f -= (temp - 20)/d_temp;
+f -= (wind)/d_wind;
+f += (humi - 50)/d_humi;
+f += (clouds - 50)/d_clouds
+
+
+#endif

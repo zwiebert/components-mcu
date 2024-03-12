@@ -14,11 +14,15 @@ static constexpr unsigned wd_current_version = 1;
 using weather_data_v1 = weather_data;
 
 struct wd_store {
-  unsigned version = wd_current_version;
+  struct {
+    uint16_t time = 0;
+    uint8_t version = 0;
+  } info;
   weather_data_v1 wd;
-  char padding[wd_store_size - sizeof version - sizeof wd] = { };
+  char padding[wd_store_size - sizeof info - sizeof wd] = { };
 };
 
+static_assert(sizeof(wd_store::info) == 4);
 static_assert(sizeof(wd_store) == wd_store_size);
 
 Weather::wday_hour Weather::get_wday_hour() {
@@ -36,14 +40,11 @@ bool Weather::set_weather_provider(Weather_Provider *wp) {
   m_wp = wp;
   return true;
 }
-const weather_data& Weather::get_past_weather_data(unsigned wday, unsigned hour) {
-  assert(wday < 7 && hour < 24);
-  return m_past_wd[wday][hour];
-}
 
 bool Weather::load_past_weather_data() {
   int err = 0;
   char key[64];
+  uint16_t tmin = static_cast<uint16_t>((time(0)/60) - (60 * 24 * 7)); // data not older than one week
 
   if (auto h = kvs_open(kvs_name, kvs_READ)) {
     wd_store wds;
@@ -54,7 +55,11 @@ bool Weather::load_past_weather_data() {
         assert(n < sizeof key);
 
         if (kvs_get_blob(h, key, &wds, sizeof wds)) {
-          m_past_wd[wday][hour] = wds.wd;
+          if (tmin <= wds.info.time) { // filter out too old data
+            if (wd_current_version == wds.info.version) {
+              m_past_wd[wday][hour] = wds.wd;
+            }
+          }
         }
 
       }
@@ -79,7 +84,7 @@ bool Weather::fetch_and_store_weather_data() {
   auto n = snprintf(key, sizeof key, kvs_key_fmt, tdh.wday, tdh.hour);
   assert(n < sizeof key);
 
-  const wd_store wds = { .wd = wd };
+  const wd_store wds = { .info { .time = static_cast<uint16_t>(time(0)/60), .version = wd_current_version }, .wd = wd };
 
   if (auto h = kvs_open(kvs_name, kvs_WRITE)) {
     if (!kvs_set_blob(h, key, &wds, sizeof wds))
@@ -90,3 +95,24 @@ bool Weather::fetch_and_store_weather_data() {
   return !err;
 }
 
+/////////////dev/////////////////
+#include <cstdlib>
+
+template<typename T>
+static T rando(T low_limit, T high_limit) {
+  return low_limit + static_cast<T>(rand()) / (static_cast<T>(RAND_MAX / (high_limit - low_limit)));
+}
+
+static void init_wd_rand(weather_data &wd) {
+  wd.main.temp = 273.15 + rando(5.0, 37.0);
+  wd.main.humidity = rando(0, 100);
+  wd.clouds.all = rando(0, 100);
+  wd.wind.speed = rando(0, 85);
+}
+
+void Weather::dev_fill_past_wd_randomly() {
+  for (unsigned wday = 0; wday < 7; ++wday)
+    for (unsigned hour = 0; hour < 24; ++hour) {
+      init_wd_rand(m_past_wd[wday][hour]);
+    }
+}
