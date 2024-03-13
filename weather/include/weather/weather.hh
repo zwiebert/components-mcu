@@ -5,6 +5,10 @@
 
 class Weather {
 public:
+  Weather(Weather_Provider *wp=nullptr): m_wp(wp) {
+  }
+
+public:
   bool set_weather_provider(Weather_Provider *wp); ///< provider to fetch data from
 public:
   /**

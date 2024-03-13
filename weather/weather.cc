@@ -15,14 +15,15 @@ using weather_data_v1 = weather_data;
 
 struct wd_store {
   struct {
-    uint16_t time = 0;
+    time_t time = 0;
     uint8_t version = 0;
   } info;
   weather_data_v1 wd;
   char padding[wd_store_size - sizeof info - sizeof wd] = { };
 };
 
-static_assert(sizeof(wd_store::info) == 4);
+static_assert(sizeof(time_t) == 8);
+static_assert(sizeof(wd_store::info) == 16);
 static_assert(sizeof(wd_store) == wd_store_size);
 
 Weather::wday_hour Weather::get_wday_hour() {
@@ -44,7 +45,7 @@ bool Weather::set_weather_provider(Weather_Provider *wp) {
 bool Weather::load_past_weather_data() {
   int err = 0;
   char key[64];
-  uint16_t tmin = static_cast<uint16_t>((time(0)/60) - (60 * 24 * 7)); // data not older than one week
+  time_t tmin = time(0) - (60 * 60 * 24 * 7); // data not older than one week
 
   if (auto h = kvs_open(kvs_name, kvs_READ)) {
     wd_store wds;
@@ -84,7 +85,7 @@ bool Weather::fetch_and_store_weather_data() {
   auto n = snprintf(key, sizeof key, kvs_key_fmt, tdh.wday, tdh.hour);
   assert(n < sizeof key);
 
-  const wd_store wds = { .info { .time = static_cast<uint16_t>(time(0)/60), .version = wd_current_version }, .wd = wd };
+  const wd_store wds = { .info { .time = time(0), .version = wd_current_version }, .wd = wd };
 
   if (auto h = kvs_open(kvs_name, kvs_WRITE)) {
     if (!kvs_set_blob(h, key, &wds, sizeof wds))
