@@ -1,6 +1,6 @@
 #pragma once
 
-#include <list>
+#include <memory>
 #include <malloc.h>
 
 template<class T>
@@ -35,6 +35,10 @@ public:
   }
 
   constexpr void deallocate(T *p, size_type) {
+    free(static_cast<void*>(p));
+  }
+
+  constexpr void deallocate(T *p) {
     free(static_cast<void*>(p));
   }
 
