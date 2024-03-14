@@ -218,7 +218,7 @@ private:
   }
 
   bool get_value(float &dst, pointer ptr) const {
-    char buf[8];
+    char buf[32];
     if (ptr->type == JSMN_PRIMITIVE && copy_string(buf, sizeof buf, ptr)) {
       dst = atof(buf);
       return true;

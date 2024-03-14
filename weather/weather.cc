@@ -90,6 +90,7 @@ bool Weather::fetch_and_store_weather_data() {
   if (auto h = kvs_open(kvs_name, kvs_WRITE)) {
     if (!kvs_set_blob(h, key, &wds, sizeof wds))
       ++err;
+    kvs_commit(h);
     kvs_close(h);
   }
 
