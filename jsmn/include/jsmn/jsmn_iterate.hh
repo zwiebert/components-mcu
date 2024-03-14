@@ -13,6 +13,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
+#include <string>
 
 template<size_t JSON_MAX_TOKENS>
 class Jsmn {
@@ -225,11 +226,28 @@ private:
     return false;
   }
 
+  bool get_value(std::string &dst, pointer ptr) const {
+    if (ptr->type == JSMN_STRING) {
+      size_t str_length = ptr->end - ptr->start;
+      dst = std::string(ptr->start, str_length);
+      return true;
+    }
+    return false;
+  }
+
   template<typename T>
   bool get_value(T &dst, pointer ptr) const {
     char buf[8];
     if (ptr->type == JSMN_PRIMITIVE && copy_string(buf, sizeof buf, ptr)) {
       dst = atoi(buf);
+      return true;
+    }
+    return false;
+  }
+
+  template<size_t size>
+  bool get_value(char (&dst)[size], pointer ptr) const {
+    if (ptr->type == JSMN_STRING && copy_string(dst, size, ptr)) {
       return true;
     }
     return false;
