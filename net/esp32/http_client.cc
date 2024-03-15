@@ -121,10 +121,11 @@ bool httpClient_getToBuffer(const char *srcUrl, char *buf, size_t buf_size) {
   struct user_data {
     char *buf;
     size_t buf_size;
+    int buf_pos;
   } ud = { buf, buf_size };
 
   esp_http_client_config_t config = { .url = srcUrl, .event_handler = [](esp_http_client_event_t *evt) -> esp_err_t {
-    static int buf_pos;
+
 
     switch (evt->event_id) {
     case HTTP_EVENT_ERROR:
@@ -141,16 +142,16 @@ bool httpClient_getToBuffer(const char *srcUrl, char *buf, size_t buf_size) {
       break;
     case HTTP_EVENT_ON_DATA: {
       user_data *ud = (user_data*) evt->user_data;
-      if (buf_pos + evt->data_len >= ud->buf_size)
+      if (ud->buf_pos + evt->data_len >= ud->buf_size)
         return ESP_ERR_NO_MEM;
 
-      memcpy(ud->buf + buf_pos, evt->data, evt->data_len);
-      buf_pos += evt->data_len;
+      memcpy(ud->buf + ud->buf_pos, evt->data, evt->data_len);
+      ud->buf_pos += evt->data_len;
     }
       break;
     case HTTP_EVENT_ON_FINISH: {
       user_data *ud = (user_data*) evt->user_data;
-      ud->buf[buf_pos] = '\0';
+      ud->buf[ud->buf_pos] = '\0';
 
       ESP_LOGI(TAG, "HTTP_EVENT_ON_FINISH");
     }

@@ -6,7 +6,7 @@
 #include <iostream>
 using namespace std;
 
-#include "../include/weather/weather_provider_owm.hh"
+#include "weather/weather_provider_owm.hh"
 
 #include "weather/weather.hh"
 void test_weather() {

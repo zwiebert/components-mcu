@@ -8,7 +8,6 @@
 #include <cstdlib>
 #include <cassert>
 
-
 using jp = Jsmn<100>;
 using jpit = jp::Iterator;
 using tok_processObj_funT = bool (*)(weather_data &weather, jpit &it);
@@ -94,7 +93,6 @@ bool weather_process_json(const char *json, weather_data &weather) {
   return false;
 }
 
-
 bool Weather_Provider_Owm::fetch_owm_data(weather_data &data, const char *url) {
   if (!url)
     return false;
@@ -109,7 +107,6 @@ bool Weather_Provider_Owm::fetch_owm_data(weather_data &data, const char *url) {
 
   return false;
 }
-
 
 Weather_Provider_Owm::~Weather_Provider_Owm() {
 }
