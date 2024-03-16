@@ -1,17 +1,17 @@
-
 #ifdef CONFIG_APP_USE_OTA
 #include "firmware_update/ota.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/event_groups.h"
-
 #include "esp_system.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_ota_ops.h"
 #include "esp_http_client.h"
 #include "esp_https_ota.h"
-
+#ifdef CONFIG_APP_OTA_USE_CERT_BUNDLE
+#include "esp_crt_bundle.h"
+#endif
 #include <txtio/inout.h>
 #include "utils_misc/int_types.h"
 #include "utils_misc/cstring_utils.hh"
@@ -63,7 +63,16 @@ static void simple_ota_example_task(void *pvParameter) {
   auto parm = static_cast<task_parm*>(pvParameter);
 
 
-  esp_http_client_config_t http_config = { .url = parm->url, .cert_pem = parm->cert, .event_handler = http_event_handler, };
+  esp_http_client_config_t http_config = { .url = parm->url,
+#ifndef CONFIG_APP_OTA_USE_CERT_BUNDLE
+        .cert_pem = parm->cert,
+#endif
+      .event_handler = http_event_handler,
+#ifdef CONFIG_APP_OTA_USE_CERT_BUNDLE
+        .crt_bundle_attach = esp_crt_bundle_attach,
+#endif
+        .keep_alive_enable = true,
+  };
 
   esp_https_ota_config_t config = { .http_config = &http_config, };
 
@@ -76,7 +85,8 @@ static void simple_ota_example_task(void *pvParameter) {
   vTaskDelete(NULL);
 }
 
-bool ota_doUpdate(const char *firmware_url, const char *cert) {
+
+static bool our_ota_doUpdate(const char *firmware_url, const char *cert) {
   io_printf_v(vrb3, "OTA: url=<%s>\n", firmware_url);
 
   auto parm = new task_parm;
@@ -87,6 +97,16 @@ bool ota_doUpdate(const char *firmware_url, const char *cert) {
   return false;
 }
 
+#ifdef CONFIG_APP_OTA_USE_CERT_BUNDLE
+bool ota_doUpdate(const char *url) {
+  return our_ota_doUpdate(url, nullptr);
+}
+#else
+#error "ca_cert.pem no longer works"
+bool ota_doUpdate(const char *url, const char *cert) {
+  return our_ota_doUpdate(url, cert);
+}
+#endif
 void ota_setup()
 {
 

@@ -1,0 +1,8 @@
+menu "zwiebert: Firmware Updater OTA"
+
+    config APP_OTA_USE_CERT_BUNDLE
+        bool "Use certificate bundle instead of our own ca_cert.pem"
+        default y
+
+endmenu
+
