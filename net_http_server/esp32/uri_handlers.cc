@@ -121,46 +121,43 @@ esp_err_t respond_file(httpd_req_t *req, const struct file_map *fm) {
 
     for (int i = 0;; ++i) {
       char buf[256];
+      auto bytes_read = fm->content_reader->read(of.fd, &buf[0], sizeof buf);
 
-      if (const auto bytes_read = fm->content_reader->read(of.fd, &buf[0], sizeof buf); bytes_read >= 0) {
-        ESP_LOGI("content_reader", "bytes_read=<%u>", bytes_read);
-
-        // handle read error
-        if (bytes_read < 0) {
-          ESP_LOGE("respond_file", "read error");
-          return ESP_FAIL;
-        }
-
-        // send whole content and return
-        if (i == 0 && bytes_read < sizeof buf) {
-          return (ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send(req, buf, bytes_read)) ? ESP_OK : ESP_FAIL;
-        }
-
-        // send a chunk and continue loop
-        if (bytes_read == sizeof buf) {
-          if (ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send_chunk(req, buf, bytes_read))
-            continue;
-
-          return ESP_FAIL;
-        }
-
-        // send last chunk and return
-        if (i > 0 && bytes_read < sizeof buf) {
-          return (ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send_chunk(req, buf, bytes_read) &&
-          ESP_OK == httpd_resp_send_chunk(req, buf, 0)) ? ESP_OK : ESP_FAIL;
-        }
-
+      // handle read error
+      if (bytes_read < 0) {
+        ESP_LOGE("respond_file", "read error");
+        return ESP_FAIL;
       }
+
+      ESP_LOGI("content_reader", "bytes_read=<%u>", bytes_read);
+
+      // If EOF, then send whole buffer and return
+      if (i == 0 && bytes_read < sizeof buf) {
+        int br = fm->content_reader->read(of.fd, &buf[bytes_read], sizeof buf - bytes_read);
+        if (br == 0)
+          return (ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send(req, buf, bytes_read)) ? ESP_OK : ESP_FAIL;
+        if (br > 0)
+          bytes_read += br;
+      }
+
+      // send chunks. last chunk needs to have size zero
+      if (!(ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send_chunk(req, buf, bytes_read))) {
+        return ESP_FAIL;
+      }
+
+      if (bytes_read == 0)
+        return ESP_OK;
     }
+
     return ESP_FAIL; // this line should be unreachable
   }
 
-  // serve memory block
+// serve memory block
   if (fm->wc.content && fm->wc.content_length) {
     return (ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send(req, fm->wc.content, fm->wc.content_length)) ? ESP_OK : ESP_FAIL;
   }
 
-  // serve null terminated string
+// serve null terminated string
   if (fm->wc.content && !fm->wc.content_length) {
     return (ESP_OK == set_hdrs() && ESP_OK == httpd_resp_sendstr(req, fm->wc.content)) ? ESP_OK : ESP_FAIL;
   }
