@@ -40,8 +40,6 @@ float Weather_Irrigation::get_simple_irrigation_factor(int hours) const {
   const unsigned from_hour = 9, to_hour = 21;
 
   const auto dh = get_wday_hour();
-  const int nmb_days = hours / 24;
-  const int nmb_hours = hours % 24;
 
   int n = 0;
   float sum = 0.0;

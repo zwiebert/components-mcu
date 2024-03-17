@@ -15,13 +15,30 @@
 #include <cassert>
 #include <string>
 
-template<size_t JSON_MAX_TOKENS>
-class Jsmn {
+
+class JsmnBase {
 using pointer = jsmntok_t *;
+
+protected:
+JsmnBase(const char *json, jsmntok_t *tok, unsigned tok_max) :
+    m_json(json),
+    m_tok_heap_alloc(nullptr),
+    m_tok(tok),
+    m_tok_max(tok_max),
+    m_nmb_tok(do_parse(json)) {
+}
 public:
 
-  Jsmn(const char *json) :
-      m_json(json), m_nmb_tok(do_parse(json)) {
+  JsmnBase(const char *json, unsigned tok_max) :
+      m_json(json),
+      m_tok_heap_alloc(new jsmntok_t[tok_max]),
+      m_tok(m_tok_heap_alloc),
+      m_tok_max(tok_max),
+      m_nmb_tok(do_parse(json)) {
+  }
+
+  ~JsmnBase() {
+    delete[] m_tok_heap_alloc;
   }
 
   operator bool() const {
@@ -38,7 +55,7 @@ public:
     using value_type = jsmntok_t;
     using pointer = value_type *;
     using reference = value_type &;
-    using container_type = Jsmn<JSON_MAX_TOKENS>;
+    using container_type = JsmnBase;
 
     Iterator(pointer ptr, container_type &container) :
         m_ptr(ptr), m_container(container) {
@@ -198,7 +215,7 @@ private:
     jsmn_parser parser;
 
     jsmn_init(&parser);
-    int r = jsmn_parse(&parser, json, strlen(json), m_tok, JSON_MAX_TOKENS);
+    int r = jsmn_parse(&parser, json, strlen(json), m_tok, m_tok_max);
     if (r < 0) {
       return 0;
     }
@@ -255,8 +272,19 @@ private:
 
 private:
   const char *m_json;
-  jsmntok_t m_tok[JSON_MAX_TOKENS];
+  jsmntok_t *m_tok_heap_alloc;
+  jsmntok_t *m_tok;
+  unsigned m_tok_max;
   unsigned m_nmb_tok;
 
+};
+
+template<size_t JSON_MAX_TOKENS>
+class Jsmn : public JsmnBase {
+public:
+  Jsmn(const char *json): JsmnBase(json, &m_tok_arr[0], JSON_MAX_TOKENS) {
+  }
+private:
+  jsmntok_t m_tok_arr[JSON_MAX_TOKENS];
 };
 
