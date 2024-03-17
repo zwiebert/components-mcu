@@ -1,4 +1,4 @@
-set(srcs  http_server.cc  esp32/http_server.cc)
+set(srcs  http_server.cc  esp32/http_server.cc esp32/uri_handlers.cc)
 
 
 idf_component_register(

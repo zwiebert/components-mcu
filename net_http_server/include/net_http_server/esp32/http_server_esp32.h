@@ -29,6 +29,15 @@ bool check_access_allowed(struct httpd_req *req);
 extern void (*hts_register_uri_handlers_cb)(httpd_handle_t server_handle);
 
 
+extern fd_set ws_fds;
+extern int ws_nfds;
+
+esp_err_t respond_file(httpd_req_t *req, const struct file_map *fm);
+void ws_async_broadcast(void *arg);
+esp_err_t ws_trigger_send(httpd_handle_t handle, const char *json, size_t len, int fd = -1);
+void ws_send_json(const char *json, ssize_t len);
+int ws_write(void *req, const char *s, ssize_t s_len = -1, bool final = true);
+
 #ifdef __cplusplus
   }
 #endif
