@@ -131,14 +131,16 @@ esp_err_t respond_file(httpd_req_t *req, const struct file_map *fm) {
 
       ESP_LOGI("content_reader", "bytes_read=<%u>", bytes_read);
 
+#if 0 // this optimization would make it harder upstream if data is originally created in chunks
       // If EOF, then send whole buffer and return
       if (i == 0 && bytes_read < sizeof buf) {
-        int br = fm->content_reader->read(of.fd, &buf[bytes_read], sizeof buf - bytes_read);
+        int br = fm->content_reader->read(of.fd, &buf[bytes_read], 1);
         if (br == 0)
           return (ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send(req, buf, bytes_read)) ? ESP_OK : ESP_FAIL;
         if (br > 0)
           bytes_read += br;
       }
+#endif
 
       // send chunks. last chunk needs to have size zero
       if (!(ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send_chunk(req, buf, bytes_read))) {

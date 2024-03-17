@@ -30,6 +30,7 @@ public:
   virtual int close(int fd) {
     return ::close(fd);
   }
+private:
 };
 
 struct web_content {
