@@ -5,8 +5,11 @@
 
 #include <stdio.h>
 
+
 static uoCb_cbsT uoCb_cbs[cbs_size]; ///< store call-back pointers
 static uoCb_Idxs uoCb_cbs_idxs; ///< keep indexes of all currently registered call-backs
+
+
 static RecMutex uoCb_mutex;  ///< lock for every public function which accesses uoCb_xxx
 
 /////////////////// Filter /////////////////////////////////////
@@ -17,7 +20,7 @@ static RecMutex uoCb_mutex;  ///< lock for every public function which accesses 
  * FIXME: the results may be invalid if uoCb_cbs is modified (we have mutex now, but it did crash until then with calling a null-fun-pointer)
  */
 uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
   uoCb_Idxs result { };
 
   for (auto i = 0; i < uoCb_cbs_idxs.size; ++i) {
@@ -50,7 +53,7 @@ static void uoCb_update_idxs() {
 // public
 
 bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
   precond(msg_cb);
 
   for (auto &it : uoCb_cbs) {
@@ -66,7 +69,7 @@ bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags) {
 }
 
 bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
   precond(msg_cb);
 
   for (auto &it : uoCb_cbs) {
@@ -91,7 +94,7 @@ static void uoCb_publish(uoCb_cbT cb, const void *ptr, uo_flagsT flags) {
 // public
 
 void uoCb_publish(uoCb_Idxs idxs, const void *ptr, uo_flagsT flags) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
   for (auto i = 0; i < idxs.size; ++i) {
     auto cb = uoCb_cbs[idxs.arr[i]].cb;
     if (!cb)
@@ -101,7 +104,7 @@ void uoCb_publish(uoCb_Idxs idxs, const void *ptr, uo_flagsT flags) {
 }
 
 void uoCb_publish_wsJson(const char *json) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
   for (auto const &it : uoCb_cbs) {
     if (!it.cb)
       continue;
@@ -118,7 +121,7 @@ void uoCb_publish_wsJson(const char *json) {
 }
 
 void uoCb_publish_pinChange(const so_arg_pch_t args) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
 
   uo_flagsT flags;
   flags.evt.pin_change = true;
@@ -138,7 +141,7 @@ void uoCb_publish_pinChange(const so_arg_pch_t args) {
 }
 
 void uoCb_publish_ipAddress(const char *ip_addr) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
 
   uo_flagsT flags;
   flags.evt.ip_address_change = true;
@@ -178,7 +181,7 @@ static void quote_string(char *dst, const char *src) {
 }
 
 void uoCb_publish_logMessage(const LogMessage &msg) {
-  LockGuard lock(uoCb_mutex);
+  //LockGuard lock(uoCb_mutex);
 
   uo_flagsT flags;
   flags.evt.gen_app_log_message = true;
