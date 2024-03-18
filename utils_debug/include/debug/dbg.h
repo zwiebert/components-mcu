@@ -1,14 +1,17 @@
 #ifdef __cplusplus
 
+
+
+
+extern "C++" {
+
 #include <cstdlib>
 #include <unistd.h>
 
-template<typename T>
-  T rando(T low_limit, T high_limit) {
-    return low_limit + static_cast<T>(rand()) / (static_cast<T>(RAND_MAX / (high_limit - low_limit)));
- }
-
-  extern "C++" {
+  template<typename T>
+    T rando(T low_limit, T high_limit) {
+      return low_limit + static_cast<T>(rand()) / (static_cast<T>(RAND_MAX / (high_limit - low_limit)));
+   }
 #endif
 #pragma once
 
