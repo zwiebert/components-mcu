@@ -15,11 +15,13 @@
 #include "txtio/inout.h"
 #include "cli/mutex.h"
 #include "uout/status_json.hh"
-#include "debug/dbg.h"
+#include "debug/log.h"
 #include "jsmn/jsmn.h"
 #include <string.h>
 
 #define D(x)
+#define L(x) x
+#define logtag "process_cmdline"
 
 bool (*cli_hook_checkPassword)(clpar p[], int len, const class UoutWriter &td);
 bool (*cli_hook_process_json)(char *json);
@@ -53,7 +55,7 @@ static char* stringFromToken(char *json, const jsmntok_t *tok) {
   return json + tok->start;
 }
 static void parse_and_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm) {
-  dbg_vpf(db_printf("process_json: %s\n", json));
+  L(db_logi(logtag, "process_json: %s", json));
 
   jsmn_parser jsp;
 #define MAX_TOKENS 24
@@ -76,7 +78,7 @@ static void parse_and_process_json(char *json, const class UoutWriter &td, proce
           cmd_obj = stringFromToken(json, &tok[i - 1]);
         }
 
-        D(db_printf("cmd_obj: <%s>\n", cmd_obj ? cmd_obj : ""));
+        D(db_logi(logtag, "cmd_obj: <%s>", cmd_obj ? cmd_obj : ""));
 
         if (cmd_obj && strcmp(cmd_obj, "json") == 0) {
           int n = handle_parm_json(json, tok, cmd_obj);
@@ -93,7 +95,7 @@ static void parse_and_process_json(char *json, const class UoutWriter &td, proce
             par[pi].val = stringFromToken(json, &tok[i]);
             ++pi;
             --n_childs;
-          } D(db_printf("proc_parm: %s\n", par->key));
+          } D(db_logi(logtag, "proc_parm: %s", par->key));
           proc_parm(par, pi, td);
         }
       }
@@ -104,7 +106,7 @@ static void parse_and_process_json(char *json, const class UoutWriter &td, proce
 //////////////////////////////public//////////////////////////////////////////////////////
 
 int cli_processParameters(clpar p[], int len, const class UoutWriter &td) {
-  precond(len > 0);
+  assert(len > 0);
 
   if (!cli_parmHandler_find_cb)
     return -1;
@@ -118,7 +120,7 @@ int cli_processParameters(clpar p[], int len, const class UoutWriter &td) {
 }
 
 void cli_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm) {
-  dbg_vpf(db_printf("process_json: %s\n", json));
+  L(db_logi(logtag, "process_json: %s", json));
 
   if (cli_hook_process_json && cli_hook_process_json(json))
     return;
@@ -137,7 +139,7 @@ void cli_process_json(char *json, const class UoutWriter &td, process_parm_cb pr
 }
 
 void cli_process_cmdline(char *line, const class UoutWriter &td, process_parm_cb proc_parm) {
-  dbg_vpf(db_printf("process_cmdline: %s\n", line));
+  L(db_logi(logtag, "process_cmdline: %s", line));
   clpar par[20] = { };
   struct cli_parm clp = { .par = par, .size = 20 };
 

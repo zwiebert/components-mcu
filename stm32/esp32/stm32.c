@@ -35,7 +35,7 @@ static struct cfg_stm32 stm32_config;
 
 #define D(x) x
 
-#define TAG "uart1"
+#define TAG "stm32"
 
 /**
  * This is an example which echos any data it receives on UART1 back to the sender,
@@ -64,7 +64,7 @@ static stm32_mode_T stm32_mode = STM32_MODE_NONE;
 bool stm32_isFirmwareRunning(void) { return stm32_mode == STM32_MODE_FIRMWARE; }
 
 void stm32_reset() {
-    ets_printf("reboot stm32\n");
+    ESP_LOGI(TAG, "reboot stm32");
     gpio_set_level(stm32_cfg->reset_gpio, 0);
     vTaskDelay(RESET_PIN_MS / portTICK_PERIOD_MS);
     gpio_set_level(stm32_cfg->reset_gpio, 1);
@@ -107,17 +107,17 @@ int stm32_read_bl(char *buf, unsigned buf_size) {
 static void stm32_configSerial(stm32_mode_T mode) {
   esp_err_t err;
   if (mode == stm32_mode) {
-    D(db_printf("uart1: skip config\n"));
+    D(ESP_LOGI(TAG,"Keep configuration and mode unchanged (mode=%d)", stm32_mode));
     return; // do nothing if mode stays the same
   }
   if (stm32_mode != STM32_MODE_NONE) {
-    D(db_printf("uart1: delete driver\n"));
+    D(ESP_LOGI(TAG,"Delete UARTdriver do. (old_mode=%d, new_mode=%d)", stm32_mode, mode));
     uart_driver_delete(UART_NUM_1);
     stm32_mode = STM32_MODE_NONE;
   }
 
   if (mode == STM32_MODE_NONE) {
-    ESP_LOGI(TAG, "driver succesfully disabled");
+    D(ESP_LOGI(TAG,"Install driver successfully (old_mode=%d, new_mode=%d)", stm32_mode, mode));
     stm32_mode = mode;
     return;
   }
@@ -129,7 +129,7 @@ static void stm32_configSerial(stm32_mode_T mode) {
 
   if (stm32_mode == STM32_MODE_BOOTLOADER) {
     uart_config.parity = UART_PARITY_EVEN;
-    D(db_printf("uart1: even parity\n"));
+    D(ESP_LOGI(TAG, "uart1: even parity\n"));
   }
 
   if ((err = uart_param_config(UART_NUM_1, &uart_config))) {
@@ -147,7 +147,7 @@ static void stm32_configSerial(stm32_mode_T mode) {
     return;
   }
 
-  ESP_LOGI(TAG, "driver succesfully installed");
+  ESP_LOGI(TAG, "uart driver succesfully installed");
   stm32_mode = mode;
 }
 

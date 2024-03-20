@@ -1,3 +1,5 @@
+
+
 #ifdef __cplusplus
 
 
@@ -32,6 +34,7 @@ extern int unit_testing;
 #ifdef MCU_ESP32
 #include <esp_heap_caps.h>
 #include <esp32/rom/ets_sys.h>
+#include <esp_log.h>
 #define db_puts(s) ets_printf("%s\n",s)
 #define db_printf ets_printf
 #else

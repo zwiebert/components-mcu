@@ -33,7 +33,7 @@ float wdd2rvpt_avg(const weather_data wdd[24], unsigned from_hour, unsigned to_h
   return n ? sum / n : 0.0;
 }
 
-float Weather_Irrigation::get_simple_irrigation_factor(int hours) const {
+float Weather_Irrigation::get_simple_irrigation_factor(int hours, const Weather_Adapter_Neutral &adapter) const {
    if (hours > 24 * 7)
      hours = 24 *7;
 
@@ -46,16 +46,16 @@ float Weather_Irrigation::get_simple_irrigation_factor(int hours) const {
   for (int wday = dh.wday;; wday = (wday + 6) % 7)
     for (int hour = dh.hour;; hour = (hour + 23) % 24) {
       if (hours-- <= 0)
-        return n ? sum / n : 0.0;
+        return n ? sum / n : 1.0;
       if (from_hour <= hour && hour <= to_hour) {
         if (auto &wd = get_past_weather_data(wday, hour); wd) {
-          sum += wd2rvpt(wd);
+          sum += adapter.get_factor(wd);
           ++n;
         }
       }
     }
 
-  return 0.0;
+  return 1.0;
 }
 
 #if 0

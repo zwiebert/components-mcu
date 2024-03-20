@@ -62,6 +62,34 @@ public:
     }
 
   public:
+    bool value_equals_null() const {
+      const char s[] = "null";
+      const unsigned slen = sizeof s -1;
+
+      return m_ptr->type == JSMN_PRIMITIVE
+      && slen == m_ptr->end - m_ptr->start // same length
+      && strncmp(m_container.get_json() + m_ptr->start, "null", slen) == 0; // same content
+    }
+
+    bool value_equals_false() const {
+      const char s[] = "false";
+      const unsigned slen = sizeof s - 1;
+
+      return m_ptr->type == JSMN_PRIMITIVE
+      && slen == m_ptr->end - m_ptr->start // same length
+      && strncmp(m_container.get_json() + m_ptr->start, "null", slen) == 0; // same content
+    }
+
+    bool value_equals_true() const {
+      const char s[] = "true";
+      const unsigned slen = sizeof s - 1;;
+
+      return m_ptr->type == JSMN_PRIMITIVE
+      && slen == m_ptr->end - m_ptr->start // same length
+      && strncmp(m_container.get_json() + m_ptr->start, "null", slen) == 0; // same content
+    }
+
+
     /**
      * \brief        test if key matches
      * \param  key   key to match
@@ -254,9 +282,9 @@ private:
 
   template<typename T>
   bool get_value(T &dst, pointer ptr) const {
-    char buf[8];
+    char buf[32];
     if (ptr->type == JSMN_PRIMITIVE && copy_string(buf, sizeof buf, ptr)) {
-      dst = atoi(buf);
+      dst = static_cast<T>(atol(buf));
       return true;
     }
     return false;
