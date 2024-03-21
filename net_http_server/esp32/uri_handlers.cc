@@ -14,7 +14,7 @@
 
 #include <fcntl.h>
 
-static const char *TAG = "APP";
+static const char *TAG = "http_handler";
 
 #ifdef CONFIG_APP_USE_WS
 /*
