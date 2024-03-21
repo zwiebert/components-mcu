@@ -12,6 +12,19 @@ private:
   void *mHandle;
 };
 
+class MutexRecursive_with_logging {
+public:
+  MutexRecursive_with_logging();
+  void lock();
+  bool try_lock();
+  void unlock();
+
+private:
+  void *mHandle;
+};
+
+
+
 class MutexDummy {
 public:
   inline void lock() {
@@ -21,6 +34,13 @@ public:
   }
   inline void unlock() {
   }
+};
+
+class MutexDummy_with_logging {
+public:
+  void lock();
+  bool try_lock();
+  void unlock();
 };
 
 #include <mutex>

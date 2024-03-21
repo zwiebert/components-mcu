@@ -5,26 +5,43 @@
 
 #include <stdio.h>
 
-
 static uoCb_cbsT uoCb_cbs[cbs_size]; ///< store call-back pointers
-static uoCb_Idxs uoCb_cbs_idxs; ///< keep indexes of all currently registered call-backs
+static bool uoCb_cbs_enable[cbs_size]; ///< enable/disable call backs (to avoid shifting them around)
 
+using OurMutex = RecMutex;
+using OurLockGuard = std::lock_guard<OurMutex>;
 
-static RecMutex uoCb_mutex;  ///< lock for every public function which accesses uoCb_xxx
+/*
+ * \brief protect while modifying callback arrays uoCb_cbs, uoCb_cbs_enable
+ *        To prevent deadlock: Do not* lock when calling external functions which may run into other mutex/semaphore
+ *
+ */
+static OurMutex uoCb_mutex;
 
 /////////////////// Filter /////////////////////////////////////
+static uoCb_Idxs get_all_callbacks() {
+  OurLockGuard lock(uoCb_mutex);
+
+  auto result = uoCb_Idxs();
+
+  for (int i = 0; i < cbs_size; ++i) {
+    if (!uoCb_cbs_enable[i])
+      continue;
+
+    result.arr[result.size++] = i;
+  }
+
+  return result;
+}
 
 // public
 
-/**
- * FIXME: the results may be invalid if uoCb_cbs is modified (we have mutex now, but it did crash until then with calling a null-fun-pointer)
- */
 uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs) {
-  //LockGuard lock(uoCb_mutex);
+  OurLockGuard lock(uoCb_mutex);
   uoCb_Idxs result { };
 
-  for (auto i = 0; i < uoCb_cbs_idxs.size; ++i) {
-    auto &it = uoCb_cbs[uoCb_cbs_idxs.arr[i]];
+  for (auto i = 0; i < idxs.size; ++i) {
+    auto &it = uoCb_cbs[idxs.arr[i]];
     if (0 == (it.flags.evt_flags & flags.evt_flags) && 0 == (it.flags.tgt_flags & flags.tgt_flags))
       continue;
     if (0 == (it.flags.fmt_flags & flags.fmt_flags))
@@ -36,50 +53,54 @@ uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs) {
 }
 
 uoCb_Idxs uoCb_filter(uo_flagsT flags) {
-  return uoCb_filter(flags, uoCb_cbs_idxs);
+  return uoCb_filter(flags, get_all_callbacks());
 }
 
 /////////////////////// Subscriptions /////////////////////////////
 
-static void uoCb_update_idxs() {
-  uoCb_cbs_idxs.size = 0;
-  for (auto &it : uoCb_cbs) {
-    if (!it.cb)
-      continue;
-    uoCb_cbs_idxs.arr[uoCb_cbs_idxs.size++] = &it - &uoCb_cbs[0];
-  }
-}
-
 // public
 
 bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags) {
-  //LockGuard lock(uoCb_mutex);
+  OurLockGuard lock(uoCb_mutex);
   precond(msg_cb);
 
-  for (auto &it : uoCb_cbs) {
-    if (it.cb) {
-      continue;
+  // pass-0: try to update or re-enable previous subscribed callback
+  // pass-1: register in empty slot preserving any un-subscribed callback
+  // pass-2: register in disabled slot
+  for (int pass = 0; pass < 3; ++pass) {
+    for (int i = 0; i < cbs_size; ++i) {
+      if (pass == 0 && uoCb_cbs[i].cb != msg_cb)
+        continue;
+      if (pass == 1 && uoCb_cbs[i].cb)
+        continue;
+      if (pass == 2 && uoCb_cbs_enable[i])
+        continue;
+
+      uoCb_cbs[i].cb = msg_cb;
+      uoCb_cbs[i].flags = flags;
+      uoCb_cbs_enable[i] = true;
+      return true;
+
     }
-    it.cb = msg_cb;
-    it.flags = flags;
-    uoCb_update_idxs();
-    return true;
   }
+
   return false;
+
 }
 
 bool uoCb_unsubscribe(uoCb_cbT msg_cb) {
-  //LockGuard lock(uoCb_mutex);
+  OurLockGuard lock(uoCb_mutex);
   precond(msg_cb);
 
-  for (auto &it : uoCb_cbs) {
-    if (it.cb != msg_cb)
+  for (int i = 0; i < cbs_size; ++i) {
+    if (uoCb_cbs[i].cb != msg_cb)
       continue;
-    it.cb = nullptr;
-    it.flags.evt_flags = it.flags.fmt_flags = it.flags.tgt_flags = 0;
-    uoCb_update_idxs();
+
+    uoCb_cbs_enable[i] = false;
     return true;
+
   }
+
   return false;
 }
 
@@ -94,7 +115,7 @@ static void uoCb_publish(uoCb_cbT cb, const void *ptr, uo_flagsT flags) {
 // public
 
 void uoCb_publish(uoCb_Idxs idxs, const void *ptr, uo_flagsT flags) {
-  //LockGuard lock(uoCb_mutex);
+  /*deadlock*/ //OurLockGuard lock(uoCb_mutex);
   for (auto i = 0; i < idxs.size; ++i) {
     auto cb = uoCb_cbs[idxs.arr[i]].cb;
     if (!cb)
@@ -104,7 +125,7 @@ void uoCb_publish(uoCb_Idxs idxs, const void *ptr, uo_flagsT flags) {
 }
 
 void uoCb_publish_wsJson(const char *json) {
-  //LockGuard lock(uoCb_mutex);
+  /*deadlock*/ //OurLockGuard lock(uoCb_mutex);
   for (auto const &it : uoCb_cbs) {
     if (!it.cb)
       continue;
@@ -121,8 +142,7 @@ void uoCb_publish_wsJson(const char *json) {
 }
 
 void uoCb_publish_pinChange(const so_arg_pch_t args) {
-  //LockGuard lock(uoCb_mutex);
-
+  /*deadlock*/ //OurLockGuard lock(uoCb_mutex);
   uo_flagsT flags;
   flags.evt.pin_change = true;
 
@@ -141,8 +161,7 @@ void uoCb_publish_pinChange(const so_arg_pch_t args) {
 }
 
 void uoCb_publish_ipAddress(const char *ip_addr) {
-  //LockGuard lock(uoCb_mutex);
-
+  /*deadlock*/ //OurLockGuard lock(uoCb_mutex);
   uo_flagsT flags;
   flags.evt.ip_address_change = true;
 
@@ -181,8 +200,7 @@ static void quote_string(char *dst, const char *src) {
 }
 
 void uoCb_publish_logMessage(const LogMessage &msg) {
-  //LockGuard lock(uoCb_mutex);
-
+  /*deadlock*/ //OurLockGuard lock(uoCb_mutex);
   uo_flagsT flags;
   flags.evt.gen_app_log_message = true;
   if ((int) msg.warn_level > (int) LogMessage::wl_Info)
