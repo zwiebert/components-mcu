@@ -1,21 +1,21 @@
 #include <uout/so_target_desc.hh>
 #include <stdio.h>
 
-int UoutRawWriter::write(const char *s, ssize_t len, bool final) const {
+int UoutRawWriter::write(const char *s, ssize_t len, bool last)  const {
   if (len < 0) {
     len = strlen(s);
   }
 
-  return priv_write(s, len, final);
+  return priv_write(s, len, last);
 }
 
-int UoutRawWriter::writeln(const char *s, ssize_t len, bool final) const {
+int UoutRawWriter::writeln(const char *s, ssize_t len, bool last)  const {
   if (len < 0) {
     len = strlen(s);
   }
 
   if (ssize_t n = priv_write(s, len, false); n == len)
-    if (write("\n", 1, final) == 1)
+    if (write("\n", 1, last) == 1)
       return n + 1;
   return -1;
 }
@@ -24,7 +24,7 @@ int UoutRawWriter::write(const char c) const {
   return write(&c, 1);
 }
 
-int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool final) const {
+int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool last) const  {
   const size_t size = len;
   assert(size < 4096);
 
@@ -57,13 +57,6 @@ int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool final) const 
   return len;
 }
 
-int UoutWriterWebsocket::priv_write(const char *s, ssize_t len, bool final) const {
-  if (myReq && myWriteReqFn) {
-    return myWriteReqFn(myReq, s, len, final);
-  }
-  return -1;
-}
-
 #include <fcntl.h>
 
 //#include "esp_log.h"
@@ -77,11 +70,11 @@ UoutWriterFile::~UoutWriterFile() {
   ::close(m_ofd);
 }
 
-int UoutWriterFile::priv_write(const char *s, ssize_t len, bool final) const {
+int UoutWriterFile::priv_write(const char *s, ssize_t len, bool last)  const {
   const size_t size = len;
   assert(size < 2046);
 
-  //ESP_LOGI("priv_write", "s=<%*s>, final=%d", len, s, (int)final);
+  //ESP_LOGI("priv_write", "s=<%*s>, last=%d", len, s, (int)last);
 
   const char crlf[] = "\r\n";
   const unsigned crlf_len = sizeof crlf - 1;

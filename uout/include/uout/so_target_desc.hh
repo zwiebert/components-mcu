@@ -12,7 +12,7 @@
 #include <string.h>
 #include <assert.h>
 #include <utils_misc/itoa.h>
-
+#include <functional>
 #include <utility>
 
 /**
@@ -28,19 +28,19 @@ public:
    * \brief        write output
    * \param s      output string
    * \param len    length of output string, or -1 for a null terminated string
-   * \param final  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
+   * \param last   On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return       Number of bytes written.  On error returns -1.
    */
-  int write(const char *s, ssize_t len = -1, bool final = false) const;
+  int write(const char *s, ssize_t len = -1, bool last = false) const;
 
   /**
    * \brief        write output line
    * \param s      output string (a line-feed will be appended)
    * \param len    length of output string, or -1 for a null terminated string
-   * \param final  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
+   * \param last  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return       Number of bytes written.  On error returns -1.
    */
-  int writeln(const char *s, ssize_t len = -1, bool final = false) const;
+  int writeln(const char *s, ssize_t len = -1, bool last = false) const;
 
   /**
    * \brief   write a single character (non final)
@@ -82,10 +82,10 @@ private:
   /**
    * \brief        do-nothing-stub for a write function to be overridden
    * \param s,len  string and string length to write
-   * \param final  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
+   * \param last  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return   -1
    */
-  virtual int priv_write(const char *s, ssize_t len, bool final) const {
+  virtual int priv_write(const char *s, ssize_t len, bool last) const  {
     // do nothing
     return -1;
   }
@@ -145,7 +145,7 @@ protected:
  * \brief Target descriptor for console (e.g. USART, TCP)
  */
 class UoutWriterConsole final: public UoutWriter {
-  typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
+  typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool last);
 public:
   UoutWriterConsole(so_target_bits tgt = SO_TGT_NONE) :
     UoutWriter(tgt) {
@@ -161,40 +161,52 @@ public:
 
 
 private:
-  virtual int priv_write(const char *s, ssize_t len, bool final) const;
+  virtual int priv_write(const char *s, ssize_t len, bool last) const override;
 private:
   int myFd = STDOUT_FILENO;
 };
 
 
 /**
- * \brief  Target descriptor for web-socket
+ * \brief  Target descriptor with callback function object (for http req, web-socket, ...)
  */
-class UoutWriterWebsocket final: public UoutWriter {
-  using writeReq_fnT = int (*)(void *req, const char *s, ssize_t len, bool final);
+class UoutWriterFunction final: public UoutWriter {
 public:
-  UoutWriterWebsocket(void *req, so_target_bits tgt, writeReq_fnT writeReq_fn) :
-    UoutWriter(tgt), myReq(req), myWriteReqFn(writeReq_fn) {
+  using write_callback_type = std::function<int(const char *src, ssize_t src_len, int is_final)>;
+public:
+  UoutWriterFunction(write_callback_type write_callback, so_target_bits tgt) :
+    UoutWriter(tgt), m_write_callback(write_callback) {
   }
 
-  UoutWriterWebsocket(const UoutWriterWebsocket&) = delete;
-  virtual ~UoutWriterWebsocket() {
-    mySj.write_json(true); // write all json synchronously and close websocket request
+  UoutWriterFunction(const UoutWriterFunction&) = delete;
+  virtual ~UoutWriterFunction() {
+    mySj.write_json(true); // write all remaining json
   }
 
 private:
-  virtual int priv_write(const char *s, ssize_t len, bool final) const;
+  virtual int priv_write(const char *src, ssize_t src_len, bool is_final) const  override {
+    int chunk_status = is_final ? -1 : 0;
+    if (is_final && nmb_chunks_written)
+      chunk_status = nmb_chunks_written;
+
+    int n = m_write_callback(src, src_len, chunk_status);
+
+    if (n > 0)
+      ++nmb_chunks_written;
+
+    return n;
+  }
 
 private:
-  void *myReq = nullptr;
-  writeReq_fnT myWriteReqFn = nullptr;
+  write_callback_type m_write_callback;
+  mutable int nmb_chunks_written = 0;
 };
 
 /**
  * \brief Target descriptor for files
  */
 class UoutWriterFile final: public UoutWriter {
-  typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
+  typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool last);
 public:
   UoutWriterFile(so_target_bits tgt = SO_TGT_NONE) :
     UoutWriter(tgt) {
@@ -209,7 +221,7 @@ public:
 
 
 private:
-  virtual int priv_write(const char *s, ssize_t len, bool final) const;
+  virtual int priv_write(const char *s, ssize_t len, bool last) const override;
 private:
   int myFd = STDOUT_FILENO;
   int m_ofd = -1;
