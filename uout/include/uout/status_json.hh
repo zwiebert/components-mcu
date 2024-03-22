@@ -5,6 +5,7 @@
 #pragma once
 
 #include <stdlib.h>
+#include <functional>
 
 /**
  * \brief Build JSON output gradually by calling member functions (with key/value parameters).
@@ -39,8 +40,9 @@ public:
 
 
 
+  int read_json_from_function(std::function<int(char *buf, size_t buf_size)> f, size_t required_size = 256);
   // copy/cat some json int buf
-  bool copy_to_buf(const char *s); ///< \brief Copy some external JSON into this object's buffer (buffer will be overwritten)
+   bool copy_to_buf(const char *s); ///< \brief Copy some external JSON into this object's buffer (buffer will be overwritten)
   bool cat_to_buf(const char *s); ///< \brief Append some external JSON to this object's buffer
 
   char* get_json() const; ///< \brief  Get this objects JSON as null terminated string (ownership remains to this object)
@@ -51,8 +53,8 @@ public:
 
 private:
   bool realloc_buffer(size_t buf_size);
-  bool not_enough_buffer(const char *key, const char *val);
-  bool buffer_grow();
+  bool not_enough_buffer(const char *key = "", const char *val = nullptr);
+  bool buffer_grow(size_t required_free_space = 0);
 
   char *myBuf = 0;
   size_t myBuf_size = 0;

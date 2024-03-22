@@ -56,17 +56,27 @@ void UoutBuilderJson::free_buffer() {
   myBuf_size = 0;
 }
 
-bool UoutBuilderJson::buffer_grow() {
+bool UoutBuilderJson::buffer_grow(size_t required_free_space) {
+  // Try to free up enough space
+  if (myBuf && myBuf_idx) {
+    write_some_json();
+   if (required_free_space && required_free_space < myBuf_size - myBuf_idx)
+     return true;
+  }
+
+  // refuse to realloc user provide buffer
   if (!myBuf_isMine)
     return false;
 
+  // realloc() our buffer
   size_t new_size = 0;
-
-  if (myBuf_size == 0) {
+  if (required_free_space) {
+    new_size = required_free_space + myBuf_idx;
+  } else if (myBuf_size == 0) {
     new_size = 128;
   } else {
     new_size = myBuf_size * 2;
-  } D(db_printf("sj_buffer_grow to %d\n", (int)new_size));
+  }D(db_printf("sj_buffer_grow to %d\n", (int)new_size));
   return realloc_buffer(new_size);
 }
 
@@ -92,6 +102,20 @@ bool UoutBuilderJson::not_enough_buffer(const char *key, const char *val) {
   postcond(myBuf);
   return false;
 }
+
+int UoutBuilderJson::read_json_from_function(std::function<int(char *buf, size_t buf_size)> f, size_t required_size) {
+  if (myBuf_size < myBuf_idx + required_size) {
+    if (!buffer_grow(required_size)) {
+      return -1;
+    }
+  }
+  int n = f(myBuf + myBuf_idx, myBuf_size - myBuf_idx);
+
+  if (n > 0)
+    myBuf_idx += n;
+  return n;
+}
+
 
 bool UoutBuilderJson::copy_to_buf(const char *s) {
   if (not_enough_buffer(s, 0))
@@ -159,6 +183,9 @@ void UoutBuilderJson::close_object() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);
   precond(myBuf_idx > 0 && m_obj_ct > 1);
+  if (not_enough_buffer())
+    return;
+
   if (myBuf[myBuf_idx - 1] == ',') { // remove trailing comma...
     --myBuf_idx;
   }
