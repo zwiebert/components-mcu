@@ -11,6 +11,7 @@
 #include "utils_misc/int_macros.h"
 #include "txtio/inout.h"
 #include "debug/dbg.h"
+#include "debug/log.h"
 
 #include <string.h>
 #include <utils_misc/cstring_utils.hh>
@@ -22,17 +23,21 @@
 
 #define D(x)
 
-#define BUF_MAX_SIZE 1024
+#define BUF_MAX_SIZE 2048
 #define unused_write_out_buf()
 
 #define myBuf_freeSize (myBuf_size - myBuf_idx)
 #define myBuf_cursor (myBuf + myBuf_idx)
 
+#define logtag "json_builder"
+
 ///////////////////////////////////////Private/////////////////////////////
 bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
   precond(buf_size > myBuf_idx);
-  if (buf_size > BUF_MAX_SIZE)
+  if (buf_size > BUF_MAX_SIZE) {
+    db_loge(logtag, "%s: maximal buffer size is %d, but requested: %d", __func__, BUF_MAX_SIZE, buf_size);
     return false;
+  }
 
   void *m = realloc(myBuf, buf_size);
 
@@ -60,7 +65,7 @@ bool UoutBuilderJson::buffer_grow(size_t required_free_space) {
   // Try to free up enough space
   if (myBuf && myBuf_idx) {
     write_some_json();
-   if (required_free_space && required_free_space < myBuf_size - myBuf_idx)
+   if (required_free_space + 20 < myBuf_size - myBuf_idx) // XXX: improve this
      return true;
   }
 
@@ -184,7 +189,7 @@ void UoutBuilderJson::close_object() {
   precond(myBuf);
   precond(myBuf_idx > 0 && m_obj_ct > 1);
   if (not_enough_buffer())
-    return;
+    abort();
 
   if (myBuf[myBuf_idx - 1] == ',') { // remove trailing comma...
     --myBuf_idx;
@@ -212,6 +217,9 @@ void UoutBuilderJson::close_array() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);
   precond(myBuf_idx > 0 && m_obj_ct > 1);
+  if (not_enough_buffer())
+    abort();
+
   if (myBuf[myBuf_idx - 1] == ',') { // remove trailing comma...
     --myBuf_idx;
   }
@@ -224,6 +232,9 @@ void UoutBuilderJson::close_root_object() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf && m_obj_ct == 1);
   precond(myBuf_idx > 0);
+  if (not_enough_buffer())
+    abort();
+
   if (myBuf[myBuf_idx - 1] == ',') { // remove trailing comma...
     --myBuf_idx;
   }
@@ -366,9 +377,13 @@ int UoutBuilderJson::write_some_json()  {
 
   if (const char *json = myBuf) {
     int n = myTd->write(json, myBuf_idx - 1, false);
-    auto last_char = myBuf[myBuf_idx - 1];
-    myBuf[0] = last_char;
-    myBuf_idx = 1;
+    if (n <= 0)
+      return n;
+
+    if (n < myBuf_idx)
+      memcpy(myBuf, myBuf + n, myBuf_idx - n);
+
+    myBuf_idx -= n;
     return n;
   }
   return -1;
