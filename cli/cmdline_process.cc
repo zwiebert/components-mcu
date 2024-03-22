@@ -113,11 +113,7 @@ int cli_processParameters(clpar p[], int len, class UoutWriter &td) {
 
   const char *parm = p[0].key;
   if (auto handler = cli_parmHandler_find_cb(parm)) {
-    if (td.sj().open_root_object("tfmcu")) {
-      return handler->process_parmX(p, len, td);
-      td.sj().close_root_object();
-    }
-
+    return handler->process_parmX(p, len, td);
   }
 
   return -1;

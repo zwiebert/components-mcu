@@ -190,15 +190,18 @@ public:
 
 private:
   virtual int priv_write(const char *src, ssize_t src_len, bool is_final) override {
+    bool no_fragments = is_final && !nmb_chunks_written;
 
-    int chunk_status = is_final ? -1 : 0;
-    if (is_final && nmb_chunks_written)
-      chunk_status = nmb_chunks_written;
+    int chunk_status = no_fragments ? 0 :
+        (is_final ?  (nmb_chunks_written + 1) : (nmb_chunks_written+1) * -1);
 
     int n = m_write_callback(src, src_len, chunk_status);
 
     if (n > 0)
       ++nmb_chunks_written;
+
+    if (is_final)
+      nmb_chunks_written = 0;
 
     return n;
   }

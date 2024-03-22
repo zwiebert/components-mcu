@@ -140,6 +140,7 @@ bool UoutBuilderJson::cat_to_buf(const char *s) {
 
 bool UoutBuilderJson::open_root_object(const char *id) {
   D(db_printf("%s()\n", __func__));
+  precond(m_obj_ct == 0);
   myBuf_idx = m_obj_ct = 0;
   if (not_enough_buffer(id, 0))
     return false;

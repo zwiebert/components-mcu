@@ -15,7 +15,7 @@
 #include <fcntl.h>
 
 static const char *TAG = "http_handler";
-#define D(x) x
+#define D(x)
 
 #ifdef CONFIG_APP_USE_WS
 /*
@@ -71,18 +71,19 @@ void ws_send_json(const char *json, ssize_t len) {
 }
 
 int ws_write(void *req, const char *s, ssize_t s_len, int chunk_status) {
-  /* Disable fragments here, because of error, but I can't find a reason
-   * error: Received start of new message but previous message is unfinished.
-   */
-  if (chunk_status != -1)
-    return 0;
-
   const size_t len = s_len < 0 ? strlen(s) : (size_t) s_len;
+
+  const bool first_chunk = chunk_status == 0 || chunk_status == -1;
+  const bool single_chunk = chunk_status == 0;
+  const bool final_chunk = 0 <= chunk_status; // 0 or total number of chunks
+
+
   D(ESP_LOGE(TAG, "ws_write(%p, <%s>, len=%d, chunk=%d", req, s, (int)s_len, chunk_status));
   httpd_ws_frame_t ws_pkt = {
-      .final = chunk_status > 0,
-      .fragmented = chunk_status != -1,
-      .type = HTTPD_WS_TYPE_TEXT, .payload = (uint8_t*) s, .len = len };
+      .final = final_chunk,
+      .fragmented = !single_chunk,
+      .type =  first_chunk ? HTTPD_WS_TYPE_TEXT : HTTPD_WS_TYPE_CONTINUE,
+      .payload = (uint8_t*) s, .len = len };
   if (auto res = httpd_ws_send_frame((httpd_req_t*) req, &ws_pkt); res != ESP_OK) {
     ESP_LOGE(TAG, "httpd_ws_send_frame failed with %d (%s)", res, esp_err_to_name(res));
     return -1;
