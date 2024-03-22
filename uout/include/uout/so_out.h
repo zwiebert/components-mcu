@@ -22,7 +22,7 @@ public:
    * \param td       Target descriptor which describes the wanted output formats and may hold a write function to print the output immediately
    *                 SO_TGT_FLAG_TXT and SO_TGT_FLAG_JSON are supported in td.myTgt
    */
-  UoutPrinter(const class UoutWriter &td) :
+  UoutPrinter(class UoutWriter &td) :
       myTd(td) {
   }
 public:

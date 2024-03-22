@@ -13,16 +13,16 @@ extern uint16_t cli_msgid;
 
 
 
-void cli_replySuccess(const class UoutWriter &td) {
+void cli_replySuccess(class UoutWriter &td) {
   reply_message(td, 0, "ok");
 }
 
-int cli_replyFailure(const class UoutWriter &td) {
+int cli_replyFailure(class UoutWriter &td) {
   reply_message(td, 0, "error");
   return -1;
 }
 
-bool cli_replyResult(const class UoutWriter &td, bool success) {
+bool cli_replyResult(class UoutWriter &td, bool success) {
   if (success)
     cli_replySuccess(td);
   else
@@ -31,14 +31,14 @@ bool cli_replyResult(const class UoutWriter &td, bool success) {
 }
 
 extern int ENR; // error number
-void  print_enr(const class UoutWriter &td) {
+void  print_enr(class UoutWriter &td) {
   char buf[64];
   if (int n = snprintf(buf, sizeof buf, "enr: %d\n", ENR); n > 0 && n < sizeof buf) {
     td.write(buf, n);
   }
 }
 
-void msg_print(const class UoutWriter &td, const char *msg, const char *tag) {
+void msg_print(class UoutWriter &td, const char *msg, const char *tag) {
   if (!cli_isInteractive())
     return;
   if (msg)
@@ -56,19 +56,19 @@ void msg_print(const class UoutWriter &td, const char *msg, const char *tag) {
   td.write(": ");
 }
 
-void  cli_warning_optionUnknown(const class UoutWriter &td, const char *key) {
+void  cli_warning_optionUnknown(class UoutWriter &td, const char *key) {
  if (!cli_isInteractive())
     return;
   msg_print(td, "warning", "unknown-option"), td.write(key), td.write('\n');
 }
 
-void  cli_reply_print(const class UoutWriter &td, const char *tag) {
+void  cli_reply_print(class UoutWriter &td, const char *tag) {
  if (!cli_isInteractive())
     return;
   msg_print(td, "cli_reply", tag);
 }
 
-void  reply_message(const class UoutWriter &td, const char *tag, const char *msg) {
+void  reply_message(class UoutWriter &td, const char *tag, const char *msg) {
  if (!cli_isInteractive())
     return;
   cli_reply_print(td, tag);
@@ -77,13 +77,13 @@ void  reply_message(const class UoutWriter &td, const char *tag, const char *msg
   td.write('\n');
 }
 
-void  cli_msg_ready(const class UoutWriter &td) {
+void  cli_msg_ready(class UoutWriter &td) {
  if (!cli_isInteractive())
     return;
   td.write("\nready:\n");
 }
 
-void  reply_id_message(const class UoutWriter &td, uint16_t id, const char *tag, const char *msg) {
+void  reply_id_message(class UoutWriter &td, uint16_t id, const char *tag, const char *msg) {
   uint16_t old_id = cli_msgid;
  if (!cli_isInteractive())
     return;

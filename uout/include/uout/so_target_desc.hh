@@ -31,7 +31,8 @@ public:
    * \param last   On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return       Number of bytes written.  On error returns -1.
    */
-  int write(const char *s, ssize_t len = -1, bool last = false) const;
+  int write(const char *s, ssize_t len = -1, bool last = false);
+
 
   /**
    * \brief        write output line
@@ -40,26 +41,28 @@ public:
    * \param last  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return       Number of bytes written.  On error returns -1.
    */
-  int writeln(const char *s, ssize_t len = -1, bool last = false) const;
+
+  int writeln(const char *s, ssize_t len = -1, bool last = false);
+
 
   /**
    * \brief   write a single character (non final)
    */
-  int write(const char c) const;
+  int write(const char c);
 
 public:
   /// \brief  write to output (non-final)
-  friend const UoutRawWriter& operator<<(const UoutRawWriter& lhs, const char *s) {
+  friend  UoutRawWriter& operator<<( UoutRawWriter& lhs, const char *s) {
     lhs.write(s);
     return lhs;
   }
   /// \brief  write to output (non-final)
-  friend const UoutRawWriter& operator<<(const UoutRawWriter& lhs, char c) {
+  friend  UoutRawWriter& operator<<( UoutRawWriter& lhs, char c) {
     lhs.write(c);
     return lhs;
   }
   /// \brief  write to output (non-final)
-  friend const UoutRawWriter& operator<<(const UoutRawWriter& lhs, int n) {
+  friend  UoutRawWriter& operator<<( UoutRawWriter& lhs, int n) {
     char buf[20];
     itoa(n, buf, 10);
     lhs.write(buf);
@@ -71,7 +74,7 @@ public:
     bool lf:1 = false;
   };
   /// \brief  write to output with modifiers XXX: currently unused/untested
-  friend const UoutRawWriter& operator<<(const UoutRawWriter &lhs, const std::pair<UoutRawWriter::mod, const char*> &mod_s) {
+  friend UoutRawWriter& operator<<(UoutRawWriter &lhs, const std::pair<UoutRawWriter::mod, const char*> &mod_s) {
     if (mod_s.first.lf)
       lhs.writeln(mod_s.second, -1, mod_s.first.fin);
     else
@@ -85,7 +88,8 @@ private:
    * \param last  On subsequent writes, mark the last write as final (required for e.g. web-socket target)
    * \return   -1
    */
-  virtual int priv_write(const char *s, ssize_t len, bool last) const  {
+
+  virtual int priv_write(const char *s, ssize_t len, bool last)  {
     // do nothing
     return -1;
   }
@@ -161,7 +165,8 @@ public:
 
 
 private:
-  virtual int priv_write(const char *s, ssize_t len, bool last) const override;
+  virtual int priv_write(const char *s, ssize_t len, bool last) override;
+
 private:
   int myFd = STDOUT_FILENO;
 };
@@ -184,7 +189,8 @@ public:
   }
 
 private:
-  virtual int priv_write(const char *src, ssize_t src_len, bool is_final) const  override {
+  virtual int priv_write(const char *src, ssize_t src_len, bool is_final) override {
+
     int chunk_status = is_final ? -1 : 0;
     if (is_final && nmb_chunks_written)
       chunk_status = nmb_chunks_written;
@@ -199,7 +205,7 @@ private:
 
 private:
   write_callback_type m_write_callback;
-  mutable int nmb_chunks_written = 0;
+  int nmb_chunks_written = 0;
 };
 
 /**
@@ -221,7 +227,7 @@ public:
 
 
 private:
-  virtual int priv_write(const char *s, ssize_t len, bool last) const override;
+  virtual int priv_write(const char *s, ssize_t len, bool last) override;
 private:
   int myFd = STDOUT_FILENO;
   int m_ofd = -1;

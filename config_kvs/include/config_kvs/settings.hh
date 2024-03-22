@@ -19,7 +19,7 @@ enum StoreFun : uint8_t {
 };
 
 struct SettingsData {
-  using soCfgFunT = void (*)(const UoutWriter &td);
+  using soCfgFunT = void (*)(UoutWriter &td);
   using storeFunOkT = void (*)(otok key, const char *val);
   const char *kvs_key;
   soCfgFunT so_cfg_fun;
@@ -51,7 +51,7 @@ template<typename CfgItem>
 class SettingsBase : public Settings1stBase{
 
 public:
-  using soCfgFunT = void (*)(const UoutWriter &td);
+  using soCfgFunT = void (*)(UoutWriter &td);
   using storeFunOkT = void (*)(otok key, const char *val);
 
 public:

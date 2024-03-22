@@ -7,17 +7,17 @@
 #include <stdint.h>
 
 
-void cli_warning_optionUnknown(const class UoutWriter &td, const char *key);
-void reply_id_message(const class UoutWriter &td, uint16_t id, const char *tag, const char *msg);
-void reply_message(const class UoutWriter &td, const char *tag, const char *msg);
+void cli_warning_optionUnknown(class UoutWriter &td, const char *key);
+void reply_id_message(class UoutWriter &td, uint16_t id, const char *tag, const char *msg);
+void reply_message(class UoutWriter &td, const char *tag, const char *msg);
 
-bool cli_replyResult(const class UoutWriter &td, bool success);
-void cli_replySuccess(const class UoutWriter &td);
-int cli_replyFailure(const class UoutWriter &td);
-void print_enr(const class UoutWriter &td);
+bool cli_replyResult(class UoutWriter &td, bool success);
+void cli_replySuccess(class UoutWriter &td);
+int cli_replyFailure(class UoutWriter &td);
+void print_enr(class UoutWriter &td);
 
 /// print command prompt
-void cli_msg_ready(const class UoutWriter &td);
+void cli_msg_ready(class UoutWriter &td);
 
 /**
  * \brief  Print key value pairs as text lines with limited length
@@ -26,7 +26,7 @@ class UoutBuilderPlaintext {
   void  cli_out_entry(const char *key, const char *val, int len);
   void cli_out_start_reply();
 public:
-  UoutBuilderPlaintext(const class UoutWriter &td): myTd(td) {}
+  UoutBuilderPlaintext(class UoutWriter &td): myTd(td) {}
 public:
 
   /**
@@ -48,7 +48,7 @@ public:
 
 private:
   int myLength = 0;
-  const class UoutWriter &myTd;
+  class UoutWriter &myTd;
   char Obj_tag[16] = "";
 };
 

@@ -23,12 +23,12 @@
 #define L(x) x
 #define logtag "process_cmdline"
 
-bool (*cli_hook_checkPassword)(clpar p[], int len, const class UoutWriter &td);
+bool (*cli_hook_checkPassword)(clpar p[], int len, class UoutWriter &td);
 bool (*cli_hook_process_json)(char *json);
 
 /////////////////////////////////private/////////////////////////////////////////////////////////
 static int handle_parm_json(char *json, jsmntok_t *tok, const char *name);
-static void parse_and_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm);
+static void parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm);
 static char* stringFromToken(char *json, const jsmntok_t *tok);
 
 static int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
@@ -54,7 +54,7 @@ static char* stringFromToken(char *json, const jsmntok_t *tok) {
   json[tok->end] = '\0';
   return json + tok->start;
 }
-static void parse_and_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm) {
+static void parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm) {
   L(db_logi(logtag, "process_json: %s", json));
 
   jsmn_parser jsp;
@@ -105,7 +105,7 @@ static void parse_and_process_json(char *json, const class UoutWriter &td, proce
 
 //////////////////////////////public//////////////////////////////////////////////////////
 
-int cli_processParameters(clpar p[], int len, const class UoutWriter &td) {
+int cli_processParameters(clpar p[], int len, class UoutWriter &td) {
   assert(len > 0);
 
   if (!cli_parmHandler_find_cb)
@@ -119,7 +119,7 @@ int cli_processParameters(clpar p[], int len, const class UoutWriter &td) {
   return -1;
 }
 
-void cli_process_json(char *json, const class UoutWriter &td, process_parm_cb proc_parm) {
+void cli_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm) {
   L(db_logi(logtag, "process_json: %s", json));
 
   if (cli_hook_process_json && cli_hook_process_json(json))
@@ -138,7 +138,7 @@ void cli_process_json(char *json, const class UoutWriter &td, process_parm_cb pr
   }
 }
 
-void cli_process_cmdline(char *line, const class UoutWriter &td, process_parm_cb proc_parm) {
+void cli_process_cmdline(char *line, class UoutWriter &td, process_parm_cb proc_parm) {
   L(db_logi(logtag, "process_cmdline: %s", line));
   clpar par[20] = { };
   struct cli_parm clp = { .par = par, .size = 20 };

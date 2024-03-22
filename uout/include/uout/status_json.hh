@@ -11,7 +11,7 @@
  */
 class UoutBuilderJson {
 public:
-  UoutBuilderJson(char *buf, size_t buf_size, const class UoutWriter *td = 0) :
+  UoutBuilderJson(char *buf, size_t buf_size, class UoutWriter *td = 0) :
       myBuf(buf), myBuf_size(buf_size), myBuf_isMine(false), myTd(td) {
   }
   UoutBuilderJson(UoutWriter *td = 0) :
@@ -59,7 +59,7 @@ private:
   int myBuf_idx = 0;
   bool myBuf_isMine = true;
   int m_obj_ct = 0;
-  const class UoutWriter *myTd = 0;
+  class UoutWriter *myTd = 0;
 };
 
 

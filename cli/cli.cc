@@ -54,7 +54,7 @@ void cli_loop(void) {
       }
     }
   } else if (!ready) {
-    const UoutWriterConsole td { (SO_TGT_CLI | SO_TGT_FLAG_TXT)};
+    UoutWriterConsole td { (SO_TGT_CLI | SO_TGT_FLAG_TXT)};
     cli_msg_ready(td);
     ready = true;
   }

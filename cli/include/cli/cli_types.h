@@ -20,7 +20,7 @@ typedef struct {
 /// \brief describing a CLI parameter handler, so it can be found by the framework
 struct parm_handler {
   const char *parm; ///< command name (first word of command line)
-  int (*process_parmX)(clpar p[], int len, const class UoutWriter &td); ///< handler for this command
+  int (*process_parmX)(clpar p[], int len, class UoutWriter &td); ///< handler for this command
   const char *help; ///< help text for this command
 };
 
@@ -56,6 +56,6 @@ enum cli_get_commline_retT {
 };
 
 /// \brief type of parameter handler function
-typedef int (*process_parm_cb)(clpar parm[], int parm_len, const class UoutWriter &td);
+typedef int (*process_parm_cb)(clpar parm[], int parm_len, class UoutWriter &td);
 
 

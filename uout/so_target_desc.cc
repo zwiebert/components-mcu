@@ -1,7 +1,8 @@
 #include <uout/so_target_desc.hh>
 #include <stdio.h>
 
-int UoutRawWriter::write(const char *s, ssize_t len, bool last)  const {
+
+int UoutRawWriter::write(const char *s, ssize_t len, bool last)  {
   if (len < 0) {
     len = strlen(s);
   }
@@ -9,7 +10,8 @@ int UoutRawWriter::write(const char *s, ssize_t len, bool last)  const {
   return priv_write(s, len, last);
 }
 
-int UoutRawWriter::writeln(const char *s, ssize_t len, bool last)  const {
+
+int UoutRawWriter::writeln(const char *s, ssize_t len, bool last)  {
   if (len < 0) {
     len = strlen(s);
   }
@@ -20,11 +22,11 @@ int UoutRawWriter::writeln(const char *s, ssize_t len, bool last)  const {
   return -1;
 }
 
-int UoutRawWriter::write(const char c) const {
+int UoutRawWriter::write(const char c) {
   return write(&c, 1);
 }
 
-int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool last) const  {
+int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool last)  {
   const size_t size = len;
   assert(size < 4096);
 
@@ -70,7 +72,7 @@ UoutWriterFile::~UoutWriterFile() {
   ::close(m_ofd);
 }
 
-int UoutWriterFile::priv_write(const char *s, ssize_t len, bool last)  const {
+int UoutWriterFile::priv_write(const char *s, ssize_t len, bool last)  {
   const size_t size = len;
   assert(size < 2046);
 
