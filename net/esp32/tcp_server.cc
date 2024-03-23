@@ -32,12 +32,15 @@
 #define PUTC_LINE_BUFFER 1
 
 #define printf ets_printf
-#ifndef DISTRIBUTION
-#define DP(x) printf("db:tcps: %s\n", (x))
+#ifdef CONFIG_NET_TCP_CLI_CLIENT_DEBUG
 #define D(x) x
+#define DT(x) x
+#define DP(x) printf("%s: %s\n", logtag, (x))
 #else
 #define D(x)
+#define DT(x)
 #endif
+#define logtag "net.tcp_cli_client"
 
 static int (*old_io_putc_fun)(char c);
 static int (*old_io_getc_fun)(void);

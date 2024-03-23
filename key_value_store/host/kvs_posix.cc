@@ -31,9 +31,15 @@
 
 
 
-
+#ifdef CONFIG_KVS_DEBUG
+#define DEBUG
+#define D(x) x
+#define DT(x) x
+#else
 #define D(x)
 #define DT(x)
+#endif
+#define logtag "kvs"
 
 
 bool kvs_checkMagicCookie(struct line_info *lip, int pos) {

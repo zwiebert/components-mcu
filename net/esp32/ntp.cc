@@ -25,7 +25,13 @@
 #include "esp_sntp.h"
 
 #define printf ets_printf
+#ifdef CONFIG_NET_NTP_CLIENT_DEBUG
+#define D(x) x
+#else
 #define D(x)
+#endif
+#define logtag "net_ntp_client"
+
 
 extern ip_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 

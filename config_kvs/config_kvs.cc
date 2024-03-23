@@ -18,7 +18,13 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define D(x) 
+#ifdef CONFIG_CONFIG_KVS_DEBUG
+#define DEBUG
+#define D(x) x
+#else
+#define D(x)
+#endif
+#define logtag "config_kvs"
 
 
 ///////////////////////////////////////

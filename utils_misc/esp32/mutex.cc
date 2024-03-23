@@ -9,7 +9,13 @@
 #include "assert.h"
 #include <stdlib.h>
 
+#ifdef CONFIG_UTILS_MISC_MUTEX_DEBUG
+#define DEBUG
+#define D(x) x
+#else
 #define D(x)
+#endif
+#define logtag "utils_misc.mutex"
 
 MutexRecursive::MutexRecursive() {
   mHandle = xSemaphoreCreateRecursiveMutex();

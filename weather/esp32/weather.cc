@@ -29,7 +29,7 @@
 
 static const char *TAG = "Weather";
 
-static const char *URL = CONFIG_OPENWEATHERMAP_URL_STRING;
+static const char *URL = CONFIG_WEATHER_OWM_URL_STRING;
 
 static weather_data_callback data_retreived_cb;
 static unsigned long retreival_period;

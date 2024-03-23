@@ -19,9 +19,17 @@
 #include "jsmn/jsmn.h"
 #include <string.h>
 
+
+#ifdef CONFIG_CLI_DEBUG
+#define DEBUG
+#define D(x) x
+#define L(x) x
+#else
 #define D(x)
 #define L(x) x
-#define logtag "process_cmdline"
+#endif
+#define logtag "cli.cmdline_processing"
+
 
 bool (*cli_hook_checkPassword)(clpar p[], int len, class UoutWriter &td);
 bool (*cli_hook_process_json)(char *json);

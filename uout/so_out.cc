@@ -10,7 +10,13 @@
 #include <stdio.h>
 
 
+#ifdef UOUT_DEBUG
+#define DEBUG
+#define D(x) x
+#else
 #define D(x)
+#endif
+#define logtag "uout.so_out"
 
 /////////////////////////Public////////////////////////////////
 bool UoutPrinter::hasOutput_text() const {

@@ -33,9 +33,17 @@ static struct cfg_stm32 stm32_config;
 
 #define STM32_SET_BOOT_PIN(level) gpio_set_level(stm32_cfg->boot_gpio, (!level != !stm32_cfg->boot_gpio_is_inverse));
 
+#ifdef CONFIG_STM32_DEBUG
+#define DEBUG
 #define D(x) x
+#define DD(x) x
+#else
+#define D(x)
+#define DD(x)
+#endif
+#define logtag "stm32"
+#define TAG logtag
 
-#define TAG "stm32"
 
 /**
  * This is an example which echos any data it receives on UART1 back to the sender,

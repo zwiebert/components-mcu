@@ -15,7 +15,12 @@
 #include <fcntl.h>
 
 static const char *TAG = "http_handler";
+#ifdef CONFIG_NET_HTTP_SERVER_DEBUG
+#define DEBUG
+#define D(x) x
+#else
 #define D(x)
+#endif
 
 #ifdef CONFIG_APP_USE_WS
 /*
@@ -40,7 +45,8 @@ struct ws_send_arg {
 
 void ws_async_broadcast(void *arg) {
   auto a = static_cast<ws_send_arg*>(arg);
-  httpd_ws_frame_t ws_pkt = { .final = true, .type = HTTPD_WS_TYPE_TEXT, .payload = (uint8_t*) a->json, .len = a->json_len };
+  D(ESP_LOGE(TAG, "ws_async_broadcast: json=<%s>, fd=%d", a->json, a->fd));
+  httpd_ws_frame_t ws_pkt = { .final = true, .fragmented = false, .type = HTTPD_WS_TYPE_TEXT, .payload = (uint8_t*) a->json, .len = a->json_len };
 
   for (int fd = 0; fd < ws_nfds; ++fd) {
     if (!FD_ISSET(fd, &ws_fds))

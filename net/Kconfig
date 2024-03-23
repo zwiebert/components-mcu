@@ -66,6 +66,19 @@ menu "zwiebert: Networking"
     config APP_TCPS_CONNECTIONS_MAX
         int  "Number of maximal allowed connections to TCP server"
         default -1
+        
+    config NET_HTTP_CLIENT_DEBUG
+        bool "Enable debug messages"
+        default n
+
+    config NET_NTP_CLIENT_DEBUG
+        bool "Enable debug messages"
+        default n
+
+    config NET_TCP_CLI_CLIENT_DEBUG
+        bool "Enable debug messages"
+        default n        
+        
 
 endmenu
 

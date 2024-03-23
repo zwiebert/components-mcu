@@ -13,9 +13,9 @@ public:
 
 /// Get  URL stored in *this -or- configured URL
   const char* get_url() const {
-#ifdef CONFIG_OPENWEATHERMAP_URL_STRING
+#ifdef CONFIG_WEATHER_OWM_URL_STRING
  if (m_url == "")
-   return CONFIG_OPENWEATHERMAP_URL_STRING;
+   return CONFIG_WEATHER_OWM_URL_STRING;
 #endif
     return m_url.c_str();
   }

@@ -24,14 +24,16 @@
 #include <stddef.h>
 #include <string.h>
 
-#ifdef DISTRIBUTION
-#define D(x)
-#else
+#ifdef CONFIG_NET_MQTT_CLIENT_DEBUG
+#define DEBUG
 #define D(x) x
+#else
+#define D(x)
 #endif
 
 static bool is_connected;
 constexpr const char *TAG = "mqtt_client";
+#define logtag TAG
 
 // implementation interface
 

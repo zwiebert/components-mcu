@@ -11,14 +11,15 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-//#define DEBUG
 
-#ifdef DEBUG
+#ifdef CONFIG_NET_HTTP_CLIENT_DEBUG
+#define DEBUG
 using namespace std;
 #define D(x) x
 #else
 #define D(x)
 #endif
+#define logtag "net.http_client"
 
 template<std::size_t buf_size>
 struct rbuf {

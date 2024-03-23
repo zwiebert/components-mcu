@@ -25,5 +25,9 @@ menu "zwiebert: MQTT client"
         string "Default login password for MQTT server"
         default ""
 
+    config NET_MQTT_CLIENT_DEBUG
+        bool "Enable debug messages"
+        default n
+
 endmenu
 

@@ -5,7 +5,13 @@
 #include <stdio.h>
 #include <time.h>
 
+#ifdef UOUT_DEBUG
+#define DEBUG
+#define D(x) x
+#else
 #define D(x)
+#endif
+#define logtag "uout.write_config"
 
 
 ///////////////////////////////////////////////////////////

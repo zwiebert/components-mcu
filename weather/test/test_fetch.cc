@@ -63,7 +63,7 @@ void test_fetch() {
 TEST_CASE("test json", "[weather]")
 {
 // test needs  URL with vaild APPID for api.openweathermap.org
-#ifdef CONFIG_OPENWEATHERMAP_URL_STRING
+#ifdef CONFIG_WEATHER_OWM_URL_STRING
   test_fetch();
   test_weather();
 #endif

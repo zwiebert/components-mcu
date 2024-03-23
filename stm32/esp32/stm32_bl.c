@@ -29,8 +29,15 @@
 #include "freertos/task.h"
 #include "debug/dbg.h"
 
+#ifdef CONFIG_STM32_DEBUG
 #define D(x) x
+#define DD(x) x
+#else
+#define D(x)
 #define DD(x)
+#endif
+#define logtag "stm32"
+
 
 void stm32Bl_sendStart(void) {
   char c = STM32_INIT;

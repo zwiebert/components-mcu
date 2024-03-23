@@ -1,0 +1,8 @@
+menu "zwiebert: STM32"
+
+    config STM32_DEBUG
+        bool "Enable debug messages"
+        default n
+
+endmenu
+

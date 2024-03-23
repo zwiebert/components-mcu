@@ -12,8 +12,11 @@ menu "zwiebert: UOUT"
         default y
         help
             We now publish messages in JSON format.  The plain text format is for backwards
-            compatibility with old versions for FHEM tronferno_mcu module and Android app
-
+            compatibility with old versions for FHEM tronferno_mcu module and Android app     
+        
+    config UOUT_DEBUG
+        bool "Enable debug messages"
+        default n
 
 endmenu
 

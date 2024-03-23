@@ -5,10 +5,8 @@
 
 #include <cstdlib>
 
-
+#ifdef CONFIG_WEATHER_TEST_DEBUG
 #define DEBUG
-
-#ifdef DEBUG
 #define D(x) x
 #include <iostream>
 #include <iomanip>
@@ -16,6 +14,7 @@ using namespace std;
 #else
 #define D(x)
 #endif
+#define logtag "weather.test.irrigation"
 
 #include "weather/weather_irrigation.hh"
 weather_data wda[24];

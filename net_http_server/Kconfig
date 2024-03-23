@@ -13,6 +13,9 @@ menu "zwiebert: HTTP Server"
         string "Default login password for HTTP server"
         default ""
 
-
+    config NET_HTTP_SERVER_DEBUG
+        bool "Enable debug messages"
+        default n
+ 
 endmenu
 

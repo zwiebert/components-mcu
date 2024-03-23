@@ -21,15 +21,19 @@
 #include "utils_misc/ftoa.h"
 #include "utils_misc/itoa.h"
 
+#ifdef UOUT_DEBUG
+#define DEBUG
+#define D(x) x
+#else
 #define D(x)
+#endif
+#define logtag "uout.json_builder"
 
 #define BUF_MAX_SIZE 2048
 #define unused_write_out_buf()
 
 #define myBuf_freeSize (myBuf_size - myBuf_idx)
 #define myBuf_cursor (myBuf + myBuf_idx)
-
-#define logtag "json_builder"
 
 ///////////////////////////////////////Private/////////////////////////////
 bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
@@ -354,7 +358,7 @@ int UoutBuilderJson::write_json(bool final)  {
     return -1;
   if (!myBuf_idx) {
     const char json[] = "{}";
-    auto n = myTd->write(json, sizeof json, final);
+    auto n = myTd->write(json, -1, final);
     myBuf_idx = final ? -1 : 0;
     return n;
   }

@@ -32,12 +32,16 @@
 #define printf(...) io_printf_v(vrb3, __VA_ARGS__)
 #define perror(s)   io_printf_v(vrb3, "%s: %s\n", s, strerror(errno))
 
-#ifndef DISTRIBUTION
-#define DP(x) printf("db:tcps: %s\n", (x))
-#define D(x)
+
+#ifdef CONFIG_NET_TCP_CLI_CLIENT_DEBUG
+#define D(x) x
+#define DT(x) x
+#define DP(x) printf("%s: %s\n", logtag, (x))
 #else
 #define D(x)
+#define DT(x)
 #endif
+#define logtag "net.tcp_cli_client"
 
 constexpr int TCPS_CCONN_MAX = CONFIG_APP_TCPS_CONNECTIONS_MAX;
 
