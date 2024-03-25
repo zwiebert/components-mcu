@@ -9,7 +9,7 @@ $(DOXY_BUILD_PATH)/$1: FORCE
 
 $(DOXY_BUILD_PATH)/$1/doxy_config: $(DOXY_BUILD_PATH)/$1 $(DOXY_BUILD_PATH)/$1/input_files
 	cat $(DOXYFILE_PATH)/Doxyfile_$1  >$$@
-	cat $(DOXY_BUILD_PATH)/$1/input_files | sed "s~^~INPUT += /~" >>$$@
+	cat $(DOXY_BUILD_PATH)/$1/input_files | sed "s~^~INPUT += ~" >>$$@
 
 $(DOXY_BUILD_PATH)/$1/html/index.html: $(DOXY_BUILD_PATH)/$1/doxy_config
 	doxygen $$^

@@ -17,6 +17,7 @@ Documentation
 help:                print this help text
 doxy-XXX-build:      build documentation using doxygen.  XXX can be one of: usr, dev, api
 doxy-XXX-view        build and view documentation in browser
+doxy-XXX-auto        autobuild and view documentation in browser
 
 
 Testing on Host
