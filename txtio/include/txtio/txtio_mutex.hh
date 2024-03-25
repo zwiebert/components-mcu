@@ -1,6 +1,7 @@
+/**
+ * \brief declare a mutex for this component
+ */
 #pragma once
-
-
 #include <utils_misc/mutex.hh>
 
 #ifdef CONFIG_APP_USE_MUTEX

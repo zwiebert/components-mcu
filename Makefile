@@ -142,47 +142,20 @@ host-test-all:
 
 
 ############# Doxygen ###################
-DOXY_BUILD_PATH=$(THIS_ROOT)/_doxy_/build/doxy
+doxy_flavors=usr dev api
+DOXY_BUILD_PATH=$(THIS_ROOT)/_doxy_/build
+DOXYFILE_PATH=$(THIS_ROOT)/_doxy_
+include doxygen_rules.mk
 
-.PHONY: FORCE
-.PHONY: doxy-usr-view  doxy-dev-view  doxy-api-view
-.PHONY: doxy-usr-build doxy-dev-build doxy-api-build
-
-$(DOXY_BUILD_PATH)/%/html/index.html: /tmp/doxy_%_file
+$(DOXY_BUILD_PATH)/usr/input_files: $(DOXY_BUILD_PATH)/usr FORCE
 	mkdir -p $(dir $@)
-	doxygen $^
-
-
-
-doxy-usr-build: $(DOXY_BUILD_PATH)/usr/html/index.html FORCE
-doxy-usr-view: doxy-usr-build
-	xdg-open $(DOXY_BUILD_PATH)/usr/html/index.html
-
-doxy-dev-build: $(DOXY_BUILD_PATH)/dev/html/index.html FORCE
-doxy-dev-view: doxy-dev-build
-	xdg-open $(DOXY_BUILD_PATH)/dev/html/index.html
-
-doxy-api-build: $(DOXY_BUILD_PATH)/api/html/index.html FORCE
-doxy-api-view: doxy-api-build
-	xdg-open $(DOXY_BUILD_PATH)/api/html/index.html
-
-
-/tmp/doxy_%_file: ./_doxy_/Doxyfile_% /tmp/doxy_input_%
-	cat $^ > $@
-
-/tmp/doxy_input_dev: FORCE
-	git ls-files '*.h' '*.c' '*.hh' '*.cc' '*.cpp' | sed "s~^~INPUT += $(THIS_ROOT)/~" > $@
-	cd . && git ls-files '*.h' '*.c' '*.hh' '*.cc' '*.cpp' | sed "s~^~INPUT += $(THIS_ROOT)/~" >> $@
-/tmp/doxy_input_api: FORCE
-	git ls-files '*.h' '*.hh' | fgrep include | sed "s~^~INPUT += $(THIS_ROOT)/~" > $@
-	cd . && git ls-files '*.h' '*.hh' | fgrep include | sed "s~^~INPUT += $(THIS_ROOT)/~" >> $@
-
-/tmp/doxy_input_usr: FORCE
 	echo "" > $@
 
-doxy-%-view: doxy-%-build FORCE
-	xdg-open $(DOXY_BUILD_PATH)/$*/html/index.html
+$(DOXY_BUILD_PATH)/api/input_files: $(DOXY_BUILD_PATH)/api FORCE
+	git ls-files '*.h' '*.hh' | fgrep include | sed "s~^~$(THIS_ROOT)/~" > $@
+
+$(DOXY_BUILD_PATH)/dev/input_files: $(DOXY_BUILD_PATH)/dev FORCE
+	git ls-files '*.h' '*.c' '*.hh' '*.cc' '*.cpp' | sed "s~^~$(THIS_ROOT)/~" > $@
 
 
-FORCE:
 
