@@ -5,19 +5,21 @@
 
 #pragma once
 
-// to select target for output messages
+/**
+ * \brief  select target and specify data-format for output messages
+ */
 typedef enum {
-  SO_TGT_NONE = 0,
-  SO_TGT_CLI_USB = (1<<0),
-  SO_TGT_CLI_TCP = (1<<1),
+  SO_TGT_NONE = 0, ///< write to no target
+  SO_TGT_CLI_USB = (1<<0), ///< write to local console
+  SO_TGT_CLI_TCP = (1<<1), ///< write to remote console
   SO_TGT_CLI = (SO_TGT_CLI_USB|SO_TGT_CLI_TCP),
-  SO_TGT_HTTP = (1<<2),
-  SO_TGT_MQTT = (1<<3),
-  SO_TGT_FLAG_JSON = (1<<4),
-  SO_TGT_FLAG_TXT = (1<<5),
-  SO_TGT_WS = (1<<6),
-  SO_TGT_STM32 = (1<<7),
-  SO_TGT_ANY = (SO_TGT_CLI|SO_TGT_HTTP|SO_TGT_MQTT|SO_TGT_WS)
+  SO_TGT_HTTP = (1<<2), ///< write to HTTP (XXX:what use???)
+  SO_TGT_MQTT = (1<<3), ///< write to MQTT server
+  SO_TGT_FLAG_JSON = (1<<4), ///< format output data to be JSON
+  SO_TGT_FLAG_TXT = (1<<5), ///< format output data to be plain text
+  SO_TGT_WS = (1<<6), ///< write to web socket
+  SO_TGT_STM32 = (1<<7), ///< write to STM32 via UART
+  SO_TGT_ANY = (SO_TGT_CLI|SO_TGT_HTTP|SO_TGT_MQTT|SO_TGT_WS)  ///< write to all targets
 } so_target_bits;
 
 constexpr so_target_bits operator|(so_target_bits lhs, so_target_bits rhs) {

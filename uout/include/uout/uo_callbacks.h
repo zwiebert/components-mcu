@@ -127,7 +127,7 @@ uoCb_Idxs uoCb_filter(uo_flagsT flags, uoCb_Idxs idxs);
 /**
  * \brief register a callback to subscribe for published messages
  * \param msg_cb      will be called if matching event occurs
- * \flags flags       describes events you will get
+ * \param flags       describes events you will get
  */
 bool uoCb_subscribe(uoCb_cbT msg_cb, uo_flagsT flags);
 bool uoCb_unsubscribe(uoCb_cbT msg_cb);
@@ -148,13 +148,16 @@ void uoCb_publish_pinChange(const so_arg_pch_t args);
 /// \brief publish ip address to evt.ip_addr_change subscribers
 void uoCb_publish_ipAddress(const char *ip_addr);
 
-
+/**
+ * \brief  data for sending log messges (e.g. over MQTT)
+ */
 struct LogMessage {
-  const char *tag;
-  const char *txt;
+  const char *tag; ///< message tag (no double quotes allowed)
+  const char *txt; ///< message text (no double quotes allowed)
   enum WarnLevel : uint8_t { wl_Info, wl_Warn, wl_Fail, wl_Bug };
-  WarnLevel warn_level;
+  WarnLevel warn_level;  ///< message warn-level
 };
+
 /**
  *  \brief        publish log message
  *  \param msg    LogMessage to publish
@@ -163,13 +166,23 @@ struct LogMessage {
 void uoCb_publish_logMessage(const LogMessage &msg);
 
 
-// accessing message
+
+/**
+ * \brief Get pointer to JSON data in message, if there is any
+ * \param msg   The message
+ * \return      pointer to null-terminated JSON string or nullptr
+ */
 inline const char *uoCb_jsonFromMsg(const uoCb_msgT msg) {
   if (msg.flags.fmt.json)
     return static_cast<const char *>(msg.cptr);
   return nullptr;
 }
 
+/**
+ * \brief Get pointer to plain-text data in message, if there is any
+ * \param msg   The message
+ * \return       pointer to null-terminated text string or nullptr
+ */
 inline const char *uoCb_txtFromMsg(const uoCb_msgT msg) {
   if (msg.flags.fmt.txt)
     return static_cast<const char *>(msg.cptr);

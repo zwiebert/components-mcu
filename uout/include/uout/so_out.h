@@ -14,13 +14,13 @@
 #define so_ws ((td.tgt() & SO_TGT_WS))
 
 /**
- * \brief Format and print output according to the flags  in UoutWriter.
+ * \brief Format and print output using the help of \ref  UoutWriter
  */
 class UoutPrinter {
 public:
   /**
-   * \param td       Target descriptor which describes the wanted output formats and may hold a write function to print the output immediately
-   *                 SO_TGT_FLAG_TXT and SO_TGT_FLAG_JSON are supported in td.myTgt
+   * \param td       writer which holds the actual builders \ref UoutWriter::mySj, \ref UoutWriter::myStxt and the output format in \ref UoutWriter::myTgt
+   *                 Supported output formats are: SO_TGT_FLAG_TXT, SO_TGT_FLAG_JSON.
    */
   UoutPrinter(class UoutWriter &td) :
       myTd(td) {
