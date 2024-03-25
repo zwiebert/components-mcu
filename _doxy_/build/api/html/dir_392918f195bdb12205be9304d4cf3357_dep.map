@@ -1,0 +1,28 @@
+<map id="/home/bertw/proj/mcu/components&#45;mcu" name="/home/bertw/proj/mcu/components&#45;mcu">
+<area shape="rect" id="node2" href="dir_637f746e9861ed257f7550edf4f819cf.html" title="_test_" alt="" coords="1685,159,1757,207"/>
+<area shape="rect" id="node3" href="dir_08f332ebc886767714011fde1d289be4.html" title="cli" alt="" coords="1528,63,1600,111"/>
+<area shape="rect" id="node15" href="dir_38c3863c8bda2a7e5a786aad1cd49034.html" title="uout" alt="" coords="1195,159,1267,207"/>
+<area shape="rect" id="edge2-headlabel" href="dir_000010_000051.html" title="1" alt="" coords="1282,172,1291,187"/>
+<area shape="rect" id="node4" href="dir_3d34bf840d2c4f9941d3458f3b0b8fa5.html" title="config_kvs" alt="" coords="1624,63,1715,111"/>
+<area shape="rect" id="edge5-headlabel" href="dir_000016_000005.html" title="2" alt="" coords="1703,131,1712,146"/>
+<area shape="rect" id="edge4-headlabel" href="dir_000016_000051.html" title="1" alt="" coords="1281,176,1291,190"/>
+<area shape="rect" id="node17" href="dir_7bb9eb202d1b51997ecec3798d30fe15.html" title="utils_misc" alt="" coords="1573,159,1661,207"/>
+<area shape="rect" id="edge6-headlabel" href="dir_000016_000013.html" title="2" alt="" coords="1642,139,1651,154"/>
+<area shape="rect" id="node5" href="dir_11cf7a439b494d0e9bfd72a78ebdec38.html" title="firmware_update" alt="" coords="1371,63,1503,111"/>
+<area shape="rect" id="node6" href="dir_0ec99679e839f9005d7ef25c29397c8c.html" title="jsmn" alt="" coords="1275,63,1347,111"/>
+<area shape="rect" id="node7" href="dir_32469de8461cee4c78ee51a64d0665a7.html" title="key_value_store" alt="" coords="1123,63,1251,111"/>
+<area shape="rect" id="node8" href="dir_568f90f0b7f4f071c65d73065d5cb7f1.html" title="main_loop" alt="" coords="1008,63,1099,111"/>
+<area shape="rect" id="node9" href="dir_f9e898b80868b95bc702c125aa89fe04.html" title="net" alt="" coords="912,63,984,111"/>
+<area shape="rect" id="edge1-headlabel" href="dir_000031_000051.html" title="1" alt="" coords="1174,152,1184,167"/>
+<area shape="rect" id="node10" href="dir_14ca84d317656cb44f9afc55b57bac09.html" title="net_http_server" alt="" coords="763,63,887,111"/>
+<area shape="rect" id="node11" href="dir_006bca3b254776b738577998940fb32a.html" title="net_mqtt" alt="" coords="658,63,739,111"/>
+<area shape="rect" id="node12" href="dir_a6b78d01378085d21a95d589e6b06247.html" title="stm32" alt="" coords="561,63,633,111"/>
+<area shape="rect" id="node13" href="dir_7b82bafc3602f610531fa28448df4afd.html" title="storage" alt="" coords="465,63,537,111"/>
+<area shape="rect" id="node14" href="dir_b400a50474be486348fc55640bab5f2a.html" title="txtio" alt="" coords="369,63,441,111"/>
+<area shape="rect" id="edge3-headlabel" href="dir_000048_000051.html" title="1" alt="" coords="1172,163,1181,178"/>
+<area shape="rect" id="node16" href="dir_896e859d469fb80f7a64c075bb476f21.html" title="utils_debug" alt="" coords="247,63,345,111"/>
+<area shape="rect" id="node18" href="dir_c4d663939f8f9e1fc719257f6e58d092.html" title="utils_time" alt="" coords="137,63,223,111"/>
+<area shape="rect" id="node19" href="dir_7689643107806ccc3dec24feec743e09.html" title="weather" alt="" coords="37,63,112,111"/>
+<area shape="rect" id="clust2" href="dir_392918f195bdb12205be9304d4cf3357.html" alt="" coords="27,52,1885,217"/>
+<area shape="rect" id="clust1" href="dir_7efe0b038087fb52f2de8d3344eb58d7.html" title="mcu" alt="" coords="16,16,1896,228"/>
+</map>

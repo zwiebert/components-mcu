@@ -1,0 +1,5 @@
+<map id="Weather_Provider" name="Weather_Provider">
+<area shape="rect" id="node1" title=" " alt="" coords="139,5,315,97"/>
+<area shape="rect" id="node2" href="$classWeather__Provider__Owm.html" title=" " alt="" coords="5,145,220,281"/>
+<area shape="rect" id="node3" href="$classWeather__Provider__Random.html" title=" " alt="" coords="244,175,443,252"/>
+</map>

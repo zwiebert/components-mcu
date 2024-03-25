@@ -1,0 +1,7 @@
+<map id="/home/bertw/proj/mcu/components&#45;mcu/uout/include/uout/uo_types.h" name="/home/bertw/proj/mcu/components&#45;mcu/uout/include/uout/uo_types.h">
+<area shape="rect" id="node1" title="API parameter and return types." alt="" coords="135,5,317,61"/>
+<area shape="rect" id="node2" href="$cli_8h.html" title="cli framework" alt="" coords="5,109,215,165"/>
+<area shape="rect" id="node3" href="$uo__callbacks_8h.html" title="pub/sub interface to publish asynchronously to MQTT servers, HTTP&#45;client web&#45;sockets,..." alt="" coords="239,109,445,165"/>
+<area shape="rect" id="node4" href="$tcp__cli__server__setup_8hh.html" title="Create TCP server for interactive and non&#45;interactive CLI clients." alt="" coords="117,213,332,269"/>
+<area shape="rect" id="node5" href="$txtio__setup_8hh_source.html" title=" " alt="" coords="356,213,560,269"/>
+</map>
