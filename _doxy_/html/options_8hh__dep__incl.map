@@ -1,6 +1,6 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/_test_/components/app_config/include/app_config/options.hh" name="/home/bertw/proj/mcu/components&#45;mcu/_test_/components/app_config/include/app_config/options.hh">
-<area shape="rect" id="node1" title="defines strings used in user interface" alt="" coords="51,5,270,76"/>
-<area shape="rect" id="node2" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,243,188,313"/>
-<area shape="rect" id="node3" href="$settings_8hh.html" title=" " alt="" coords="135,124,317,195"/>
-<area shape="rect" id="node4" href="$settings__template_8hh_source.html" title=" " alt="" coords="212,243,395,313"/>
+<map id="options.hh" name="options.hh">
+<area shape="rect" id="node1" title="defines strings used in user interface" alt="" coords="71,5,162,32"/>
+<area shape="rect" id="node2" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,155,143,181"/>
+<area shape="rect" id="node3" href="$settings_8hh.html" title=" " alt="" coords="112,80,207,107"/>
+<area shape="rect" id="node4" href="$settings__template_8hh_source.html" title=" " alt="" coords="167,155,327,181"/>
 </map>

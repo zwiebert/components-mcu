@@ -1,5 +1,5 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/net_http_server/include/net_http_server/http_server_setup.h" name="/home/bertw/proj/mcu/components&#45;mcu/net_http_server/include/net_http_server/http_server_setup.h">
-<area shape="rect" id="node1" title="Create HTTP server." alt="" coords="5,5,208,76"/>
-<area shape="rect" id="node2" title=" " alt="" coords="15,124,97,151"/>
-<area shape="rect" id="node3" title=" " alt="" coords="122,124,193,151"/>
+<map id="http_server_setup.h" name="http_server_setup.h">
+<area shape="rect" id="node1" title="Create HTTP server." alt="" coords="22,5,173,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,80,88,107"/>
+<area shape="rect" id="node3" title=" " alt="" coords="113,80,183,107"/>
 </map>

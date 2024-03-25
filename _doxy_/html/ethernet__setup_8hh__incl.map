@@ -1,4 +1,4 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/net/include/net/ethernet_setup.hh" name="/home/bertw/proj/mcu/components&#45;mcu/net/include/net/ethernet_setup.hh">
-<area shape="rect" id="node1" title="Configure Ethernet hardware." alt="" coords="5,5,220,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="77,109,148,136"/>
+<map id="ethernet_setup.hh" name="ethernet_setup.hh">
+<area shape="rect" id="node1" title="Configure Ethernet hardware." alt="" coords="5,5,145,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="40,80,111,107"/>
 </map>

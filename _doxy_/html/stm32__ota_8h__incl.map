@@ -1,4 +1,4 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/stm32/include/stm32/stm32_ota.h" name="/home/bertw/proj/mcu/components&#45;mcu/stm32/include/stm32/stm32_ota.h">
-<area shape="rect" id="node1" title="download and update firmware of the connected STM32" alt="" coords="5,5,208,61"/>
-<area shape="rect" id="node2" title=" " alt="" coords="65,109,148,136"/>
+<map id="stm32_ota.h" name="stm32_ota.h">
+<area shape="rect" id="node1" title="download and update firmware of the connected STM32" alt="" coords="5,5,108,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="15,80,98,107"/>
 </map>

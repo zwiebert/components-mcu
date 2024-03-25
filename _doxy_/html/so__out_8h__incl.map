@@ -1,4 +1,4 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/uout/include/uout/so_out.h" name="/home/bertw/proj/mcu/components&#45;mcu/uout/include/uout/so_out.h">
-<area shape="rect" id="node1" title="write formatted output to UoutWriter" alt="" coords="5,5,177,61"/>
-<area shape="rect" id="node2" href="$so__target__bits_8h.html" title="flags to select output formats and targets" alt="" coords="28,109,155,136"/>
+<map id="so_out.h" name="so_out.h">
+<area shape="rect" id="node1" title="write formatted output to UoutWriter" alt="" coords="30,5,107,32"/>
+<area shape="rect" id="node2" href="$so__target__bits_8h.html" title="flags to select output formats and targets" alt="" coords="5,80,132,107"/>
 </map>

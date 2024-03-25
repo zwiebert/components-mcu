@@ -1,6 +1,6 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/config_kvs/include/config_kvs/config.h" name="/home/bertw/proj/mcu/components&#45;mcu/config_kvs/include/config_kvs/config.h">
-<area shape="rect" id="node1" title=" " alt="" coords="69,5,252,76"/>
-<area shape="rect" id="node2" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,243,188,313"/>
-<area shape="rect" id="node3" href="$settings_8hh.html" title=" " alt="" coords="135,124,317,195"/>
-<area shape="rect" id="node4" href="$settings__template_8hh_source.html" title=" " alt="" coords="212,243,395,313"/>
+<map id="config.h" name="config.h">
+<area shape="rect" id="node1" title=" " alt="" coords="80,5,153,32"/>
+<area shape="rect" id="node2" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,155,143,181"/>
+<area shape="rect" id="node3" href="$settings_8hh.html" title=" " alt="" coords="112,80,207,107"/>
+<area shape="rect" id="node4" href="$settings__template_8hh_source.html" title=" " alt="" coords="167,155,327,181"/>
 </map>

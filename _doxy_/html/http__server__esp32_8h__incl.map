@@ -1,4 +1,4 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/net_http_server/include/net_http_server/esp32/http_server_esp32.h" name="/home/bertw/proj/mcu/components&#45;mcu/net_http_server/include/net_http_server/esp32/http_server_esp32.h">
-<area shape="rect" id="node1" title="implementation specific interface for HTTP server" alt="" coords="5,5,203,91"/>
-<area shape="rect" id="node2" title=" " alt="" coords="35,139,173,165"/>
+<map id="http_server_esp32.h" name="http_server_esp32.h">
+<area shape="rect" id="node1" title="implementation specific interface for HTTP server" alt="" coords="5,5,160,32"/>
+<area shape="rect" id="node2" title=" " alt="" coords="14,80,151,107"/>
 </map>

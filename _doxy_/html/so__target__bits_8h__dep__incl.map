@@ -1,13 +1,13 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/uout/include/uout/so_target_bits.h" name="/home/bertw/proj/mcu/components&#45;mcu/uout/include/uout/so_target_bits.h">
-<area shape="rect" id="node1" title="flags to select output formats and targets" alt="" coords="339,5,511,76"/>
-<area shape="rect" id="node2" href="$so__out_8h.html" title="write formatted output to UoutWriter" alt="" coords="339,124,511,180"/>
-<area shape="rect" id="node3" href="$so__target__desc_8hh.html" title="Provide an output class hierarchy which knows about the required format (text or JSON) and write func..." alt="" coords="240,228,412,299"/>
-<area shape="rect" id="node7" href="$uo__types_8h.html" title="API parameter and return types." alt="" coords="433,354,614,410"/>
-<area shape="rect" id="node4" href="$settings_8hh.html" title=" " alt="" coords="212,347,395,417"/>
-<area shape="rect" id="node5" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,465,188,536"/>
-<area shape="rect" id="node6" href="$settings__template_8hh_source.html" title=" " alt="" coords="212,465,395,536"/>
-<area shape="rect" id="node8" href="$cli_8h.html" title="cli framework" alt="" coords="419,473,628,529"/>
-<area shape="rect" id="node9" href="$uo__callbacks_8h.html" title="pub/sub interface to publish asynchronously to MQTT servers, HTTP&#45;client web&#45;sockets,..." alt="" coords="652,473,859,529"/>
-<area shape="rect" id="node10" href="$tcp__cli__server__setup_8hh.html" title="Create TCP server for interactive and non&#45;interactive CLI clients." alt="" coords="531,584,745,640"/>
-<area shape="rect" id="node11" href="$txtio__setup_8hh_source.html" title=" " alt="" coords="769,584,973,640"/>
+<map id="so_target_bits.h" name="so_target_bits.h">
+<area shape="rect" id="node1" title="flags to select output formats and targets" alt="" coords="276,5,403,32"/>
+<area shape="rect" id="node2" href="$so__out_8h.html" title="write formatted output to UoutWriter" alt="" coords="301,80,378,107"/>
+<area shape="rect" id="node3" href="$so__target__desc_8hh.html" title="Provide an output class hierarchy which knows about the required format (text or JSON) and write func..." alt="" coords="188,155,328,181"/>
+<area shape="rect" id="node7" href="$uo__types_8h.html" title="API parameter and return types." alt="" coords="330,229,423,256"/>
+<area shape="rect" id="node4" href="$settings_8hh.html" title=" " alt="" coords="200,229,295,256"/>
+<area shape="rect" id="node5" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,304,143,331"/>
+<area shape="rect" id="node6" href="$settings__template_8hh_source.html" title=" " alt="" coords="167,304,327,331"/>
+<area shape="rect" id="node8" href="$cli_8h.html" title="cli framework" alt="" coords="352,304,401,331"/>
+<area shape="rect" id="node9" href="$uo__callbacks_8h.html" title="pub/sub interface to publish asynchronously to MQTT servers, HTTP&#45;client web&#45;sockets,..." alt="" coords="425,304,544,331"/>
+<area shape="rect" id="node10" href="$tcp__cli__server__setup_8hh.html" title="Create TCP server for interactive and non&#45;interactive CLI clients." alt="" coords="312,379,487,405"/>
+<area shape="rect" id="node11" href="$txtio__setup_8hh_source.html" title=" " alt="" coords="511,379,626,405"/>
 </map>

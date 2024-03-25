@@ -1,6 +1,6 @@
-<map id="/home/bertw/proj/mcu/components&#45;mcu/utils_misc/include/utils_misc/int_macros.h" name="/home/bertw/proj/mcu/components&#45;mcu/utils_misc/include/utils_misc/int_macros.h">
-<area shape="rect" id="node1" title="Basic helper macros for integers." alt="" coords="70,5,251,76"/>
-<area shape="rect" id="node2" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,243,188,313"/>
-<area shape="rect" id="node3" href="$settings_8hh.html" title=" " alt="" coords="135,124,317,195"/>
-<area shape="rect" id="node4" href="$settings__template_8hh_source.html" title=" " alt="" coords="212,243,395,313"/>
+<map id="int_macros.h" name="int_macros.h">
+<area shape="rect" id="node1" title="Basic helper macros for integers." alt="" coords="63,5,170,32"/>
+<area shape="rect" id="node2" href="$comp__settings_8hh.html" title="Settings for shared components." alt="" coords="5,155,143,181"/>
+<area shape="rect" id="node3" href="$settings_8hh.html" title=" " alt="" coords="112,80,207,107"/>
+<area shape="rect" id="node4" href="$settings__template_8hh_source.html" title=" " alt="" coords="167,155,327,181"/>
 </map>
