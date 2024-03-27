@@ -18,6 +18,8 @@ extern RecMutex stm32_mutex;
 int stm32_write(const char *data, unsigned data_len);
 /// read data from stm32
 int stm32_read(char *buf, unsigned buf_size);
+/// read line from stm32 with waiting for Queue outside of stm32_mutex
+int stm32_read_line(char *buf, unsigned buf_size, unsigned wait_ms);
 /// get char from STM32 (with optional blocking)
 int stm32_getc(bool block);
 /// write data to STM32 bootloader

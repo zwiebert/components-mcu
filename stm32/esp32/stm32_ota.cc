@@ -8,6 +8,7 @@
 #include "stm32/stm32_ota.h"
 #include "stm32/stm32.h"
 #include "stm32/stm32_bl.h"
+#include "lock_guard.hh"
 #include "utils_misc/int_macros.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
@@ -33,7 +34,7 @@ static stm32ota_state_T state;
 stm32ota_state_T stm32ota_getState(void) { return state; }
 
 bool stm32Ota_firmwareUpdate(const char *file_name) {
-  LockGuard lock(stm32_mutex);
+  WakeUpLockGuard lock(stm32_mutex);
   bool result = false;
 
   D(ESP_LOGI(logtag, "boot STM32 into bootloader..."));
