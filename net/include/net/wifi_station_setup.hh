@@ -6,8 +6,10 @@
 
 /// \brief WLAN client configuration data
 struct cfg_wlan {
+#ifdef CONFIG_APP_USE_WLAN
   char SSID[32] = CONFIG_APP_WIFI_SSID; ///< SSID to connect to
   char password[64] = CONFIG_APP_WIFI_PASSWORD; ///< Password to connect with
+#endif
 };
 
 /**

@@ -16,7 +16,7 @@
 #include "utils_misc/int_types.h"
 
 static TaskHandle_t xHandle = NULL;
-#define STACK_SIZE  4096
+#define STACK_SIZE  6000
 
 
 static void cli_task(void *pvParameters) {

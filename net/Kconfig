@@ -68,15 +68,15 @@ menu "zwiebert: Networking"
         default -1
         
     config NET_HTTP_CLIENT_DEBUG
-        bool "Enable debug messages"
+        bool "Enable HTTP-client debug messages"
         default n
 
     config NET_NTP_CLIENT_DEBUG
-        bool "Enable debug messages"
+        bool "Enable NTP-client debug messages"
         default n
 
     config NET_TCP_CLI_CLIENT_DEBUG
-        bool "Enable debug messages"
+        bool "Enable TCP-CLI-client debug messages"
         default n        
         
 

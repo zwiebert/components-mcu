@@ -1,6 +1,3 @@
-#ifdef __cplusplus
-  extern "C" {
-#endif
 /**
  * \file stm32/stm32_bl.h
  * \brief access STM32F103 bootloader
@@ -15,7 +12,7 @@
 
 #define   STM32_INIT 0x7F
 
-typedef enum {
+enum stm32_cmd_T : uint8_t {
   STM32_ACK = 0x79,
   STM32_ERASE = 0x43,
   STM32_ERASEN = 0x44,
@@ -35,7 +32,7 @@ typedef enum {
   STM32_WP_NS = 0x64,
   STM32_WR = 0x31
 
-} stm32_cmd_T;
+};
 
 /// \brief        send \link STM32_INIT \endlink
 void stm32Bl_sendStart(void);
@@ -85,8 +82,3 @@ bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, uint32_t addr);
  * \param size      size for erasing as bytes count
  */
 bool stm32Bl_eraseFlashByFileSize(uint32_t addr, unsigned size);
-
-
-#ifdef __cplusplus
-  }
-#endif

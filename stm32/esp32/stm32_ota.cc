@@ -13,7 +13,18 @@
 #include "freertos/task.h"
 #include "net/http_client.h"
 #include "debug/dbg.h"
+#include "esp_log.h"
 #include <utils_misc/cstring_utils.hh>
+
+#ifdef CONFIG_STM32_DEBUG
+#define D(x) x
+#define DD(x) x
+#else
+#define D(x)
+#define DD(x)
+#endif
+#define logtag "stm32.ota"
+
 
 #define STM32_WAIT_AFTER_BOOT_MS 2000
 
@@ -22,28 +33,37 @@ static stm32ota_state_T state;
 stm32ota_state_T stm32ota_getState(void) { return state; }
 
 bool stm32Ota_firmwareUpdate(const char *file_name) {
-  db_printf("boot STM32 into bootloader...\n");
+  LockGuard lock(stm32_mutex);
+  bool result = false;
+
+  D(ESP_LOGI(logtag, "boot STM32 into bootloader..."));
   stm32_runBootLoader();
   vTaskDelay(STM32_WAIT_AFTER_BOOT_MS / portTICK_PERIOD_MS);
 
-  db_printf("connect to bootloader...\n");
+  D(ESP_LOGI(logtag, "connect to bootloader..."));
   if (!stm32Bl_doStart()) {
-    return false;
-  }
-  db_printf("erase flash and write firmware...\n");
-  if (!stm32Bl_writeMemoryFromBinFile(file_name, 0x8000000)) {
-    return false;
+    ESP_LOGE(logtag, "connecting to bootloader failed");
+    goto done;
   }
 
-  db_printf("boot STM32 into firmware...\n");
+  D(ESP_LOGI(logtag, "erase flash and write firmware..."));
+  if (!stm32Bl_writeMemoryFromBinFile(file_name, 0x8000000)) {
+    ESP_LOGE(logtag, "erase flash and writing firmware failed");
+    goto done;
+  }
+
+  result = true;
+
+  done:
+  D(ESP_LOGI(logtag, "boot STM32 into firmware..."));
   stm32_runFirmware();
   vTaskDelay(STM32_WAIT_AFTER_BOOT_MS / portTICK_PERIOD_MS);
 
-  return true;
+  return result;
 }
 
 bool stm32Ota_firmwareDownload(const char *url, const char *file_name) {
-  db_printf("download file name=<%s> url=<%s>\n", file_name, url);
+  D(ESP_LOGI(logtag, "download file name=<%s> url=<%s>\n", file_name, url));
   return httpClient_downloadFile(url, file_name);
 }
 

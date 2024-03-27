@@ -1,12 +1,4 @@
-#ifdef __cplusplus
-#define USE_MUTEX
-#include "utils_misc/mutex.hh"
-extern RecMutex stm32_mutex;
-  extern "C" {
-#endif
-
-
- /**
+/**
  * \file        stm32/stm32.h
  * \brief       access STM32 from ESP32 for communication and firware updat
  * \author      bertw
@@ -16,6 +8,11 @@ extern RecMutex stm32_mutex;
 
 #include <stdbool.h>
 #include <stdint.h>
+
+#define USE_MUTEX
+#include "utils_misc/mutex.hh"
+extern RecMutex stm32_mutex;
+
 
 /// write data to stm32
 int stm32_write(const char *data, unsigned data_len);
@@ -56,7 +53,3 @@ struct cfg_stm32 {
 
 /// set up the stm32 component
 void stm32_setup(const struct cfg_stm32 *cfg_stm32);
-
-#ifdef __cplusplus
-  }
-#endif
