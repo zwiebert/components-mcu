@@ -133,7 +133,7 @@ void cli_process_json(char *json, class UoutWriter &td, process_parm_cb proc_par
   if (cli_hook_process_json && cli_hook_process_json(json))
     return;
 
-  if (td.sj().open_root_object("tfmcu")) {
+  if (td.sj().open_root_object("cli")) {
     parse_and_process_json(json, td, proc_parm);
     td.sj().close_root_object();
   }
@@ -159,7 +159,7 @@ void cli_process_cmdline(char *line, class UoutWriter &td, process_parm_cb proc_
     if (cli_hook_checkPassword && !cli_hook_checkPassword(clp.par, n, td))
       return;
 
-    if (td.so().root_open("tfmcu")) {
+    if (td.so().root_open("cli")) {
       proc_parm(clp.par, n, td);
       td.so().root_close();
 #ifdef CONFIG_APP_USE_WS

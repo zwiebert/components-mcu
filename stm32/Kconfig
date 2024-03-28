@@ -1,5 +1,9 @@
 menu "zwiebert: STM32"
 
+    config STM32_USE_COMPONENT
+      bool "Use this component XXX: should be invisible in menuconfig"
+      default y
+
     config STM32_DEBUG
         bool "Enable debug messages"
         default n

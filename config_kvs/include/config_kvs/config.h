@@ -43,3 +43,6 @@ enum verbosity config_read_verbose();
 
 void config_setup_cliTcpServer(struct uo_flagsT *flags);
 
+struct cfg_stm32 *config_read_stm32(struct cfg_stm32 *cfg);
+void config_setup_stm32();
+bool config_read_stm32_inv_bootpin();

@@ -117,3 +117,8 @@ void soCfg_HTTP_PASSWORD(class UoutWriter &td) {
 void soCfg_VERBOSE(class UoutWriter &td) {
   td.so().print(settings_get_optKeyStr(CB_VERBOSE), config_read_verbose());
 }
+#ifdef CONFIG_STM32_USE_COMPONENT
+void soCfg_STM32_BOOTGPIO_INV(class UoutWriter &td) {
+  td.so().print(settings_get_optKeyStr(CB_STM32_INV_BOOTPIN), config_read_stm32_inv_bootpin());
+}
+#endif

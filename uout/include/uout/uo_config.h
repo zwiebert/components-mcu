@@ -29,3 +29,6 @@ void soCfg_HTTP_USER(class UoutWriter &td);
 void soCfg_HTTP_PASSWORD(class UoutWriter &td);
 #endif
 void soCfg_VERBOSE(class UoutWriter &td);
+#ifdef CONFIG_STM32_USE_COMPONENT
+void soCfg_STM32_BOOTGPIO_INV(class UoutWriter &td);
+#endif

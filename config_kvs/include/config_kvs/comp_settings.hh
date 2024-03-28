@@ -33,6 +33,9 @@ enum configItem : int8_t {
 #ifdef CONFIG_APP_USE_LAN
   CB_LAN_PHY, CB_LAN_PWR_GPIO,
 #endif
+#ifdef CONFIG_STM32_USE_COMPONENT
+  CB_STM32_INV_BOOTPIN,
+#endif
 //-----------
   CB_size
 };

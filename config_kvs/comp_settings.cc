@@ -43,6 +43,9 @@ public:
     initField(CB_LAN_PWR_GPIO, "C_LAN_PWR_GPIO", otok::k_lan_pwr_gpio, CBT_i8, soCfg_LAN_PWR_GPIO);
     // initField(, "", otok::k_);
 #endif
+#ifdef CONFIG_STM32_USE_COMPONENT
+    initField(CB_STM32_INV_BOOTPIN, "C_STM_INV_BP", otok::k_stm32_bootgpio_inv, CBT_i8, soCfg_STM32_BOOTGPIO_INV, STF_direct);
+#endif
   }
 };
 

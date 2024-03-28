@@ -62,6 +62,21 @@ enum verbosity config_read_verbose() {
 }
 #endif
 
+#ifdef CONFIG_STM32_USE_COMPONENT
+#include <stm32/stm32.h>
+cfg_stm32 *config_read_stm32(cfg_stm32 *cfg) {
+  *cfg = cfg_stm32 { .uart_tx_gpio = CONFIG_STM32_UART_TX_PIN, .uart_rx_gpio = CONFIG_STM32_UART_RX_PIN, .boot_gpio_is_inverse =
+      !!config_read_item((CB_STM32_INV_BOOTPIN), 0), .boot_gpio =  CONFIG_STM32_BOOT_PIN, .reset_gpio = CONFIG_STM32_RESET_PIN, };
+  return cfg;
+}
+void config_setup_stm32() {
+  struct cfg_stm32 c;
+  config_read_stm32(&c);
+  stm32_setup(&c);
+}
+#endif
+
+
 #ifdef CONFIG_APP_USE_LAN
 #include <net/ethernet_setup.hh>
 struct cfg_lan* config_read_ethernet(struct cfg_lan *c) {
@@ -169,5 +184,11 @@ void config_setup_httpServer() {
 
 bool config_read_http_enable() {
   return !!config_read_item(CB_HTTP_ENABLE, cfg_http().enable);
+}
+#endif
+
+#ifdef CONFIG_STM32_USE_COMPONENT
+bool config_read_stm32_inv_bootpin() {
+  return !!config_read_item((CB_STM32_INV_BOOTPIN), 0);
 }
 #endif
