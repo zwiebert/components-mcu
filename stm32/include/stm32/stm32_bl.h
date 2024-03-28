@@ -10,9 +10,11 @@
 #include "utils_misc/int_types.h"
 
 
-#define   STM32_INIT 0x7F
 
-enum stm32_cmd_T : uint8_t {
+/**
+ * \brief STM32 command opcodes
+ */
+enum stm32_cmd_T  {
   STM32_ACK = 0x79,
   STM32_ERASE = 0x43,
   STM32_ERASEN = 0x44,
@@ -31,8 +33,13 @@ enum stm32_cmd_T : uint8_t {
   STM32_WP = 0x63,
   STM32_WP_NS = 0x64,
   STM32_WR = 0x31
-
 };
+#define STM32_INIT 0x7F
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /// \brief        send \link STM32_INIT \endlink
 void stm32Bl_sendStart(void);
@@ -82,3 +89,7 @@ bool stm32Bl_writeMemoryFromBinFile(const char *srcFile, uint32_t addr);
  * \param size      size for erasing as bytes count
  */
 bool stm32Bl_eraseFlashByFileSize(uint32_t addr, unsigned size);
+
+#ifdef __cplusplus
+}
+#endif

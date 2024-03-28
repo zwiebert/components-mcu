@@ -1,6 +1,3 @@
-#ifdef __cplusplus
-  extern "C" {
-#endif
 /**
  * \file       stm32_ota.h
  * \brief      download and update firmware of the connected STM32
@@ -14,6 +11,11 @@
 #define STM32_FW_FILE_NAME "/spiffs/rv.bin"
 
 typedef enum { stm32ota_NONE, stm32ota_RUN, stm32ota_FAIL, stm32ota_DONE} stm32ota_state_T;
+
+#ifdef __cplusplus
+  extern "C" {
+#endif
+
 stm32ota_state_T stm32ota_getState(void);
 
 /// update the STM32 firmware from a FILE

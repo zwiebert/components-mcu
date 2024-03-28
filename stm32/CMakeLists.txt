@@ -1,4 +1,6 @@
-set(srcs esp32/stm32_bl.cc  esp32/stm32.cc  esp32/stm32_ota.cc  esp32/mutex.cc
+set(srcs stm32.cc esp32/mutex.cc esp32/stm32_uart.cc 
+  esp32/stm32_impl.cc stm32_flash.cc esp32/stm32_flash.cc stm32_bootloader.cc
+  stm32_bl.cc
 )
 
 

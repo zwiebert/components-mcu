@@ -1,12 +1,21 @@
 menu "zwiebert: STM32"
 
     config STM32_USE_COMPONENT
-      bool "Use this component XXX: should be invisible in menuconfig"
+      bool "Use stm32 component XXX: should be invisible in menuconfig"
       default y
 
     config STM32_DEBUG
-        bool "Enable debug messages"
+        bool "Enable stm32 component debug messages"
         default n
+
+    config STM32_MAKE_COMPONENT_THREAD_SAFE
+        bool "Make stm32 component generally thread safe"
+        default y
+
+    config STM32_MAKE_API_THREAD_SAFE
+        depends on STM32_MAKE_COMPONENT_THREAD_SAFE
+        bool "Make all stm32 API functions totally thread safe"
+        default y
 
 endmenu
 
