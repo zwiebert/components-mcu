@@ -1,0 +1,8 @@
+menu "zwiebert: UTILS_MISC"
+     
+    config UTILS_MISC_MUTEX_DEBUG
+        bool "Enable debug messages"
+        default n
+
+endmenu
+
