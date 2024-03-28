@@ -69,7 +69,7 @@ Stm32_Bootloader(Stm32_Uart_if &stm32_uart): m_stm32_uart(stm32_uart) {
    * \param addr      start for erasing as byte address
    * \param size      size for erasing as bytes count
    */
-  bool stm32Bl_eraseFlashByFileSize(uint32_t addr, unsigned size);
+  bool stm32Bl_eraseFlashByFileSize(uint32_t addr, size_t size);
 
 private:
   bool stm32Bl_doExtEraseFlash(uint16_t start_page, uint16_t page_count);
