@@ -8,6 +8,7 @@
 
 #include "uout/uo_types.h"
 #include "cli_types.h"
+#include <jsmn/jsmn_iterate.hh>
 
 
 /**
@@ -47,6 +48,15 @@ int cli_processParameters(clpar p[], int len, class UoutWriter &td);
 extern bool (*cli_hook_process_json)(char *json);
 
 
+/**
+ * \brief           Set this to get an iterator to the "json" command object
+ *
+ *                  This is for small objects only. The jsmn parser holds only a small amount of tokens.
+ *                  If you need bigger objects, use \link cli_hook_process_json \endlink
+ * \param it        reference to iterator copy. the state/position at return does not matter
+ * \return          if false is returned the object may be processed differently.
+ */
+extern bool (*cli_hook_process_json_obj)(class UoutWriter &td, Jsmn_String::Iterator &it);
 
 /**
  * \brief the parser stores the mid option in this global variable (FIXME)

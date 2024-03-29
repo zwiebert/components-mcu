@@ -17,8 +17,8 @@
 #include "uout/status_json.hh"
 #include "debug/log.h"
 #include "jsmn/jsmn.h"
+#include "jsmn/jsmn_iterate.hh"
 #include <string.h>
-
 
 #ifdef CONFIG_CLI_DEBUG
 #define DEBUG
@@ -30,13 +30,15 @@
 #endif
 #define logtag "cli.cmdline_processing"
 
-
 bool (*cli_hook_checkPassword)(clpar p[], int len, class UoutWriter &td);
 bool (*cli_hook_process_json)(char *json);
+bool (*cli_hook_process_json_obj)(class UoutWriter &td,Jsmn_String::Iterator &it);
+
 
 /////////////////////////////////private/////////////////////////////////////////////////////////
 static int handle_parm_json(char *json, jsmntok_t *tok, const char *name);
-static void parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm);
+//static void parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm);
+//static bool parse_and_process_jsmn(Jsmn_String::Iterator &it, class UoutWriter &td, process_parm_cb proc_parm);
 static char* stringFromToken(char *json, const jsmntok_t *tok);
 
 static int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
@@ -62,53 +64,65 @@ static char* stringFromToken(char *json, const jsmntok_t *tok) {
   json[tok->end] = '\0';
   return json + tok->start;
 }
-static void parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm) {
+
+static bool parse_and_process_jsmn(Jsmn_String::Iterator &it, class UoutWriter &td, process_parm_cb proc_parm) {
+
+  // "json" object is allowed to have nested content
+  if (it.keyIsEqual("json", JSMN_OBJECT)) {
+    if (cli_hook_process_json_obj) {
+      // pass iterator by value copy
+      auto it_copy = it;
+      cli_hook_process_json_obj(td, ++it_copy);
+    }
+    // skip the json object
+    Jsmn_String::skip_key_and_value(it);
+    return true;
+  }
+
+  // handle any objects here. The command names of CLI handlers are not know by this component
+  // nested objects or arrays are not allowed
+  if (it.keyIsEqual(nullptr, JSMN_OBJECT)) {
+    int err = 0;
+    auto count = it[1].size;
+    const int par_len = 20;
+    int par_idx = 0;
+    clpar par[par_len] = { };
+     (par[par_idx].key = it.getValueAsString()) || ++err;;
+    par[par_idx++].val = "";
+
+    for (it += 2; count > 0 && it; --count) {
+      (par[par_idx].key = it++.getValueAsString()) || ++err;
+      (par[par_idx++].val = it++.getValueAsString()) || ++err;
+    }
+
+    if (err) {
+     db_loge(logtag, "%s: failed no nested objects allowed in cli commands", __func__);
+    }
+    if (auto res = proc_parm(par, par_idx, td); res < 0) {
+      db_loge(logtag, "%s: handler for <%s> returned <%d>", __func__, par[0].key, res);
+    }
+    return true;
+  }
+
+  // eat up any non object tokens (e.g. from":"wapp")
+  Jsmn_String::skip_key_and_value(it);
+  return true;
+}
+
+static bool parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm) {
   L(db_logi(logtag, "process_json: %s", json));
 
-  jsmn_parser jsp;
-#define MAX_TOKENS 24
-  jsmntok_t tok[MAX_TOKENS];
+  auto jsmn = Jsmn_String(json, 128);//Jsmn<128, char *>(json);
+  if (!jsmn)
+    return false;
+  auto it = jsmn.begin();
 
-  jsmn_init(&jsp);
-  int nt = jsmn_parse(&jsp, json, strlen(json), tok, MAX_TOKENS);
-
-  int i = 0;
-
-  if (tok[i].type == JSMN_OBJECT) {
-    for (i = 1; i < nt; ++i) {
-
-      if (tok[i].type == JSMN_OBJECT) {
-        int coi = i; // command object index
-        int n_childs = tok[i].size;
-
-        char *cmd_obj = 0;
-        if (tok[i - 1].type == JSMN_STRING) {
-          cmd_obj = stringFromToken(json, &tok[i - 1]);
-        }
-
-        D(db_logi(logtag, "cmd_obj: <%s>", cmd_obj ? cmd_obj : ""));
-
-        if (cmd_obj && strcmp(cmd_obj, "json") == 0) {
-          int n = handle_parm_json(json, tok, cmd_obj);
-          i += n;
-        } else {
-          clpar par[20] = { };
-          int pi = 0;
-
-          par[pi].key = cmd_obj;
-          par[pi++].val = "";
-
-          for (i = coi + 1; i < nt && n_childs > 0; ++i) {
-            par[pi].key = stringFromToken(json, &tok[i++]);
-            par[pi].val = stringFromToken(json, &tok[i]);
-            ++pi;
-            --n_childs;
-          } D(db_logi(logtag, "proc_parm: %s", par->key));
-          proc_parm(par, pi, td);
-        }
-      }
-    }
+  int err = 0;
+  auto count = it->size;
+  for (++it; count > 0 && it; --count) {
+     parse_and_process_jsmn(it, td, proc_parm);
   }
+  return !err;
 }
 
 //////////////////////////////public//////////////////////////////////////////////////////

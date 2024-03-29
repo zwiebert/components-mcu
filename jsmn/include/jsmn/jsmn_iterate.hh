@@ -15,12 +15,12 @@
 #include <cassert>
 #include <string>
 
-
-class JsmnBase {
+template<typename input_type = const char *>
+class JsmnBaseTmplt {
 using pointer = jsmntok_t *;
 
 protected:
-JsmnBase(const char *json, jsmntok_t *tok, unsigned tok_max) :
+JsmnBaseTmplt(input_type json, jsmntok_t *tok, unsigned tok_max) :
     m_json(json),
     m_tok_heap_alloc(nullptr),
     m_tok(tok),
@@ -29,7 +29,7 @@ JsmnBase(const char *json, jsmntok_t *tok, unsigned tok_max) :
 }
 public:
 
-  JsmnBase(const char *json, unsigned tok_max) :
+  JsmnBaseTmplt(input_type json, unsigned tok_max) :
       m_json(json),
       m_tok_heap_alloc(new jsmntok_t[tok_max]),
       m_tok(m_tok_heap_alloc),
@@ -37,7 +37,7 @@ public:
       m_nmb_tok(do_parse(json)) {
   }
 
-  ~JsmnBase() {
+  ~JsmnBaseTmplt() {
     delete[] m_tok_heap_alloc;
   }
 
@@ -45,7 +45,12 @@ public:
     return m_json && m_nmb_tok > 0;
   }
 
-  const char* get_json() const {
+  /**
+   * \brief get json buffer passed to ctor
+   *
+   * \return pointer to json text buffer
+   */
+  input_type get_json() {
     return m_json;
   }
 
@@ -55,7 +60,7 @@ public:
     using value_type = jsmntok_t;
     using pointer = value_type *;
     using reference = value_type &;
-    using container_type = JsmnBase;
+    using container_type = JsmnBaseTmplt;
 
     Iterator(pointer ptr, container_type &container) :
         m_ptr(ptr), m_container(container) {
@@ -89,7 +94,12 @@ public:
       && strncmp(m_container.get_json() + m_ptr->start, "null", slen) == 0; // same content
     }
 
-
+    /**
+     * \brief get json text buffer
+     */
+    input_type get_json() {
+      return m_container.get_json();
+    }
     /**
      * \brief        test if key matches
      * \param  key   key to match
@@ -114,9 +124,32 @@ public:
     }
 
     /**
+     * \brief        test if key matches
+     * \param  key   key to match
+     * \return       false if key does not match or type is not JSMN_STRING
+     */
+    bool keyStartsWith(const char *key) const {
+      return m_ptr->type == JSMN_STRING // JSON keys are strings
+      && strlen(key) < m_ptr->end - m_ptr->start // key should be smaller
+      && strncmp(m_container.get_json() + m_ptr->start, key, strlen(key)) == 0; // same content
+    }
+
+    /**
+     * \brief           test if both key and value-type matches
+     * \param  key      string to match key or nullptr to match any key
+     * \param  val_type type of value to match
+     * \return          false for mismatch or key type not JSMN_STRING
+     */
+    bool keyStartsWith(const char *key, jsmntype_t val_type) const {
+      if (val_type != m_ptr[1].type)
+        return false;
+      return !key || keyStartsWith(key);
+    }
+
+    /**
      * \brief        Get value
      * \dst          value will be written to dst
-     * \return       false if value type is not JSMN_PRIMITIVE
+     * \return       false if value type is not JSMN_PRIMITIVE Or JSMN_STRING
      */
     template<typename T>
     bool getValue(T &dst) const {
@@ -124,10 +157,36 @@ public:
     }
 
     /**
+     * \brief        Get value as string instead of number or boolean
+     * \dst          value will be written to dst
+     * \return       false if value type is not JSMN_PRIMITIVE Or JSMN_STRING
+     */
+    template<size_t size>
+    bool getValueAsString(char (&dst)[size]) const {
+      return m_container.get_value_as_string(dst, size, m_ptr);
+    }
+    bool getValueAsString(char *dst, size_t size) const {
+      return m_container.get_value_as_string(dst, size, m_ptr);
+    }
+
+    /**
+     * \brief        Get value as string null terminated string (in place)
+     *
+     *               This works only for non constant input_type, because it writes
+     *               into the json text buffer to terminate strings.
+     *
+     * \return       pointer to null terminated string. If not JSMN_STRING or JSMN_PRIMITIVE it returns null
+     */
+    char *getValueAsString() const {
+      return m_container.get_value_as_string(m_ptr);
+    }
+
+
+    /**
      * \brief        Get value of key/value pair if key
      * \param  key   key to match or nullptr to match any key
      * \param  dst   value will be written to dst
-     * \return       false if key does not match, or value type is not JSMN_PRIMITIVE
+     * \return       false if key does not match, or value type is not JSMN_PRIMITIVE or JSMN_STRING
      */
     template<typename T>
     bool getValue(T &dst, const char *key) const {
@@ -189,6 +248,11 @@ public:
       return a.m_ptr > b.m_ptr;
     }
 
+  public:
+
+  bool skip_key_and_value() {
+    return m_container.skip_key_and_value(*this);
+  }
 
   private:
     pointer m_ptr;
@@ -298,8 +362,23 @@ private:
     return false;
   }
 
+  bool get_value_as_string(char *dst, size_t size, pointer ptr) const {
+    if ((ptr->type == JSMN_STRING || ptr->type == JSMN_PRIMITIVE) && copy_string(dst, size, ptr)) {
+      return true;
+    }
+    return false;
+  }
+
+  char *get_value_as_string(pointer ptr) {
+    if (ptr->type != JSMN_STRING && ptr->type != JSMN_PRIMITIVE)
+      return nullptr;
+
+    m_json[ptr->end] = '\0';
+    return m_json + ptr->start;
+  }
+
 private:
-  const char *m_json;
+  input_type m_json;
   jsmntok_t *m_tok_heap_alloc;
   jsmntok_t *m_tok;
   unsigned m_tok_max;
@@ -307,12 +386,17 @@ private:
 
 };
 
-template<size_t JSON_MAX_TOKENS>
-class Jsmn : public JsmnBase {
+using Jsmn_String = JsmnBaseTmplt<char *>;
+using Jsmn_Cstring = JsmnBaseTmplt<const char *>;
+using JsmnBase = Jsmn_Cstring;
+
+template<size_t JSON_MAX_TOKENS, typename input_type = const char *>
+class Jsmn : public JsmnBaseTmplt<input_type> {
 public:
-  Jsmn(const char *json): JsmnBase(json, &m_tok_arr[0], JSON_MAX_TOKENS) {
+  Jsmn(input_type json): JsmnBaseTmplt<input_type>(json, &m_tok_arr[0], JSON_MAX_TOKENS) {
   }
 private:
   jsmntok_t m_tok_arr[JSON_MAX_TOKENS];
 };
+
 

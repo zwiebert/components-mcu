@@ -4,8 +4,8 @@ set(srcs cli.cc
 
 idf_component_register(SRCS ${srcs} 
     INCLUDE_DIRS "./include"  
-    REQUIRES uout 
-    PRIV_REQUIRES   utils_debug utils_misc txtio uout jsmn net_http_server
+    REQUIRES uout jsmn 
+    PRIV_REQUIRES   utils_debug utils_misc txtio uout net_http_server
                   esp_event  #PRIV_ESP_IDF
 )
 
