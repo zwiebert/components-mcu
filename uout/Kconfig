@@ -1,5 +1,9 @@
 menu "zwiebert: UOUT"
 
+    config UOUT_HAVE_COMPONENT
+      bool
+      default y
+
     config UOUT_PUBLISH_LOG_AS_TXT
         bool "publish log messages (also) as plain text in terminal"
         default n

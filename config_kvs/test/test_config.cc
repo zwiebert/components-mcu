@@ -1,11 +1,17 @@
+#if 1
+#define DEFINE_COMP_SETTINGS_OBJECT
+#include <config_kvs/register_settings.hh>
+#endif
+
 #include <unity.h>
 #ifdef TEST_HOST
 #include <test_runner.h>
 #endif
 
 
+#if 1
 #include "../include/config_kvs/config.h"
-#include "../config_kvs.h"
+#include "config_kvs/config_kvs.h"
 #include <config_kvs/comp_settings.hh>
 #include "key_value_store/kvs_wrapper.h"
 
@@ -15,6 +21,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <utils_misc/cstring_utils.hh>
+
 
 static void tst_compSettings() {
 
@@ -63,3 +70,6 @@ TEST_CASE("CompSettings", "[config]")
 {
   tst_compSettings();
 }
+
+
+#endif

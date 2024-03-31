@@ -19,8 +19,11 @@ public:
   using Base = SettingsBase<CfgItem>;
   using soCfgFunT = Base::soCfgFunT;
   using storeFunT = void (*)(CfgItem item, const char *val);
-public:
+  using ourT = Settings<CfgItem, Size, Offset>;
+  using initFunT = void (*)(ourT&);
 
+
+public:
   virtual const SettingsData* get_SettingsData(const CfgItem item) const {
     if ((int) item < 0)
       return nullptr;
@@ -96,14 +99,14 @@ protected:
     return -1;
   }
 
-protected:
+public:
   constexpr void initField(const CfgItem ai, const char *const kvsKey, const otok optKey, const KvsType kvsType, soCfgFunT soCfgFun = 0, StoreFun storeFun =
       STF_none) {
     uint8_t idx = ai - Offset;
     m_data[idx] = SettingsData { .kvs_key = kvsKey, .so_cfg_fun = soCfgFun, .opt_key = optKey, .kvs_type = kvsType, .store_fun = storeFun, .id_bit = idx };
   }
 protected:
-  SettingsData m_data[Size];
+  SettingsData m_data[Size] = {};
 };
 
 

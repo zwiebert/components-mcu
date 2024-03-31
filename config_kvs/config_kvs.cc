@@ -7,8 +7,8 @@
 
 
 
-#include "config_kvs/config.h"
-#include "config_kvs.h"
+#include <config_kvs/config.h>
+#include <config_kvs/config_kvs.h>
 
 
 #include "utils_misc/int_macros.h"

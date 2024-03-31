@@ -1,5 +1,9 @@
 menu "zwiebert: txtio"
 
+    config TXTIO_HAVE_COMPONENT
+        bool
+        default y
+
     config APP_UART_BAUD_RATE
         int "Baud rate of serial interface"
         default 115200

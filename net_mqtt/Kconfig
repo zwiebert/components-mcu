@@ -1,5 +1,9 @@
 menu "zwiebert: MQTT client"
 
+    config NET_MQTT_CLIENT_HAVE_COMPONENT
+        bool
+        default y
+
     config APP_MQTT_CLIENT_ID
         string "Default ID of MQTT client"
         default "zb"

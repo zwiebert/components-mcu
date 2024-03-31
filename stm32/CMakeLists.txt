@@ -9,7 +9,7 @@ idf_component_register(
     INCLUDE_DIRS "./include" 
     REQUIRES ""  
     PRIV_REQUIRES  net utils_debug utils_misc
-                  spiffs driver esp_rom #PRIV_ESP_IDF
+                  spiffs driver esp_rom 
 )
 
 component_compile_options(${comp_compile_opts})

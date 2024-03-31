@@ -1,7 +1,11 @@
 menu "zwiebert: STM32"
 
+    config STM32_HAVE_COMPONENT
+      bool 
+      default y
+
     config STM32_USE_COMPONENT
-      bool "Use stm32 component XXX: should be invisible in menuconfig"
+      bool 
       default y
 
     config STM32_DEBUG

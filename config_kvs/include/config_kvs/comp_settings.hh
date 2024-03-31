@@ -4,9 +4,8 @@
  */
 
 #pragma once
-#include "settings.hh"
+#include "settings_template.hh"
 #include <app_config/options.hh>
-#include <uout/uo_config.h>
 #include <utils_misc/int_macros.h>
 #include "config.h"
 #include <assert.h>
@@ -42,7 +41,6 @@ enum configItem : int8_t {
 
 extern const SettingsBase<configItem> &comp_sett;
 
-
 #ifdef CONFIG_APP_USE_MQTT
 constexpr uint32_t CBM_mqttClient = BIT(CB_MQTT_ENABLE) | BIT(CB_MQTT_PASSWD) | BIT(CB_MQTT_USER) | BIT(CB_MQTT_URL) | BIT(CB_MQTT_CLIENT_ID) | BIT(CB_MQTT_ROOT_TOPIC);
 #endif
@@ -61,7 +59,7 @@ constexpr uint32_t CBM_mqttClient = BIT(CB_MQTT_ENABLE) | BIT(CB_MQTT_PASSWD) | 
 constexpr auto settings_get_kvsKey(configItem item) {
   return comp_sett.get_kvsKey(item);
 }
-/// overloaded function for template usage
+/// overloaded fction for template usage
 constexpr auto settings_get_kvsType(configItem item) {
   return comp_sett.get_kvsType(item);
 }

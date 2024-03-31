@@ -1,5 +1,9 @@
 menu "zwiebert: HTTP Server"
 
+    config NET_HTTP_SERVER_HAVE_COMPONENT
+        bool
+        default y
+
     config APP_HTTP_ENABLE
         int  "Enable HTTP server by default"
         range 0 1

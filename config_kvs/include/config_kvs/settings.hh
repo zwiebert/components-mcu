@@ -78,7 +78,7 @@ public:
   virtual StoreFun get_storeFun(const CfgItem item) const = 0;
   virtual StoreFun get_storeFun(const otok optKey) const = 0;
 
-
+  virtual void initField(const CfgItem item, const char *const kvsKey, const otok optKey, const KvsType kvsType, soCfgFunT soCfgFun = 0, StoreFun storeFun = STF_none) =0;
 };
 
 template<typename Kvs_Type, typename CfgItem>
