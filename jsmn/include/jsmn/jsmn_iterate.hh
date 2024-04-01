@@ -349,6 +349,21 @@ private:
     return false;
   }
 
+  bool get_value(bool &dst, pointer ptr) const {
+    char buf[32];
+    if (ptr->type == JSMN_PRIMITIVE && copy_string(buf, sizeof buf, ptr)) {
+      if (0 ==strcmp(buf, "true") || 0==strcmp(buf, "1")){
+        dst = true;
+        return true;
+      }
+      if (0 ==strcmp(buf, "false") || 0==strcmp(buf, "0")){
+        dst = false;
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool get_value(std::string &dst, pointer ptr) const {
     if (ptr->type == JSMN_STRING) {
       size_t str_length = ptr->end - ptr->start;
