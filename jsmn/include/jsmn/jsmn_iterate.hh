@@ -15,26 +15,18 @@
 #include <cassert>
 #include <string>
 
-template<typename input_type = const char *>
+template<typename input_type = const char*>
 class JsmnBaseTmplt {
-using pointer = jsmntok_t *;
+  using pointer = jsmntok_t *;
 
 protected:
-JsmnBaseTmplt(input_type json, jsmntok_t *tok, unsigned tok_max) :
-    m_json(json),
-    m_tok_heap_alloc(nullptr),
-    m_tok(tok),
-    m_tok_max(tok_max),
-    m_nmb_tok(do_parse(json)) {
-}
+  JsmnBaseTmplt(input_type json, jsmntok_t *tok, unsigned tok_max) :
+      m_json(json), m_tok_heap_alloc(nullptr), m_tok(tok), m_tok_max(tok_max), m_nmb_tok(do_parse(json)) {
+  }
 public:
 
   JsmnBaseTmplt(input_type json, unsigned tok_max) :
-      m_json(json),
-      m_tok_heap_alloc(new jsmntok_t[tok_max]),
-      m_tok(m_tok_heap_alloc),
-      m_tok_max(tok_max),
-      m_nmb_tok(do_parse(json)) {
+      m_json(json), m_tok_heap_alloc(new jsmntok_t[tok_max]), m_tok(m_tok_heap_alloc), m_tok_max(tok_max), m_nmb_tok(do_parse(json)) {
   }
 
   ~JsmnBaseTmplt() {
@@ -69,10 +61,9 @@ public:
   public:
     bool value_equals_null() const {
       const char s[] = "null";
-      const unsigned slen = sizeof s -1;
+      const unsigned slen = sizeof s - 1;
 
-      return m_ptr->type == JSMN_PRIMITIVE
-      && slen == m_ptr->end - m_ptr->start // same length
+      return m_ptr->type == JSMN_PRIMITIVE && slen == m_ptr->end - m_ptr->start // same length
       && strncmp(m_container.get_json() + m_ptr->start, "null", slen) == 0; // same content
     }
 
@@ -80,17 +71,16 @@ public:
       const char s[] = "false";
       const unsigned slen = sizeof s - 1;
 
-      return m_ptr->type == JSMN_PRIMITIVE
-      && slen == m_ptr->end - m_ptr->start // same length
+      return m_ptr->type == JSMN_PRIMITIVE && slen == m_ptr->end - m_ptr->start // same length
       && strncmp(m_container.get_json() + m_ptr->start, "null", slen) == 0; // same content
     }
 
     bool value_equals_true() const {
       const char s[] = "true";
-      const unsigned slen = sizeof s - 1;;
+      const unsigned slen = sizeof s - 1;
+      ;
 
-      return m_ptr->type == JSMN_PRIMITIVE
-      && slen == m_ptr->end - m_ptr->start // same length
+      return m_ptr->type == JSMN_PRIMITIVE && slen == m_ptr->end - m_ptr->start // same length
       && strncmp(m_container.get_json() + m_ptr->start, "null", slen) == 0; // same content
     }
 
@@ -155,6 +145,18 @@ public:
     bool getValue(T &dst) const {
       return m_container.get_value(dst, m_ptr);
     }
+    /**
+     * \brief        Get value of key/value pair and advance iterator
+     * \param  dst   value will be written to dst
+     * \return       false if value type is not JSMN_PRIMITIVE Or JSMN_STRING
+     */
+    template<typename T>
+    bool takeValue(T &dst) {
+      if (!getValue(dst))
+        return false;
+      *this += 1;
+      return true;
+    }
 
     /**
      * \brief        Get value as string instead of number or boolean
@@ -177,10 +179,9 @@ public:
      *
      * \return       pointer to null terminated string. If not JSMN_STRING or JSMN_PRIMITIVE it returns null
      */
-    char *getValueAsString() const {
+    char* getValueAsString() const {
       return m_container.get_value_as_string(m_ptr);
     }
-
 
     /**
      * \brief        Get value of key/value pair if key
@@ -191,6 +192,19 @@ public:
     template<typename T>
     bool getValue(T &dst, const char *key) const {
       return keyIsEqual(key) && m_container.get_value(dst, m_ptr + 1);
+    }
+    /**
+     * \brief        Get value of key/value pair and advance iterator
+     * \param  key   key to match or nullptr to match any key
+     * \param  dst   value will be written to dst
+     * \return       false if key does not match, or value type is not JSMN_PRIMITIVE or JSMN_STRING
+     */
+    template<typename T>
+    bool takeValue(T &dst, const char *key) {
+      if (!getValue(dst, key))
+        return false;
+      *this += 2;
+      return true;
     }
 
   public: // operators
@@ -250,9 +264,9 @@ public:
 
   public:
 
-  bool skip_key_and_value() {
-    return m_container.skip_key_and_value(*this);
-  }
+    bool skip_key_and_value() {
+      return m_container.skip_key_and_value(*this);
+    }
 
   private:
     pointer m_ptr;
@@ -369,7 +383,7 @@ private:
     return false;
   }
 
-  char *get_value_as_string(pointer ptr) {
+  char* get_value_as_string(pointer ptr) {
     if (ptr->type != JSMN_STRING && ptr->type != JSMN_PRIMITIVE)
       return nullptr;
 
@@ -390,13 +404,13 @@ using Jsmn_String = JsmnBaseTmplt<char *>;
 using Jsmn_Cstring = JsmnBaseTmplt<const char *>;
 using JsmnBase = Jsmn_Cstring;
 
-template<size_t JSON_MAX_TOKENS, typename input_type = const char *>
-class Jsmn : public JsmnBaseTmplt<input_type> {
+template<size_t JSON_MAX_TOKENS, typename input_type = const char*>
+class Jsmn: public JsmnBaseTmplt<input_type> {
 public:
-  Jsmn(input_type json): JsmnBaseTmplt<input_type>(json, &m_tok_arr[0], JSON_MAX_TOKENS) {
+  Jsmn(input_type json) :
+      JsmnBaseTmplt<input_type>(json, &m_tok_arr[0], JSON_MAX_TOKENS) {
   }
 private:
   jsmntok_t m_tok_arr[JSON_MAX_TOKENS];
 };
-
 

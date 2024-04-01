@@ -20,7 +20,9 @@
 #include "esp_system.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include "esp_log.h"
 
+#define logtag "kvs"
 struct kvs_handle {
   nvs_handle handle;
 };
@@ -65,7 +67,11 @@ bool kvs_write_str(kvshT handle, const char *key, const char *src_or_dst) {
 }
 
 bool kvs_write_blob(kvshT handle, const char *key, const void *src_or_dst, unsigned length) {
-  return (nvs_set_blob(VP2H(handle), key, src_or_dst, length) == ESP_OK);
+  if (auto err = nvs_set_blob(VP2H(handle), key, src_or_dst, length); err != ESP_OK) {
+     ESP_LOGE(logtag, "%s: %s", __func__, esp_err_to_name(err));
+     return false;
+  }
+  return true;
 }
 
 static ssize_t kvs_read_blob(kvshT handle, const char *key, void *src_or_dst, unsigned length) {
