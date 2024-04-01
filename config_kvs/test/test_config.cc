@@ -34,15 +34,15 @@ static void tst_compSettings() {
 
   {
     char buf[80] = "---------------";
-    TEST_ASSERT_EQUAL_STRING("C_VERBOSE", settings_get_kvsKey(CB_VERBOSE));
-    config_save_item_s(settings_get_kvsKey(CB_VERBOSE), "val2");
-    config_read_item_s(settings_get_kvsKey(CB_VERBOSE), buf, sizeof buf, "def2");
+    TEST_ASSERT_EQUAL_STRING("C_VERBOSE", comp_sett.get_kvsKey(CB_VERBOSE));
+    config_save_item_s(comp_sett.get_kvsKey(CB_VERBOSE), "val2");
+    config_read_item_s(comp_sett.get_kvsKey(CB_VERBOSE), buf, sizeof buf, "def2");
     TEST_ASSERT_EQUAL_STRING(buf, "val2");
   }
 
   {
     char buf[80] = "---------------";
-    config_save_item_s(settings_get_kvsKey(CB_VERBOSE), "val3");
+    config_save_item_s(comp_sett.get_kvsKey(CB_VERBOSE), "val3");
     kvshT h;
     if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
       kvsRead_charArray(h, CB_VERBOSE, buf);
@@ -56,7 +56,7 @@ static void tst_compSettings() {
     char buf4[4] = "444";
     char buf8[8] = "8888888";
     } s;
-    config_save_item_s(settings_get_kvsKey(CB_VERBOSE), "abcd");
+    config_save_item_s(comp_sett.get_kvsKey(CB_VERBOSE), "abcd");
     kvshT h;
     if ((h = kvs_open(CONFIG_APP_CFG_NAMESPACE, kvs_READ))) {
       kvsRead_charArray(h, CB_VERBOSE, s.buf4);

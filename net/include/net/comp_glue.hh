@@ -106,29 +106,29 @@ inline void config_setup_cliTcpServer(struct uo_flagsT *flagsPtr) {
 #include "net/ethernet_setup.hh"
 inline void soCfg_LAN_PHY(class UoutWriter &td) {
   cfg_lan c;
-  td.so().print(settings_get_optKeyStr(CB_LAN_PHY), cfg_args_lanPhy[config_read_ethernet(&c)->phy]);
+  td.so().print(comp_sett.get_optKeyStr(CB_LAN_PHY), cfg_args_lanPhy[config_read_ethernet(&c)->phy]);
 }
 inline void soCfg_LAN_PWR_GPIO(class UoutWriter &td) {
   cfg_lan c;
-  td.so().print(settings_get_optKeyStr(CB_LAN_PWR_GPIO), config_read_ethernet(&c)->pwr_gpio);
+  td.so().print(comp_sett.get_optKeyStr(CB_LAN_PWR_GPIO), config_read_ethernet(&c)->pwr_gpio);
 }
 #endif
 #ifdef CONFIG_APP_USE_WLAN
 #include "net/wifi_station_setup.hh"
 inline void soCfg_WLAN_SSID(class UoutWriter &td) {
   cfg_wlan c;
-  td.so().print(settings_get_optKeyStr(CB_WIFI_SSID), config_read_wifiStation(&c)->SSID);
+  td.so().print(comp_sett.get_optKeyStr(CB_WIFI_SSID), config_read_wifiStation(&c)->SSID);
 }
 inline void soCfg_WLAN_PASSWORD(class UoutWriter &td) {
   cfg_wlan c;
-  td.so().print(settings_get_optKeyStr(CB_WIFI_PASSWD), *config_read_wifiStation(&c)->password ? "*" : "");
+  td.so().print(comp_sett.get_optKeyStr(CB_WIFI_PASSWD), *config_read_wifiStation(&c)->password ? "*" : "");
 }
 #endif
 #ifdef CONFIG_APP_USE_NTP
 #include "net/ntp_client_setup.hh"
 inline void soCfg_NTP_SERVER(class UoutWriter &td) {
   cfg_ntp c;
-  td.so().print(settings_get_optKeyStr(CB_NTP_SERVER), config_read_ntpClient(&c)->server);
+  td.so().print(comp_sett.get_optKeyStr(CB_NTP_SERVER), config_read_ntpClient(&c)->server);
 }
 #endif
 

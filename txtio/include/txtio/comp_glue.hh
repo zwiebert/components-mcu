@@ -46,7 +46,7 @@ inline enum verbosity config_read_verbose() {
 
 
 inline void soCfg_VERBOSE(class UoutWriter &td) {
-  td.so().print(settings_get_optKeyStr(CB_VERBOSE), config_read_verbose());
+  td.so().print(comp_sett.get_optKeyStr(CB_VERBOSE), config_read_verbose());
 }
 
 template<typename settings_type>

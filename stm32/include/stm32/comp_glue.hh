@@ -35,7 +35,7 @@ inline bool config_read_stm32_inv_bootpin() {
 
 #include <uout/so_target_desc.hh>
 inline void soCfg_STM32_BOOTGPIO_INV(class UoutWriter &td) {
-  td.so().print(settings_get_optKeyStr(CB_STM32_INV_BOOTPIN), config_read_stm32_inv_bootpin());
+  td.so().print(comp_sett.get_optKeyStr(CB_STM32_INV_BOOTPIN), config_read_stm32_inv_bootpin());
 }
 #endif
 

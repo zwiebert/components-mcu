@@ -52,22 +52,22 @@ inline void soCfg_HTTP(class UoutWriter &td) {
   cfg_http c;
   config_read_httpServer(&c);
 
-  td.so().print(settings_get_optKeyStr(CB_HTTP_USER), c.user);
-  td.so().print(settings_get_optKeyStr(CB_HTTP_PASSWD), *c.password ? "*" : "");
-  td.so().print(settings_get_optKeyStr(CB_HTTP_ENABLE), c.enable);
+  td.so().print(comp_sett.get_optKeyStr(CB_HTTP_USER), c.user);
+  td.so().print(comp_sett.get_optKeyStr(CB_HTTP_PASSWD), *c.password ? "*" : "");
+  td.so().print(comp_sett.get_optKeyStr(CB_HTTP_ENABLE), c.enable);
 }
 
 inline void soCfg_HTTP_ENABLE(class UoutWriter &td) {
   cfg_http c;
-  td.so().print(settings_get_optKeyStr(CB_HTTP_ENABLE), config_read_httpServer(&c)->enable);
+  td.so().print(comp_sett.get_optKeyStr(CB_HTTP_ENABLE), config_read_httpServer(&c)->enable);
 }
 inline void soCfg_HTTP_USER(class UoutWriter &td) {
   cfg_http c;
-  td.so().print(settings_get_optKeyStr(CB_HTTP_USER), config_read_httpServer(&c)->user);
+  td.so().print(comp_sett.get_optKeyStr(CB_HTTP_USER), config_read_httpServer(&c)->user);
 }
 inline void soCfg_HTTP_PASSWORD(class UoutWriter &td) {
   cfg_http c;
-  td.so().print(settings_get_optKeyStr(CB_HTTP_PASSWD), *config_read_httpServer(&c)->password ? "*" : "");
+  td.so().print(comp_sett.get_optKeyStr(CB_HTTP_PASSWD), *config_read_httpServer(&c)->password ? "*" : "");
 }
 #endif
 

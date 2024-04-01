@@ -28,19 +28,19 @@
 template<typename settings_type>
 constexpr void register_settings(settings_type &settings) {
 #if __has_include(<net_http_server/comp_glue.hh>)
-    net_http_server_register_settings(settings);
+  net_http_server_register_settings(settings);
 #endif
 #if __has_include(<net/comp_glue.hh>)
-    net_register_settings(settings);
+  net_register_settings(settings);
 #endif
 #if __has_include(<net_mqtt/comp_glue.hh>)
-    netMqtt_register_settings(settings);
+  netMqtt_register_settings(settings);
 #endif
 #if __has_include(<stm32/comp_glue.hh>)
-    stm32_register_settings(settings);
+  stm32_register_settings(settings);
 #endif
 #if __has_include(<txtio/comp_glue.hh>)
-    txtio_register_settings(settings);
+  txtio_register_settings(settings);
 #endif
 }
 
@@ -58,9 +58,8 @@ public:
 static constexpr CompSettings comp_settings_obj;
 const SettingsBase<configItem> &comp_sett = comp_settings_obj;
 #else
-extern const SettingsBase<configItem> &comp_sett;// = comp_settings_obj;
+extern const SettingsBase<configItem> &comp_sett; // = comp_settings_obj;
 #endif
 
 #endif
-
 

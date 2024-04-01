@@ -45,37 +45,37 @@ inline void soCfg_MQTT(class UoutWriter &td, bool backup) {
   cfg_mqtt c;
   config_read_mqttClient(&c);
 
-  td.so().print(settings_get_optKeyStr(CB_MQTT_URL), c.url);
-  td.so().print(settings_get_optKeyStr(CB_MQTT_USER), c.user);
-  if (!backup) td.so().print(settings_get_optKeyStr(CB_MQTT_PASSWD), *c.password ? "*" : "");
-  td.so().print(settings_get_optKeyStr(CB_MQTT_CLIENT_ID), c.client_id);
-  td.so().print(settings_get_optKeyStr(CB_MQTT_ROOT_TOPIC), c.root_topic);
-  td.so().print(settings_get_optKeyStr(CB_MQTT_ENABLE), c.enable);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_URL), c.url);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_USER), c.user);
+  if (!backup) td.so().print(comp_sett.get_optKeyStr(CB_MQTT_PASSWD), *c.password ? "*" : "");
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_CLIENT_ID), c.client_id);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_ROOT_TOPIC), c.root_topic);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_ENABLE), c.enable);
 }
 
 inline void soCfg_MQTT_ENABLE(class UoutWriter &td) {
   cfg_mqtt c;
-  td.so().print(settings_get_optKeyStr(CB_MQTT_ENABLE), config_read_mqttClient(&c)->enable);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_ENABLE), config_read_mqttClient(&c)->enable);
 }
 inline void soCfg_MQTT_URL(class UoutWriter &td) {
   cfg_mqtt c;
-  td.so().print(settings_get_optKeyStr(CB_MQTT_URL), config_read_mqttClient(&c)->url);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_URL), config_read_mqttClient(&c)->url);
 }
 inline void soCfg_MQTT_USER(class UoutWriter &td) {
   cfg_mqtt c;
-  td.so().print(settings_get_optKeyStr(CB_MQTT_USER), config_read_mqttClient(&c)->user);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_USER), config_read_mqttClient(&c)->user);
 }
 inline void soCfg_MQTT_PASSWORD(class UoutWriter &td) {
   cfg_mqtt c;
-  td.so().print(settings_get_optKeyStr(CB_MQTT_PASSWD), *config_read_mqttClient(&c)->password ? "*" : "");
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_PASSWD), *config_read_mqttClient(&c)->password ? "*" : "");
 }
 inline void soCfg_MQTT_CLIENT_ID(class UoutWriter &td) {
   cfg_mqtt c;
-  td.so().print(settings_get_optKeyStr(CB_MQTT_CLIENT_ID), config_read_mqttClient(&c)->client_id);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_CLIENT_ID), config_read_mqttClient(&c)->client_id);
 }
 inline void soCfg_MQTT_ROOT_TOPIC(class UoutWriter &td) {
   cfg_mqtt c;
-  td.so().print(settings_get_optKeyStr(CB_MQTT_ROOT_TOPIC), config_read_mqttClient(&c)->root_topic);
+  td.so().print(comp_sett.get_optKeyStr(CB_MQTT_ROOT_TOPIC), config_read_mqttClient(&c)->root_topic);
 }
 #endif
 

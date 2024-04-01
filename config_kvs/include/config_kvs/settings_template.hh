@@ -21,6 +21,11 @@ public:
   using storeFunT = void (*)(CfgItem item, const char *val);
   using ourT = Settings<CfgItem, Size, Offset>;
   using initFunT = void (*)(ourT&);
+public:
+ template<typename T>
+constexpr CfgItem castToConfigItem(T item) {
+  return static_cast<CfgItem>(item);
+}
 
 
 public:
@@ -100,7 +105,8 @@ protected:
   }
 
 public:
-  constexpr void initField(const CfgItem ai, const char *const kvsKey, const otok optKey, const KvsType kvsType, soCfgFunT soCfgFun = 0, StoreFun storeFun =
+  template<typename config_item_type2>
+  constexpr void initField(const config_item_type2 ai, const char *const kvsKey, const otok optKey, const KvsType kvsType, soCfgFunT soCfgFun = 0, StoreFun storeFun =
       STF_none) {
     uint8_t idx = ai - Offset;
     m_data[idx] = SettingsData { .kvs_key = kvsKey, .so_cfg_fun = soCfgFun, .opt_key = optKey, .kvs_type = kvsType, .store_fun = storeFun, .id_bit = idx };
