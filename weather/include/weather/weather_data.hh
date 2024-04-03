@@ -1,4 +1,5 @@
 #pragma once
+#include <cstdio>
 
 struct weather_data {
   struct {
@@ -28,5 +29,15 @@ public:
   }
   unsigned get_cloud_coverage_percent() const {
     return clouds.all;
+  }
+public:
+  int to_json(char *dst, size_t dst_size) const {
+    auto n = snprintf(dst, dst_size, //
+        R"({"main":{"humidity":%u,"temp":%f,"pressure":%u},"wind":{"speed":%f,"deg":%u},"clouds":{"all":%u}})", //
+        main.humidity, main.temp, main.pressure, //
+        wind.speed, wind.deg, //
+        clouds.all);
+
+    return n < dst_size ? n : 0;
   }
 };

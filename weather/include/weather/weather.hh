@@ -35,4 +35,27 @@ public: // dev
 private:
   Weather_Provider *m_wp = nullptr;
   weather_data m_past_wd[7][24] = {}; ///< past weather data sorted by weekday and hour
+
+public:
+
+
+  /**
+   * \brief  read out member objects in JSON format in chunks
+   *
+   * This is called from a read function which will call it multiple times until all data was read
+   *
+   * \param buf       buffer.
+   * \param buf_size  should at least 250 bytes
+   * \param obj_ct    holds the state (where we were at return). Needs to passed unchanged to next call.
+   *                  obj_ct holds the number of objects
+   *                  if obj_ct is -1 (EOF), the function does nothing
+   * \param start_ct  as long as obj_ct is less than this parameter, do nothing
+   *
+   * \return          returns the number of bytes written to buf
+   *                  returns 0 for EOF or if buffer was not large enough
+   * .
+   */
+  int to_json(char *buf, size_t buf_size, int &obj_ct, int &state, int start_ct = 0);
+  static constexpr int PAST_WD_OBJS =  sizeof m_past_wd / sizeof m_past_wd[0][0];
+  static constexpr int TOTAL_OBJS = PAST_WD_OBJS;
 };
