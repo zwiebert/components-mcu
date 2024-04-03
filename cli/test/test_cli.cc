@@ -14,7 +14,7 @@
 #include "utils_misc/bcd.h"
 #include "../cli_private.h"
 #include "cli/cli.h"
-#include "uout/status_json.hh"
+#include "uout/uout_builder_json.hh"
 
 
 static void test_commandline() {

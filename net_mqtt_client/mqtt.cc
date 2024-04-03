@@ -2,7 +2,7 @@
 
 #include "cli/cli.h"
 #include "cli/mutex.h"
-#include "uout/status_json.hh"
+#include "uout/uout_builder_json.hh"
 
 #include <string.h>
 #include <stdio.h>

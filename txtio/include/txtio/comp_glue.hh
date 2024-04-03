@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/so_target_desc.hh>)
+#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/uout_writer.hh>)
 #include <config_kvs/settings.hh>
 #include <config_kvs/comp_settings.hh>
 #include <config_kvs/config_kvs.h>
@@ -17,7 +17,7 @@
 #include "txtio/inout.h"
 #include "txtio/txtio_setup.hh"
 #include <uout/uo_callbacks.h>
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 
 inline struct cfg_txtio* config_read_txtio(struct cfg_txtio *c) {
   kvshT h;

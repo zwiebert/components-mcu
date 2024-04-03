@@ -10,7 +10,7 @@
 #pragma once
 
 
-#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/so_target_desc.hh>)
+#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/uout_writer.hh>)
 #include <config_kvs/settings.hh>
 #include <config_kvs/comp_settings.hh>
 #include <config_kvs/config_kvs.h>
@@ -38,7 +38,7 @@ inline void config_setup_mqttClient(struct cfg_mqtt *cp) {
   io_mqtt_setup(&c);
 }
 
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 #include "net_mqtt_client/mqtt.hh"
 
 inline void soCfg_MQTT(class UoutWriter &td, bool backup) {

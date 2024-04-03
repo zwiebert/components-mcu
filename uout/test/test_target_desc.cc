@@ -4,7 +4,7 @@
 #endif
 
 //#define final
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 #include <array>
 
 class UoutWriterTest final : public UoutWriter {

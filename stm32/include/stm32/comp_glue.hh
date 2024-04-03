@@ -9,7 +9,7 @@
 
 #pragma once
 
-#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/so_target_desc.hh>)
+#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/uout_writer.hh>)
 #include <stm32/stm32.h>
 #include <config_kvs/settings.hh>
 #include <config_kvs/comp_settings.hh>
@@ -33,7 +33,7 @@ inline bool config_read_stm32_inv_bootpin() {
   return !!config_read_item((CB_STM32_INV_BOOTPIN), 0);
 }
 
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 inline void soCfg_STM32_BOOTGPIO_INV(class UoutWriter &td) {
   td.so().print(comp_sett.get_optKeyStr(CB_STM32_INV_BOOTPIN), config_read_stm32_inv_bootpin());
 }

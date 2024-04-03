@@ -4,11 +4,11 @@
  */
 #pragma once
 #include "so_target_bits.h"
-#include "so_target_desc.hh"
+#include "uout_writer.hh"
 #include "so_out.h"
 
 #include <uout/so_out.h>
-#include <uout/status_json.hh>
+#include <uout/uout_builder_json.hh>
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>

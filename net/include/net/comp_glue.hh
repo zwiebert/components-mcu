@@ -10,7 +10,7 @@
 #pragma once
 
 
-#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/so_target_desc.hh>)
+#if __has_include(<config_kvs/settings.hh>) &&  __has_include(<uout/uout_writer.hh>)
 #include <config_kvs/settings.hh>
 #include <config_kvs/comp_settings.hh>
 #include <config_kvs/config_kvs.h>
@@ -100,7 +100,7 @@ inline void config_setup_cliTcpServer(struct uo_flagsT *flagsPtr) {
 }
 #endif
 
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 
 #ifdef CONFIG_APP_USE_LAN
 #include "net/ethernet_setup.hh"

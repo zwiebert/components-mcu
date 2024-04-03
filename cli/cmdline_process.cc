@@ -14,7 +14,7 @@
 //#include "net_http_server/http_server_setup.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
-#include "uout/status_json.hh"
+#include "uout/uout_builder_json.hh"
 #include "debug/log.h"
 #include "jsmn/jsmn.h"
 #include "jsmn/jsmn_iterate.hh"

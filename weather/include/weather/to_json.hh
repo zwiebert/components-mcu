@@ -2,7 +2,7 @@
 
 #include <cstdio>
 #include <cstring>
-#include <uout/status_json.hh>
+#include <uout/uout_builder_json.hh>
 
 
 /**

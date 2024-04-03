@@ -7,7 +7,7 @@
  */
 #pragma once
 
-#if __has_include(<config_kvs/comp_settings.hh>) &&  __has_include(<uout/so_target_desc.hh>)
+#if __has_include(<config_kvs/comp_settings.hh>) &&  __has_include(<uout/uout_writer.hh>)
 #include <config_kvs/comp_settings.hh>
 #if __has_include(<net_http_server/comp_glue.hh>)
 #include <net_http_server/comp_glue.hh>

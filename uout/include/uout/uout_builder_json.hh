@@ -1,5 +1,5 @@
 /**
- * \file uout/status_json.hh
+ * \file uout/uout_builder_json.hh
  * \brief  Create JSON output from key/val pairs
  */
 #pragma once

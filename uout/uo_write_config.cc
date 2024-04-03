@@ -1,4 +1,4 @@
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 #include <config_kvs/comp_settings.hh>
 
 #include <string.h>

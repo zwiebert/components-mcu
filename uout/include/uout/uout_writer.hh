@@ -1,12 +1,12 @@
 /**
- * \file   uout/so_target_desc.hh
+ * \file   uout/uout_writer.hh
  * \brief  Provide an output class hierarchy which knows about the required format (text or JSON) and write functions provided by the target.
  */
 #pragma once
 #include "so_out.h"
 #include "cli_out.h"
 #include "so_target_bits.h"
-#include "status_json.hh"
+#include "uout_builder_json.hh"
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>

@@ -1,9 +1,9 @@
 
 #include "uout/so_out.h"
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 #include <app_config/options.hh>
 #include "txtio/inout.h"
-#include "uout/status_json.hh"
+#include "uout/uout_builder_json.hh"
 #include "debug/dbg.h"
 #include "utils_misc/int_macros.h"
 #include <string.h>

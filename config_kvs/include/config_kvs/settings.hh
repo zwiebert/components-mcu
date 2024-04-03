@@ -5,7 +5,7 @@
 #pragma once
 
 #include <app_config/options.hh>
-#include <uout/so_target_desc.hh>
+#include <uout/uout_writer.hh>
 #include <utils_misc/int_macros.h>
 #include "config.h"
 #include <assert.h>
