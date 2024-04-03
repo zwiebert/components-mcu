@@ -15,7 +15,7 @@
 #include <config_kvs/comp_settings.hh>
 #include <config_kvs/config_kvs.h>
 #include <app_config/options.hh>
-#include "net_mqtt/mqtt.hh"
+#include "net_mqtt_client/mqtt.hh"
 
 #ifdef CONFIG_APP_USE_MQTT
 inline struct cfg_mqtt* config_read_mqttClient(struct cfg_mqtt *c) {
@@ -39,7 +39,7 @@ inline void config_setup_mqttClient(struct cfg_mqtt *cp) {
 }
 
 #include <uout/so_target_desc.hh>
-#include "net_mqtt/mqtt.hh"
+#include "net_mqtt_client/mqtt.hh"
 
 inline void soCfg_MQTT(class UoutWriter &td, bool backup) {
   cfg_mqtt c;

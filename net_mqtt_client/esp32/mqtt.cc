@@ -1,5 +1,5 @@
 
-#include "net_mqtt/mqtt.hh"
+#include "net_mqtt_client/mqtt.hh"
 
 #include "cli/cli.h"
 #include "txtio/inout.h"
@@ -18,7 +18,7 @@
 #include "lwip/sockets.h"
 #include "lwip/dns.h"
 #include "lwip/netdb.h"
-#include <net_mqtt/mqtt.hh>
+#include <net_mqtt_client/mqtt.hh>
 #include <mbedtls/error.h>
 
 #include <stddef.h>

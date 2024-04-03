@@ -1,5 +1,5 @@
 /**
- * \file net_mqtt/mqtt.hh
+ * \file net_mqtt_client/mqtt.hh
  * \brief C++ wrapper of MQTT client library
  */
 #pragma once

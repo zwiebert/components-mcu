@@ -1,5 +1,5 @@
 
-#include "net_mqtt/mqtt.hh"
+#include "net_mqtt_client/mqtt.hh"
 
 #include <stddef.h>
 #include <string.h>

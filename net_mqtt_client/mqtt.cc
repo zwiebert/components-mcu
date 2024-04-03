@@ -1,4 +1,4 @@
-#include "net_mqtt/mqtt.hh"
+#include "net_mqtt_client/mqtt.hh"
 
 #include "cli/cli.h"
 #include "cli/mutex.h"

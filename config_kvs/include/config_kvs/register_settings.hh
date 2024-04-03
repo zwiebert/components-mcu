@@ -15,8 +15,8 @@
 #if __has_include(<net/comp_glue.hh>)
 #include <net/comp_glue.hh>
 #endif
-#if __has_include(<net_mqtt/comp_glue.hh>)
-#include <net_mqtt/comp_glue.hh>
+#if __has_include(<net_mqtt_client/comp_glue.hh>)
+#include <net_mqtt_client/comp_glue.hh>
 #endif
 #if __has_include(<stm32/comp_glue.hh>)
 #include <stm32/comp_glue.hh>
@@ -33,7 +33,7 @@ constexpr void register_settings(settings_type &settings) {
 #if __has_include(<net/comp_glue.hh>)
   net_register_settings(settings);
 #endif
-#if __has_include(<net_mqtt/comp_glue.hh>)
+#if __has_include(<net_mqtt_client/comp_glue.hh>)
   netMqtt_register_settings(settings);
 #endif
 #if __has_include(<stm32/comp_glue.hh>)
