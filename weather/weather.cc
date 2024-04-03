@@ -1,6 +1,6 @@
 #include <weather/weather.hh>
 #include <weather/to_json.hh>
-#include <key_value_store/kvs_wrapper.h>
+#include <kvs/kvs_wrapper.h>
 #include <cassert>
 #include <stddef.h>
 #include <stdio.h>

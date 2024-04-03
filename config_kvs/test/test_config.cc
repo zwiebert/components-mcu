@@ -13,7 +13,7 @@
 #include "../include/config_kvs/config.h"
 #include "config_kvs/config_kvs.h"
 #include <config_kvs/comp_settings.hh>
-#include "key_value_store/kvs_wrapper.h"
+#include "kvs/kvs_wrapper.h"
 
 #include "utils_misc/int_types.h"
 #include "utils_misc/itoa.h"

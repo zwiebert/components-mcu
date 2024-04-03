@@ -11,7 +11,7 @@
 
 #include "utils_misc/int_types.h"
 #include "utils_misc/cstring_utils.h"
-#include "key_value_store/kvs_wrapper.h"
+#include "kvs/kvs_wrapper.h"
 
 #include <string.h>
 

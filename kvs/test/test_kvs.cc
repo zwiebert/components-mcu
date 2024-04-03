@@ -2,7 +2,7 @@
 #ifdef TEST_HOST
 #include <test_runner.h>
 #endif
-#include "key_value_store/kvs_wrapper.h"
+#include "kvs/kvs_wrapper.h"
 #include <string.h>
 #include "utils_misc/cstring_utils.h"
 #include <iostream>

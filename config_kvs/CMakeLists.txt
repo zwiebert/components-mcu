@@ -4,7 +4,7 @@ idf_component_register(SRCS ${srcs}
     INCLUDE_DIRS "./include" 
     PRIV_INCLUDE_DIRS "./include/config_kvs" 
     REQUIRES   utils_misc app_config
-    PRIV_REQUIRES key_value_store uout 
+    PRIV_REQUIRES kvs uout 
     )
 
 component_compile_options(${comp_compile_opts})

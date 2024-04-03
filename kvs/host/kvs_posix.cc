@@ -9,7 +9,7 @@
 #ifndef TEST_HOST
 
 #endif
-#include "key_value_store/kvs_wrapper.h"
+#include "kvs/kvs_wrapper.h"
 #include "utils_misc/int_types.h"
 #include "utils_misc/int_macros.h"
 #include "debug/dbg.h"
@@ -460,7 +460,7 @@ void kvs_setup(void) {
 
 /*
  Local Variables:
- compile-command: "gcc -g3 kvs_posix.c -o kvs -I../include/key_value_store" && ./kvs
+ compile-command: "gcc -g3 kvs_posix.c -o kvs -I../include/kvs" && ./kvs
  js-indent-level: 2
  indent-tabs-mode: nil
  End:
