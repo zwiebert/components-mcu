@@ -143,6 +143,9 @@ esp_err_t respond_file(httpd_req_t *req, const struct file_map *fm) {
       // handle read error
       if (bytes_read < 0) {
         ESP_LOGE("respond_file", "read error");
+        if (!(ESP_OK == set_hdrs() && ESP_OK == httpd_resp_send_chunk(req, "", 0))) { //FIXME return error
+          return ESP_FAIL;
+        }
         return ESP_FAIL;
       }
 

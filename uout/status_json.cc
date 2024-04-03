@@ -69,8 +69,8 @@ bool UoutBuilderJson::buffer_grow(size_t required_free_space) {
   // Try to free up enough space
   if (myBuf && myBuf_idx) {
     write_some_json();
-   if (required_free_space + 20 < myBuf_size - myBuf_idx) // XXX: improve this
-     return true;
+    if (required_free_space + 20 < myBuf_size - myBuf_idx) // XXX: improve this
+      return true;
   }
 
   // refuse to realloc user provide buffer
@@ -99,6 +99,28 @@ char* UoutBuilderJson::get_json() const {
   return myBuf;
 }
 
+char* UoutBuilderJson::get_a_buffer(size_t required_size) {
+  if ((myBuf_size < myBuf_idx + required_size + 1) && !buffer_grow(required_size))
+    return nullptr;
+
+  return myBuf + myBuf_idx;
+}
+bool UoutBuilderJson::advance_position(int n) {
+  int pos = myBuf_idx + n;
+  if (!(0 <= pos && pos <= myBuf_size)) // allow position to be one behind buffer end
+    return false;
+  myBuf_idx = pos;
+
+  // we want to keep the buffer always null terminated
+  if (myBuf_size == myBuf_idx && !buffer_grow(1)) {
+    myBuf[myBuf_idx = 0] = '\0';
+    return false;
+  }
+
+  myBuf[myBuf_idx] = '\0';
+
+  return true;
+}
 
 bool UoutBuilderJson::not_enough_buffer(const char *key, const char *val) {
   size_t required_size = strlen(key);
@@ -125,7 +147,6 @@ int UoutBuilderJson::read_json_from_function(std::function<int(char *buf, size_t
   return n;
 }
 
-
 bool UoutBuilderJson::copy_to_buf(const char *s) {
   if (not_enough_buffer(s, 0))
     return false;
@@ -149,7 +170,7 @@ bool UoutBuilderJson::open_root_object(const char *id) {
   if (not_enough_buffer(id, 0))
     return false;
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "{\"from\":\"", id, "\",");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "{\"from\":\"", id, "\",");
 
   ++m_obj_ct;
 
@@ -164,7 +185,7 @@ int UoutBuilderJson::add_object() {
   if (not_enough_buffer("", 0))
     return -1;
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "{");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "{");
   unused_write_out_buf();
 
   ++m_obj_ct;
@@ -180,7 +201,7 @@ int UoutBuilderJson::add_object(const char *key) {
   if (not_enough_buffer(key, 0))
     return -1;
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":{");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":{");
   unused_write_out_buf();
 
   ++m_obj_ct;
@@ -207,11 +228,11 @@ void UoutBuilderJson::close_object() {
 
 bool UoutBuilderJson::add_array(const char *key) {
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(myBuf_idx > 0 && m_obj_ct > 0); unused_write_out_buf();
+  precond(myBuf_idx > 0 && m_obj_ct > 0);unused_write_out_buf();
   if (not_enough_buffer(key, 0))
     return false;
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize,  "\"", key, "\":[");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":[");
   ++m_obj_ct;
 
   postcond(myBuf_size > myBuf_idx);
@@ -228,7 +249,7 @@ void UoutBuilderJson::close_array() {
   if (myBuf[myBuf_idx - 1] == ',') { // remove trailing comma...
     --myBuf_idx;
   }
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "],");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "],");
   --m_obj_ct;
   postcond(myBuf_size > myBuf_idx);
 }
@@ -244,21 +265,21 @@ void UoutBuilderJson::close_root_object() {
     --myBuf_idx;
   }
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "}");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "}");
   --m_obj_ct;
   unused_write_out_buf();
 }
 
 bool UoutBuilderJson::add_value_s(const char *val) {
   D(db_printf("%s(%s)\n", __func__, val));
-  precond(myBuf_idx > 0); unused_write_out_buf();
+  precond(myBuf_idx > 0);unused_write_out_buf();
 
   if (not_enough_buffer("---", val))
     return false;
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize,  "\"");
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, val);
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize,  "\",");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, val);
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\",");
 
   D(db_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);
@@ -267,31 +288,30 @@ bool UoutBuilderJson::add_value_s(const char *val) {
 
 bool UoutBuilderJson::add_value_d(int val) {
   D(db_printf("%s(%d)\n", __func__, val));
-  precond(myBuf_idx > 0); unused_write_out_buf();
+  precond(myBuf_idx > 0);unused_write_out_buf();
   char buf[20];
   ltoa(val, buf, 10);
 
   if (not_enough_buffer("", buf))
     return false;
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize,  ",");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, ",");
 
   D(db_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);
   return true;
 }
 
-
 bool UoutBuilderJson::add_key_value_pair_f(const char *key, float val, int prec) {
   D(db_printf("%s(%s, %f)\n", __func__, key, val));
   precond(myBuf_idx > 0);;
-  precond(key); unused_write_out_buf();
+  precond(key);unused_write_out_buf();
   if (not_enough_buffer(key, 0))
     return false;
 
   char buf[20];
   ftoa(val, buf, prec);
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":", buf, ",");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":", buf, ",");
   D(ets_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);
   return true;
@@ -300,13 +320,13 @@ bool UoutBuilderJson::add_key_value_pair_f(const char *key, float val, int prec)
 bool UoutBuilderJson::add_key_value_pair_d(const char *key, int val) {
   D(db_printf("%s(%s, %d)\n", __func__, key, val));
   precond(myBuf_idx > 0);
-  precond(key); unused_write_out_buf();
+  precond(key);unused_write_out_buf();
   if (not_enough_buffer(key, 0))
     return false;
 
   char buf[20];
   ltoa(val, buf, 10);
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":", buf, ",");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":", buf, ",");
   D(db_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);
   return true;
@@ -315,17 +335,30 @@ bool UoutBuilderJson::add_key_value_pair_d(const char *key, int val) {
 bool UoutBuilderJson::add_key_value_pair_s(const char *key, const char *val) {
   D(db_printf("%s(%s, %s)\n", __func__, key, val));
   precond(myBuf_idx > 0);
-  precond(key); unused_write_out_buf();
+  precond(key);unused_write_out_buf();
   if (not_enough_buffer(key, val))
     return false;
 
-  myBuf_idx +=  csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":\"", val, "\",");
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":\"", val, "\",");
   D(ets_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);
   return true;
 }
 
-int UoutBuilderJson::writeln_json(bool final)  {
+bool UoutBuilderJson::add_key(const char *key) {
+  D(db_printf("%s(%s)\n", __func__, key));
+  precond(myBuf_idx > 0);
+  precond(key);unused_write_out_buf();
+  if (not_enough_buffer(key))
+    return false;
+
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":");
+  D(ets_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+
+int UoutBuilderJson::writeln_json(bool final) {
   if (myBuf_idx < 0)
     return -1; //EOF
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
@@ -351,7 +384,7 @@ int UoutBuilderJson::writeln_json(bool final)  {
   return -1;
 }
 
-int UoutBuilderJson::write_json(bool final)  {
+int UoutBuilderJson::write_json(bool final) {
   if (myBuf_idx < 0)
     return -1; //EOF
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
@@ -371,7 +404,7 @@ int UoutBuilderJson::write_json(bool final)  {
   return -1;
 }
 
-int UoutBuilderJson::write_some_json()  {
+int UoutBuilderJson::write_some_json() {
   if (myBuf_idx < 0)
     return -1; //EOF
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
@@ -393,6 +426,4 @@ int UoutBuilderJson::write_some_json()  {
   }
   return -1;
 }
-
-
 

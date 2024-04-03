@@ -31,11 +31,13 @@ public:
   bool add_key_value_pair_s(const char *key, const char *val); ///< \brief  Add key value pair "KEY":"VAL"
   bool add_key_value_pair_d(const char *key, int val); ///< \brief  Add key value pair "KEY":VAL
   bool add_key_value_pair_f(const char *key, float val, int prec = 5); ///< \brief  Add key value pair "KEY":VAL
+  bool add_key(const char *key); ///< \brief  Add a single key with colon but no value
 
   bool add_array(const char *key);  ///< \brief  add array  "KEY":[
   void close_array(); ///< \brief close array with ],
   bool add_value_d(int n);  ///< \brief Add number to array: N,
   bool add_value_s(const char *val); //< \brief Add string to array,
+
 
 
 
@@ -50,6 +52,9 @@ public:
   int write_json(bool final = true); ///< \brief write this objects JSON to its Target descriptor w/o newline
   int write_some_json(); ///< \brief write buffer to its Target (final=false), but leave the last character in the buffer at index 0.
   void free_buffer(); ///<  Destroy this objects JSON buffer (Optional. Destructor will take care of it)
+
+  char *get_a_buffer(size_t size); ///< get a buffer of at least size. returns a pointer inside the main buffer at current buf_idx
+  bool advance_position(int n); ///< advance buf_idx after writing to buffer from get_a_buffer. n can be negative. returns false if n is out of range
 
 private:
   bool realloc_buffer(size_t buf_size);
