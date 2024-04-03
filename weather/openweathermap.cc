@@ -19,16 +19,13 @@ static const tok_processObj_funT tok_processRootChilds_funs[] = { //
         auto count = it[1].size;
         for (it += 2; count > 0 && it; --count) {
           assert(it->type == JSMN_STRING);
-          if (it.getValue(weather.main.humidity, "humidity") || it.getValue(weather.main.temp, "temp") || it.getValue(weather.main.pressure, "pressure")) {
-            it += 2;
-          } else {
-            jp::skip_key_and_value(it);
-          }
-        }
+          if (!(it.takeValue(weather.main.humidity, "humidity") || it.takeValue(weather.main.temp, "temp") || it.takeValue(weather.main.pressure, "pressure"))) {
+jp::skip_key_and_value(it);
+}
+}
         return true;
       }
       return false;
-
     },
 
     [](weather_data &weather, jpit &it) -> bool { // Process object: wind
@@ -37,9 +34,7 @@ static const tok_processObj_funT tok_processRootChilds_funs[] = { //
         for (it += 2; count > 0 && it; --count) {
           assert(it->type == JSMN_STRING);
 
-          if (it.getValue(weather.wind.speed, "speed") || it.getValue(weather.wind.deg, "deg")) {
-            it += 2;
-          } else {
+          if (!(it.takeValue(weather.wind.speed, "speed") || it.takeValue(weather.wind.deg, "deg"))) {
             jp::skip_key_and_value(it);
           }
         }
@@ -55,9 +50,7 @@ static const tok_processObj_funT tok_processRootChilds_funs[] = { //
         for (it += 2; count > 0 && it; --count) {
           assert(it->type == JSMN_STRING);
 
-          if (it.getValue(weather.clouds.all, "all")) {
-            it += 2;
-          } else {
+          if (!(it.takeValue(weather.clouds.all, "all"))) {
             jp::skip_key_and_value(it);
           }
         }
@@ -68,7 +61,7 @@ static const tok_processObj_funT tok_processRootChilds_funs[] = { //
 
     [](weather_data &weather, jpit &it) -> bool { // Throw away unwanted objects
       return jp::skip_key_and_value(it);
-    } };
+    }};
 
 bool weather_process_json(const char *json, weather_data &weather) {
   auto jsmn = jp(json);
