@@ -46,6 +46,7 @@ bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
   void *m = realloc(myBuf, buf_size);
 
   if (!m) {
+    db_loge(logtag, "%s: buffer size=%u too small, but allocation of %u bytes failed", __func__, (unsigned)myBuf_size, (unsigned)buf_size);
     return false;
     io_puts("ERROR: UoutBuilderJson::realloc_buffer: out of memory\n");
   }
@@ -74,8 +75,10 @@ bool UoutBuilderJson::buffer_grow(size_t required_free_space) {
   }
 
   // refuse to realloc user provide buffer
-  if (!myBuf_isMine)
+  if (!myBuf_isMine) {
+    db_loge(logtag, "%s: user provided buffer size=%u too small. %u additional buffer space was requested", __func__, (unsigned)myBuf_size, (unsigned)required_free_space);
     return false;
+  }
 
   // realloc() our buffer
   size_t new_size = 0;
