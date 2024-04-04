@@ -1,9 +1,10 @@
 #pragma once
 
-#include <cstdio>
-#include <cstring>
 #include <uout/uout_builder_json.hh>
 #include <debug/log.h>
+#include <cstdio>
+#include <cstring>
+#include <functional>
 
 /**
  * \brief            template to make an sprintf based obj.to_json(dst, dst_size) to integrate into uout
@@ -14,31 +15,20 @@
  * \return           true for success
  */
 template<class C>
-bool uo_to_json(UoutBuilderJson &sj, const C &obj) {
-  size_t buf_size = 128;
+bool uo_elem_to_json(UoutBuilderJson &sj, const C &obj, size_t buf_size = 256) {
 
-  // do a second pass with bigger buffer, if was too small at first pass
+  // pass-0: try provide buffer size
+  // pass-1: try size returned by JSON generator function to_json()
   for (int pass = 0, n = -1; n < 0 && pass < 2; ++pass) {
 
-    auto buf = sj.get_a_buffer(buf_size + 1); //one extra byte for trailing comma
-    if (!buf)
+    if (n = sj.read_json_from_function(std::bind(&C::to_json, &obj, std::placeholders::_1, std::placeholders::_2), buf_size); n > 0)
+      return true;
+
+    if (n == 0)
       return false;
 
-    // if buffer was too small, the return value of obj.to_json
-    // should be negative and contain the required size
-    n = obj.to_json(buf, buf_size);
-
-    if (n < 0) {
-      buf_size = -n;
-      continue;
-    }
-#ifdef UOUT_DEBUG
-    db_loge(__func__, "add to sj buffer (buf_size=%u, n=%d): <%.*s>", buf_size, n, n, buf);
-#endif
-    buf[n++] = ',';
-    return sj.advance_position(n);
+    buf_size = -n;
   }
-
   return false;
 }
 
@@ -51,10 +41,10 @@ bool uo_to_json(UoutBuilderJson &sj, const C &obj) {
  * \return           success
  */
 template<class C>
-bool uo_to_json(UoutBuilderJson &sj, const C *arr, size_t arr_len) {
+bool uo_arr_to_json(UoutBuilderJson &sj, const C *arr, size_t arr_len, size_t buf_size = 256) {
   if (sj.add_array()) {
     for (int i = 0; i < arr_len; ++i) {
-      uo_to_json(sj, arr[i]);
+      uo_elem_to_json<C>(sj, arr[i], buf_size);
     }
     sj.close_array();
     return true;
@@ -72,12 +62,12 @@ bool uo_to_json(UoutBuilderJson &sj, const C *arr, size_t arr_len) {
  * \return           success
  */
 template<class C>
-bool uo_to_json(UoutBuilderJson &sj, const C *arr, size_t arr_llen, size_t arr_rlen) {
+bool uo_arr2_to_json(UoutBuilderJson &sj, const C *arr, size_t arr_llen, size_t arr_rlen, size_t buf_size = 256) {
   if (sj.add_array()) {
     for (int li = 0; li < arr_llen; ++li) {
       if (sj.add_array()) {
         for (int ri = 0; ri < arr_rlen; ++ri) {
-          uo_to_json(sj, arr[li + ri]);
+          uo_elem_to_json(sj, arr[li + ri], buf_size);
         }
         sj.close_array();
       }

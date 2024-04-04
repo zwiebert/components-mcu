@@ -86,7 +86,7 @@ bool Weather::fetch_and_store_weather_data() {
   auto n = snprintf(key, sizeof key, kvs_key_fmt, tdh.wday, tdh.hour);
   assert(n < sizeof key);
 
-  const wd_store wds = { .info { .time = time(0), .version = wd_current_version }, .wd = wd };
+  const wd_store wds = { .info { .time = ::time(0), .version = wd_current_version }, .wd = wd };
 
   if (auto h = kvs_open(kvs_name, kvs_WRITE)) {
     if (!kvs_set_blob(h, key, &wds, sizeof wds))
@@ -99,7 +99,8 @@ bool Weather::fetch_and_store_weather_data() {
 }
 
 bool Weather::to_json(class UoutBuilderJson &sj) {
-  return uo_to_json(sj, &m_past_wd[0][0], 7, 24);
+  sj.get_a_buffer(1024);
+  return uo_arr2_to_json(sj, &m_past_wd[0][0], 7, 24);
 }
 
 /////////////dev/////////////////

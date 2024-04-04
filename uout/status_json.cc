@@ -138,15 +138,21 @@ bool UoutBuilderJson::not_enough_buffer(const char *key, const char *val) {
 }
 
 int UoutBuilderJson::read_json_from_function(std::function<int(char *buf, size_t buf_size)> f, size_t required_size) {
-  if (myBuf_size < myBuf_idx + required_size) {
-    if (!buffer_grow(required_size)) {
-      return -1;
+  if (myBuf_size < myBuf_idx + required_size + 2) {
+    if (!buffer_grow(required_size + 2)) {
+      return 0;
     }
   }
-  int n = f(myBuf + myBuf_idx, myBuf_size - myBuf_idx);
 
-  if (n > 0)
+  const int n = f(myBuf + myBuf_idx, required_size);
+
+  if (n > 0) {
     myBuf_idx += n;
+    myBuf[myBuf_idx++] = ',';
+    myBuf[myBuf_idx] = '\0';
+  }
+
+  postcond(myBuf_size > myBuf_idx);
   return n;
 }
 
