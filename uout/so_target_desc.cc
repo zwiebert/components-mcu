@@ -76,7 +76,7 @@ int UoutWriterFile::priv_write(const char *s, ssize_t len, bool last)  {
   const size_t size = len;
   assert(size < 2046);
 
-  //ESP_LOGI("priv_write", "s=<%*s>, last=%d", len, s, (int)last);
+  //ESP_LOGI("priv_write", "s=<%.*s>, last=%d", len, s, (int)last);
 
   const char crlf[] = "\r\n";
   const unsigned crlf_len = sizeof crlf - 1;

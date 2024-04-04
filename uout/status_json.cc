@@ -242,6 +242,22 @@ bool UoutBuilderJson::add_array(const char *key) {
   return true;
 }
 
+bool UoutBuilderJson::add_array() {
+  D(db_printf("%s()\n", __func__));
+  precond(myBuf_idx > 0 && m_obj_ct > 0);
+  unused_write_out_buf();
+
+  if (not_enough_buffer())
+    return false;
+
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "[");
+  ++m_obj_ct;
+
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+
+
 void UoutBuilderJson::close_array() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);

@@ -1,5 +1,5 @@
 #include <weather/weather.hh>
-#include <weather/to_json.hh>
+#include <uout/to_json_adapter.hh>
 #include <kvs/kvs_wrapper.h>
 #include <cassert>
 #include <stddef.h>
@@ -98,16 +98,8 @@ bool Weather::fetch_and_store_weather_data() {
   return !err;
 }
 
-int Weather::to_json(char *buf, size_t buf_size, int &obj_ct, int &state, int start_ct) {
-  int bi = 0;
-  int arr_idx = obj_ct - start_ct;
-
-  if (!(0 <= arr_idx && arr_idx < TOTAL_OBJS))
-    return 0; // out of our range (EOF)
-
-  bi += array_to_json_tmpl(buf + bi, buf_size - bi, obj_ct, &m_past_wd[0][0], PAST_WD_OBJS, "past_wdj", start_ct);
-  state = arr_idx+1 == TOTAL_OBJS;
-  return bi;
+bool Weather::to_json(class UoutBuilderJson &sj) {
+  return uo_to_json(sj, &m_past_wd[0][0], 7, 24);
 }
 
 /////////////dev/////////////////

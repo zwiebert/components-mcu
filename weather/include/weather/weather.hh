@@ -40,22 +40,11 @@ public:
 
 
   /**
-   * \brief  read out member objects in JSON format in chunks
-   *
-   * This is called from a read function which will call it multiple times until all data was read
-   *
-   * \param buf       buffer.
-   * \param buf_size  should at least 250 bytes
-   * \param obj_ct    holds the state (where we were at return). Needs to passed unchanged to next call.
-   *                  obj_ct holds the number of objects
-   *                  if obj_ct is -1 (EOF), the function does nothing
-   * \param start_ct  as long as obj_ct is less than this parameter, do nothing
-   *
-   * \return          returns the number of bytes written to buf
-   *                  returns 0 for EOF or if buffer was not large enough
-   * .
+   * \brief           read out member objects in JSON format in chunks
+   * \param sj        JSON builder which should contain an UoutWriter object to write out the large past weather data in small chunks
+   * \return success
    */
-  int to_json(char *buf, size_t buf_size, int &obj_ct, int &state, int start_ct = 0);
+  bool to_json(class UoutBuilderJson &sj);
   static constexpr int PAST_WD_OBJS =  sizeof m_past_wd / sizeof m_past_wd[0][0];
   static constexpr int TOTAL_OBJS = PAST_WD_OBJS;
 };

@@ -34,6 +34,7 @@ public:
   bool add_key(const char *key); ///< \brief  Add a single key with colon but no value
 
   bool add_array(const char *key);  ///< \brief  add array  "KEY":[
+  bool add_array(); ///< \brief add array w/o a key (e.g. in arrays):[
   void close_array(); ///< \brief close array with ],
   bool add_value_d(int n);  ///< \brief Add number to array: N,
   bool add_value_s(const char *val); //< \brief Add string to array,

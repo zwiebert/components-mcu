@@ -84,7 +84,7 @@ int ws_write(void *req, const char *s, ssize_t s_len, int chunk_status) {
   const bool final_chunk = 0 <= chunk_status; // 0 or total number of chunks
 
 
-  D(ESP_LOGE(TAG, "ws_write(%p, <%s>, len=%d, chunk=%d", req, s, (int)s_len, chunk_status));
+  D(ESP_LOGE(TAG, "ws_write(%p, <%.*s>, len=%d, chunk=%d", req, (int)s_len, s, (int)s_len, chunk_status));
   httpd_ws_frame_t ws_pkt = {
       .final = final_chunk,
       .fragmented = !single_chunk,
