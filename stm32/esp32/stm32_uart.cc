@@ -15,7 +15,7 @@
 #ifdef CONFIG_STM32_DEBUG
 #define DEBUG
 #define D(x) x
-#define DD(x) x
+#define DD(x)
 #else
 #define D(x)
 #define DD(x)
@@ -51,6 +51,7 @@ int Stm32_Uart_ESP32::p_stm32_write(const char *data, unsigned data_len) {
   //LockGuard lock(stm32_mutex);
   if (stm32_mode != STM32_MODE_FIRMWARE)
     return -1;
+  D(ESP_LOGI(logtag,  "%s: dlen=%u, data=<%.*s>", __func__, data_len, data_len, data));
   return uart_write_bytes(m_uart, (const char*) data, data_len);
 }
 
@@ -81,7 +82,7 @@ int Stm32_Uart_ESP32::p_stm32_read_line(char *buf, unsigned buf_size, unsigned w
       if (!xQueueReceive(uart0_queue, (void*) &event, (TickType_t) 1000 / portTICK_PERIOD_MS))
         continue;
 
-      D(ESP_LOGI(TAG, "uart[%d] event:", m_uart));
+      DD(ESP_LOGI(TAG, "uart[%d] event:", m_uart));
       if (event.type == (uart_event_type_t) MY_UART_WAKE_UP)
         return 0;
 
@@ -94,9 +95,9 @@ int Stm32_Uart_ESP32::p_stm32_read_line(char *buf, unsigned buf_size, unsigned w
       case UART_DATA: {
         //LockGuard lock(stm32_mutex);
 
-        D(ESP_LOGI(TAG, "[UART DATA]: %d", event.size));
+        DD(ESP_LOGI(TAG, "[UART DATA]: %d", event.size));
         uart_read_bytes(m_uart, dtmp, event.size, portMAX_DELAY);
-        D(ESP_LOGI(TAG, "[DATA EVT]:"));
+        DD(ESP_LOGI(TAG, "[DATA EVT]:"));
         uart_write_bytes(m_uart, (const char*) dtmp, event.size);
       }
         break;
@@ -144,7 +145,7 @@ int Stm32_Uart_ESP32::p_stm32_read_line(char *buf, unsigned buf_size, unsigned w
         size_t buffered_size;
         uart_get_buffered_data_len(m_uart, &buffered_size);
         int pos = uart_pattern_pop_pos(m_uart);
-        D(ESP_LOGI(TAG, "[UART PATTERN DETECTED] pos: %d, buffered size: %d", pos, buffered_size));
+        DD(ESP_LOGI(TAG, "[UART PATTERN DETECTED] pos: %d, buffered size: %d", pos, buffered_size));
         if (pos == -1) {
           // There used to be a UART_PATTERN_DET event, but the pattern position queue is full so that it can not
           // record the position. We should set a larger queue size.
