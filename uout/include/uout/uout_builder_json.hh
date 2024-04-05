@@ -40,12 +40,67 @@ public:
   bool add_value_s(const char *val); //< \brief Add string to array,
 
 
+  /**
+   * \brief                   a snprintf like function writing JSON content like unamed objects, primitives. (things you could place in an array)
+   *                          \ref read_json_from_function
+   * \param arr_idx           index of the element we want the function to generate the JSON
+   * \param dst        output buffer
+   * \param dst_size   output buffer size
+   * \return                  return value should be exactly be like snprintf(3)'s return value
+   */
+using uo_to_json_funT = std::function<int(char *dst, size_t dst_size)>;
+  /**
+   * \brief                   a snprintf like function writing JSON for an array element used in JSON writer for arrays
+   *                          \ref read_json_arr_from_function
+   * \param dst        output buffer
+   * \param dst_size   output buffer size
+   * \param arr_idx           index of the element we want the function to generate the JSON
+   * \return                  return value should be exactly be like snprintf(3)'s return value
+   */
+using uo_to_json_arr_funT = std::function<int(char *dst, size_t dst_size, unsigned arr_idx)>;
+  /**
+   * \brief                   a snprintf like function writing JSON for an array element used in JSON writer for 2 dimensional arrays
+   *                          \ref read_json_arr2_from_function
+   * \param dst        output buffer
+   * \param dst_size   output buffer size
+   * \param arr_lidx          index of the nested array
+   * \param arr_ridx          index of the element inside the nested array we want the function to generate the JSON
+   * \return                  return value should be exactly be like snprintf(3)'s return value
+   */
+using uo_to_json_arr2_funT = std::function<int(char *dst, size_t dst_size, unsigned arr_lidx, unsigned arr_ridx)>;
 
+  /**
+   * \brief                   let a snprintf like function insert a JSON value, object, array element (anything which could be followed by a comma)
+   * \param f                 this function should behave exactly like snprintf(3). We do a second pass based on its return value if buffer was too small.
+   * \param required_size     if you know the size of the produced JSON, feel free to provide it here. It saves the second pass. Making it too large is wasteful.
+   *                          To increase chunk size use get_a_buffer(), because this parameter will not work for that
+   * \return                  success
+   */
+  bool read_json_from_function(uo_to_json_funT f, size_t required_size = 256);
+  /**
+   * \brief                   let a snprintf like function write JSON array elements directly into our buffer and add a comma
+   * \param f                 this function should behave exactly like snprintf(3). We do a second pass based on its return value if buffer was too small.
+   * \param arr_len           number of elements in the array (array length)
+   * \param required_size     if you know the size of the produced JSON per element, feel free to provide it here. It saves the second pass. Making it too large is wasteful.
+   *                          To increase chunk size use get_a_buffer(), because this parameter will not work for that
+   * \return                  success
+   */
+  bool read_json_arr_from_function(uo_to_json_arr_funT f, unsigned arr_len, size_t required_size = 256);
 
+  /**
+   * \brief                   let a snprintf like function write JSON array elements directly into our buffer and add a comma
+   * \param f                 this function should behave exactly like snprintf(3). We do a second pass based on its return value if buffer was too small.
+   * \param arr_llen          number of nested arrays   arr[arr_llen][]
+   * \param arr_rlen          number of array elements   arr[][arr_rlen]
+   * \param required_size     if you know the size of the produced JSON per element, feel free to provide it here. It saves the second pass. Making it too large is wasteful.
+   *                          To increase chunk size use get_a_buffer(), because this parameter will not work for that
+   * \return                  success
+   */
+  bool read_json_arr2_from_function(uo_to_json_arr2_funT f, unsigned arr_llen,
+      unsigned arr_rlen, size_t required_size = 256);
 
-  int read_json_from_function(std::function<int(char *buf, size_t buf_size)> f, size_t required_size = 256);
   // copy/cat some json int buf
-   bool copy_to_buf(const char *s); ///< \brief Copy some external JSON into this object's buffer (buffer will be overwritten)
+  bool copy_to_buf(const char *s); ///< \brief Copy some external JSON into this object's buffer (buffer will be overwritten)
   bool cat_to_buf(const char *s); ///< \brief Append some external JSON to this object's buffer
 
   char* get_json() const; ///< \brief  Get this objects JSON as null terminated string (ownership remains to this object)
@@ -54,7 +109,7 @@ public:
   int write_some_json(); ///< \brief write buffer to its Target (final=false), but leave the last character in the buffer at index 0.
   void free_buffer(); ///<  Destroy this objects JSON buffer (Optional. Destructor will take care of it)
 
-  char *get_a_buffer(size_t size); ///< get a buffer of at least size. returns a pointer inside the main buffer at current buf_idx
+  char* get_a_buffer(size_t size); ///< get a buffer of at least size. returns a pointer inside the main buffer at current buf_idx
   bool advance_position(int n); ///< advance buf_idx after writing to buffer from get_a_buffer. n can be negative. returns false if n is out of range
 
 private:
@@ -69,5 +124,3 @@ private:
   int m_obj_ct = 0;
   class UoutWriter *myTd = 0;
 };
-
-

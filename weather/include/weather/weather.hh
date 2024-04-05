@@ -38,6 +38,9 @@ private:
 
 public:
 
+  auto get_past_weather_data_json(char *dst, size_t dst_size, int wday, int hour) {
+    return m_past_wd[wday][hour].to_json(dst, dst_size);
+  }
 
   /**
    * \brief           read out member objects in JSON format in chunks

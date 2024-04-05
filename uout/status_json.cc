@@ -137,23 +137,55 @@ bool UoutBuilderJson::not_enough_buffer(const char *key, const char *val) {
   return false;
 }
 
-int UoutBuilderJson::read_json_from_function(std::function<int(char *buf, size_t buf_size)> f, size_t required_size) {
-  if (myBuf_size < myBuf_idx + required_size + 2) {
-    if (!buffer_grow(required_size + 2)) {
-      return 0;
+bool UoutBuilderJson::read_json_from_function(std::function<int(char *buf, size_t buf_size)> f, size_t required_size) {
+  // pass-0: try with as parameter provided buffer size
+  // pass-1: try size size returned by failed JSON generator function to_json()
+  for (unsigned pass = 0, n; pass < 2; ++pass, required_size = (n + 1) - (myBuf_size - myBuf_idx)) {
+    if (!buffer_grow(required_size)) {
+      return false;
     }
+
+    if (n = f(myBuf + myBuf_idx, (myBuf_size - myBuf_idx)); 0 < n && n < (myBuf_size - myBuf_idx)) {
+      myBuf_idx += n;
+      myBuf[myBuf_idx++] = ',';
+      myBuf[myBuf_idx] = '\0';
+
+      postcond(myBuf_size > myBuf_idx);
+      return true;
+
+    }
+    if (n <= 0)
+      return false;
   }
-
-  const int n = f(myBuf + myBuf_idx, required_size);
-
-  if (n > 0) {
-    myBuf_idx += n;
-    myBuf[myBuf_idx++] = ',';
-    myBuf[myBuf_idx] = '\0';
+  return false;
+}
+bool UoutBuilderJson::read_json_arr_from_function(std::function<int(char *buf, size_t buf_size, unsigned arr_idx)> f, unsigned arr_len, size_t required_size) {
+  if (add_array()) {
+    for (int i = 0; i < arr_len; ++i) {
+      if (!read_json_from_function(std::bind(f, std::placeholders::_1, std::placeholders::_2, i), required_size))
+        return false;
+    }
+    close_array();
+    return true;
   }
-
-  postcond(myBuf_size > myBuf_idx);
-  return n;
+  return false;
+}
+bool UoutBuilderJson::read_json_arr2_from_function(std::function<int(char *buf, size_t buf_size, unsigned arr_lidx, unsigned arr_ridx)> f, unsigned arr_llen,
+    unsigned arr_rlen, size_t required_size) {
+  if (add_array()) {
+    for (int li = 0; li < arr_llen; ++li) {
+      if (add_array()) {
+        for (int ri = 0; ri < arr_rlen; ++ri) {
+          if (! read_json_from_function(std::bind(f, std::placeholders::_1, std::placeholders::_2, li, ri), required_size))
+            return false;
+        }
+        close_array();
+      }
+    }
+    close_array();
+    return true;
+  }
+  return false;
 }
 
 bool UoutBuilderJson::copy_to_buf(const char *s) {
@@ -250,8 +282,7 @@ bool UoutBuilderJson::add_array(const char *key) {
 
 bool UoutBuilderJson::add_array() {
   D(db_printf("%s()\n", __func__));
-  precond(myBuf_idx > 0 && m_obj_ct > 0);
-  unused_write_out_buf();
+  precond(myBuf_idx > 0 && m_obj_ct > 0);unused_write_out_buf();
 
   if (not_enough_buffer())
     return false;
@@ -262,7 +293,6 @@ bool UoutBuilderJson::add_array() {
   postcond(myBuf_size > myBuf_idx);
   return true;
 }
-
 
 void UoutBuilderJson::close_array() {
   D(db_printf("%s()\n", __func__));

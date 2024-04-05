@@ -1,11 +1,13 @@
 #include <weather/weather.hh>
-#include <uout/to_json_adapter.hh>
+#include <uout/uout_builder_json.hh>
 #include <kvs/kvs_wrapper.h>
 #include <cassert>
 #include <stddef.h>
 #include <stdio.h>
 #include <time.h>
 #include <iostream>
+#include <functional>
+using namespace std::placeholders;
 
 static constexpr char kvs_name[] = "kvsWeather";
 static constexpr char kvs_key_fmt[] = "pastwd%d%d";
@@ -100,7 +102,7 @@ bool Weather::fetch_and_store_weather_data() {
 
 bool Weather::to_json(class UoutBuilderJson &sj) {
   sj.get_a_buffer(1024);
-  return uo_arr2_to_json(sj, &m_past_wd[0][0], 7, 24);
+  return sj.read_json_arr2_from_function(std::bind(&Weather::get_past_weather_data_json, this,  _1, _2, _3, _4), 7, 24);
 }
 
 /////////////dev/////////////////
