@@ -23,7 +23,7 @@ class UoutRawWriter {
 
 protected:
   virtual ~UoutRawWriter() = default;
-  ;
+
 public:
   /**
    * \brief        write output
@@ -191,7 +191,7 @@ private:
    * \brief does nothing. This should cause the builder to grow its buffer
    * \return  returns bytes written, which is always zero.
    */
-  virtual int priv_write(const char *s, ssize_t len, bool last) override {
+  virtual int priv_write(const char *, ssize_t, bool) override {
     return 0;
   }
 };

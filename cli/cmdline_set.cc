@@ -5,8 +5,8 @@
  *      Author: bertw
  */
 
-#include "cli_private.h"
 #include "cli/cli.h"
+#include "cli_private.h"
 #include "txtio/inout.h"
 #include <string.h>
 #include <stdlib.h>

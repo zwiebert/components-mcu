@@ -5,13 +5,13 @@
  *      Author: bertw
  */
 
-#include "cli_private.h"
+#include <cli/cli.h>
+#include <cli/cli_types.h>
 #include "utils_misc/bcd.h"
-#include "cli/cli.h"
+#include "cli_private.h"
 #include "uout/uo_types.h"
 #include "uout/uo_callbacks.h"
 #include "uout/cli_out.h"
-//#include "net_http_server/http_server_setup.h"
 #include "txtio/inout.h"
 #include "cli/mutex.h"
 #include "uout/uout_builder_json.hh"
@@ -36,35 +36,6 @@ bool (*cli_hook_process_json_obj)(class UoutWriter &td,Jsmn_String::Iterator &it
 
 
 /////////////////////////////////private/////////////////////////////////////////////////////////
-static int handle_parm_json(char *json, jsmntok_t *tok, const char *name);
-//static void parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm);
-//static bool parse_and_process_jsmn(Jsmn_String::Iterator &it, class UoutWriter &td, process_parm_cb proc_parm);
-static char* stringFromToken(char *json, const jsmntok_t *tok);
-
-static int handle_parm_json(char *json, jsmntok_t *tok, const char *name) {
-  const int oc = tok[0].size;
-  ++tok;
-  for (int i = 0; i < oc; ++i) {
-    if (tok[i].type == JSMN_OBJECT) {
-      handle_parm_json(json, &tok[i], stringFromToken(json, &tok[i - 1]));
-    } else {
-
-    }
-  }
-  return 0;
-}
-
-/**
- * \brief            Get value of token as string (will null-terminate the string in place)
- * \param    json    the json data which was parsed (will be modified)
- * \param    tok     the parsed token
- * \return           the value of the token as null terminated string (in place)
- */
-static char* stringFromToken(char *json, const jsmntok_t *tok) {
-  json[tok->end] = '\0';
-  return json + tok->start;
-}
-
 static bool parse_and_process_jsmn(Jsmn_String::Iterator &it, class UoutWriter &td, process_parm_cb proc_parm) {
 
   // "json" object is allowed to have nested content

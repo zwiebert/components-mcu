@@ -1,8 +1,6 @@
 
 #include "uout/so_out.h"
 #include <uout/uout_writer.hh>
-#include <app_config/options.hh>
-#include "txtio/inout.h"
 #include "uout/uout_builder_json.hh"
 #include "debug/dbg.h"
 #include "utils_misc/int_macros.h"

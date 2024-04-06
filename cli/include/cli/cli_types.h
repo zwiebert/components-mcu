@@ -34,7 +34,7 @@ struct parm_handlers {
 struct cli_buf {
   char *buf; ///< byte buffer
   unsigned buf_size; ///< buffer byte size
-  int buf_idx; ///< position to append next character
+  unsigned buf_idx; ///< position to append next character
   int quote_count; ///< helper to support quoted values
 };
 

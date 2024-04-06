@@ -9,7 +9,6 @@
 
 #include "uout/uo_types.h"
 #include "utils_misc/int_macros.h"
-#include "txtio/inout.h"
 #include "debug/dbg.h"
 #include "debug/log.h"
 
@@ -48,7 +47,6 @@ bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
   if (!m) {
     db_loge(logtag, "%s: buffer size=%u too small, but allocation of %u bytes failed", __func__, (unsigned)myBuf_size, (unsigned)buf_size);
     return false;
-    io_puts("ERROR: UoutBuilderJson::realloc_buffer: out of memory\n");
   }
 
   myBuf = static_cast<char*>(m);

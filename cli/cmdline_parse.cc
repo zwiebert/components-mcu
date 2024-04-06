@@ -1,5 +1,6 @@
+#include <cli/cli.h>
+#include <cli/cli_types.h>
 #include "cli_private.h"
-#include "cli/cli.h"
 #include "string.h"
 #include <ctype.h>
 #include <stdlib.h>
@@ -33,7 +34,7 @@ cli_parseCommandline(char *cl, struct cli_parm *clp) {
 #define cli_par (clp->par)
 #undef MAX_PAR
 #define MAX_PAR (clp->size)
-  int p;
+  unsigned p;
   cli_msgid = 0;
 
   for (p = 0; p < MAX_PAR; ++p) {

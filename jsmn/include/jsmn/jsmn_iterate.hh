@@ -97,7 +97,7 @@ public:
      */
     bool keyIsEqual(const char *key) const {
       return m_ptr->type == JSMN_STRING // JSON keys are strings
-      && strlen(key) == m_ptr->end - m_ptr->start // same length
+      && (int)strlen(key) == m_ptr->end - m_ptr->start // same length
       && strncmp(m_container.get_json() + m_ptr->start, key, m_ptr->end - m_ptr->start) == 0; // same content
     }
 
