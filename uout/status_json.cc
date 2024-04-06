@@ -107,7 +107,8 @@ char* UoutBuilderJson::get_a_buffer(size_t required_size) {
   return myBuf + myBuf_idx;
 }
 bool UoutBuilderJson::advance_position(int n) {
-  int pos = myBuf_idx + n;
+  precond(n <= myBuf_idx);
+  unsigned pos = myBuf_idx + n;
   if (!(0 <= pos && pos <= myBuf_size)) // allow position to be one behind buffer end
     return false;
   myBuf_idx = pos;
@@ -159,7 +160,7 @@ bool UoutBuilderJson::read_json_from_function(std::function<int(char *buf, size_
 }
 bool UoutBuilderJson::read_json_arr_from_function(std::function<int(char *buf, size_t buf_size, unsigned arr_idx)> f, unsigned arr_len, size_t required_size) {
   if (add_array()) {
-    for (int i = 0; i < arr_len; ++i) {
+    for (unsigned i = 0; i < arr_len; ++i) {
       if (!read_json_from_function(std::bind(f, std::placeholders::_1, std::placeholders::_2, i), required_size))
         return false;
     }
@@ -171,9 +172,9 @@ bool UoutBuilderJson::read_json_arr_from_function(std::function<int(char *buf, s
 bool UoutBuilderJson::read_json_arr2_from_function(std::function<int(char *buf, size_t buf_size, unsigned arr_lidx, unsigned arr_ridx)> f, unsigned arr_llen,
     unsigned arr_rlen, size_t required_size) {
   if (add_array()) {
-    for (int li = 0; li < arr_llen; ++li) {
+    for (unsigned li = 0; li < arr_llen; ++li) {
       if (add_array()) {
-        for (int ri = 0; ri < arr_rlen; ++ri) {
+        for (unsigned ri = 0; ri < arr_rlen; ++ri) {
           if (! read_json_from_function(std::bind(f, std::placeholders::_1, std::placeholders::_2, li, ri), required_size))
             return false;
         }

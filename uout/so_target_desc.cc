@@ -26,7 +26,7 @@ int UoutRawWriter::write(const char c) {
   return write(&c, 1);
 }
 
-int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool last)  {
+int UoutWriterConsole::priv_write(const char *s, ssize_t len, bool)  {
   const size_t size = len;
   assert(size < 4096);
 
@@ -72,7 +72,7 @@ UoutWriterFile::~UoutWriterFile() {
   ::close(m_ofd);
 }
 
-int UoutWriterFile::priv_write(const char *s, ssize_t len, bool last)  {
+int UoutWriterFile::priv_write(const char *s, ssize_t len, bool)  {
   const size_t size = len;
   assert(size < 2046);
 
