@@ -5,9 +5,10 @@ option(BUILD_DOXY "build doxy docs" OFF)
 option(ASAN "enable compiler sanitizer" OFF)
 option(GPROF "enable gprof" OFF)
 
+set(TARGET_PLATFORM_FILTER "host/.*")
+
 if (BUILD_HOST_TESTS)
 project(tfmcu-test)
-
 set(proj_src_dir "${CMAKE_SOURCE_DIR}/../..")
 
 message("proj_src_dir: ${proj_src_dir}")

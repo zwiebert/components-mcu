@@ -240,7 +240,7 @@ bool UoutBuilderJson::open_root_object(const char *id) {
 int UoutBuilderJson::add_object() {
   int result = myBuf_idx;
   D(db_printf("%s()\n", __func__));
-  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
+  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
   if (not_enough_buffer("", 0))
     return -1;
 
@@ -255,7 +255,7 @@ int UoutBuilderJson::add_object() {
 int UoutBuilderJson::add_object(const char *key) {
   int result = myBuf_idx;
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
+  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
   if (not_enough_buffer(key, 0))
     return -1;
 
@@ -285,7 +285,7 @@ void UoutBuilderJson::close_object() {
 
 bool UoutBuilderJson::add_array(const char *key) {
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
+  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
 
   if (not_enough_buffer(key, 0))
     return false;
@@ -299,7 +299,7 @@ bool UoutBuilderJson::add_array(const char *key) {
 
 bool UoutBuilderJson::add_array() {
   D(db_printf("%s()\n", __func__));
-  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
+  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
 
   if (not_enough_buffer())
     return false;
