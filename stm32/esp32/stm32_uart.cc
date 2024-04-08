@@ -40,11 +40,13 @@ bool Stm32_Uart_ESP32::stm32_isFirmwareRunning(void) {
 }
 
 void Stm32_Uart_ESP32::stm32_reset() {
+#ifdef CONFIG_STM32_ENABLE_RESET
   LockGuard lock(stm32_mutex);
   ESP_LOGI(TAG, "reboot stm32");
   gpio_set_level((gpio_num_t) stm32_cfg->reset_gpio, 0);
   vTaskDelay(RESET_PIN_MS / portTICK_PERIOD_MS);
   gpio_set_level((gpio_num_t) stm32_cfg->reset_gpio, 1);
+#endif
 }
 
 int Stm32_Uart_ESP32::p_stm32_write(const char *data, unsigned data_len) {

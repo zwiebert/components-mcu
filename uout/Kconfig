@@ -17,6 +17,9 @@ menu "zwiebert: UOUT"
         help
             We now publish messages in JSON format.  The plain text format is for backwards
             compatibility with old versions for FHEM tronferno_mcu module and Android app     
+     config REQUIRE_ROOT_OBJECT
+        bool "Require a root object, so you can add ordinary objects only inside this root object"
+        default y
         
     config UOUT_DEBUG
         bool "Enable debug messages"

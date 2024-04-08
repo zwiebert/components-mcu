@@ -22,11 +22,23 @@ public:
 
 public:
   bool open_root_object(const char *id); ///< \brief add root object  {"from":"ID",
+  bool open_root_object(); ///< \brief add root object  {
   void close_root_object(); ///< \brief close the root object with },
 
   int add_object(const char *key); ///< \brief add object "KEY":{
   int add_object(); ///< \brief add object w/o a key (e.g. in arrays):{
   void close_object();  ///< \brief close object with },
+
+
+  bool put_kv(const char *key, bool val); ///< \brief  Add key value pair "KEY":VAL
+  bool put_kv(const char *key, unsigned val); ///< \brief  Add key value pair "KEY":VAL
+  bool put_kv(const char *key, int val); ///< \brief  Add key value pair "KEY":VAL
+  bool put_kv(const char *key, long unsigned val); ///< \brief  Add key value pair "KEY":VAL
+  bool put_kv(const char *key, long int val); ///< \brief  Add key value pair "KEY":VAL
+  bool put_kv(const char *key, long long unsigned val); ///< \brief  Add key value pair "KEY":VAL
+  bool put_kv(const char *key, long long int val); ///< \brief  Add key value pair "KEY":VAL
+
+  bool put_kv(const char *key, const char *val); ///< \brief  Add key value pair "KEY":"VAL"
 
   bool add_key_value_pair_s(const char *key, const char *val); ///< \brief  Add key value pair "KEY":"VAL"
   bool add_key_value_pair_d(const char *key, int val); ///< \brief  Add key value pair "KEY":VAL
@@ -38,6 +50,7 @@ public:
   void close_array(); ///< \brief close array with ],
   bool add_value_d(int n);  ///< \brief Add number to array: N,
   bool add_value_s(const char *val); //< \brief Add string to array,
+  bool add_value(long int n);  ///< \brief Add number to array: N,
 
 
   /**

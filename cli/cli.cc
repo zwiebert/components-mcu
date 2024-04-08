@@ -41,7 +41,7 @@ void cli_loop(void) {
 
   char *cmdline;
   static bool ready;
-  if ((cmdline = get_commandline())) {
+  if ((cmdline = get_commandline()) && *cmdline) {
     {
       LockGuard lock(cli_mutex);
       if (cmdline[0] == '{') {

@@ -28,7 +28,7 @@
 #define D(x)
 #define L(x) x
 #endif
-#define logtag "cli.cmdline_processing"
+#define logtag "cli"
 
 bool (*cli_hook_checkPassword)(clpar p[], int len, class UoutWriter &td);
 bool (*cli_hook_process_json)(char *json);
@@ -118,10 +118,14 @@ void cli_process_json(char *json, class UoutWriter &td, process_parm_cb proc_par
   if (cli_hook_process_json && cli_hook_process_json(json))
     return;
 
+#ifdef CONFIG_CLI_JSON_ROOT_OBJECT
   if (td.sj().open_root_object("cli")) {
+#endif
     parse_and_process_json(json, td, proc_parm);
+#ifdef CONFIG_CLI_JSON_ROOT_OBJECT
     td.sj().close_root_object();
   }
+#endif
 
   if (so_tgt_test(SO_TGT_CLI)) {
     td.sj().writeln_json();

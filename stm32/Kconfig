@@ -12,6 +12,10 @@ menu "zwiebert: STM32"
         bool "Enable stm32 component debug messages"
         default n
 
+    config STM32_ENABLE_RESET
+        bool "Enable stm32_reset() function"
+        default y
+
     config STM32_MAKE_COMPONENT_THREAD_SAFE
         bool "Make stm32 component generally thread safe"
         default y

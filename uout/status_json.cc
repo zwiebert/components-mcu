@@ -29,11 +29,15 @@
 #define logtag "uout.json_builder"
 
 #define BUF_MAX_SIZE 2048
-#define unused_write_out_buf()
 
 #define myBuf_freeSize (myBuf_size - myBuf_idx)
 #define myBuf_cursor (myBuf + myBuf_idx)
 
+#ifdef CONFIG_REQUIRE_ROOT_OBJECT
+#define ROOT_OBJS 1
+#else
+#define ROOT_OBJS 0
+#endif
 ///////////////////////////////////////Private/////////////////////////////
 bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
   precond(buf_size > myBuf_idx);
@@ -175,7 +179,7 @@ bool UoutBuilderJson::read_json_arr2_from_function(std::function<int(char *buf, 
     for (unsigned li = 0; li < arr_llen; ++li) {
       if (add_array()) {
         for (unsigned ri = 0; ri < arr_rlen; ++ri) {
-          if (! read_json_from_function(std::bind(f, std::placeholders::_1, std::placeholders::_2, li, ri), required_size))
+          if (!read_json_from_function(std::bind(f, std::placeholders::_1, std::placeholders::_2, li, ri), required_size))
             return false;
         }
         close_array();
@@ -203,6 +207,21 @@ bool UoutBuilderJson::cat_to_buf(const char *s) {
   return true;
 }
 
+bool UoutBuilderJson::open_root_object() {
+  D(db_printf("%s()\n", __func__));
+  precond(m_obj_ct == 0);
+  myBuf_idx = m_obj_ct = 0;
+  if (not_enough_buffer("", 0))
+    return false;
+
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "{");
+
+  ++m_obj_ct;
+
+  postcond(myBuf_idx > 0 && m_obj_ct == 1);
+  return true;
+}
+
 bool UoutBuilderJson::open_root_object(const char *id) {
   D(db_printf("%s()\n", __func__));
   precond(m_obj_ct == 0);
@@ -221,12 +240,11 @@ bool UoutBuilderJson::open_root_object(const char *id) {
 int UoutBuilderJson::add_object() {
   int result = myBuf_idx;
   D(db_printf("%s()\n", __func__));
-  precond(myBuf_idx > 0 && m_obj_ct > 0);
+  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
   if (not_enough_buffer("", 0))
     return -1;
 
   myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "{");
-  unused_write_out_buf();
 
   ++m_obj_ct;
 
@@ -237,12 +255,11 @@ int UoutBuilderJson::add_object() {
 int UoutBuilderJson::add_object(const char *key) {
   int result = myBuf_idx;
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(myBuf_idx > 0 && m_obj_ct > 0);
+  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
   if (not_enough_buffer(key, 0))
     return -1;
 
   myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":{");
-  unused_write_out_buf();
 
   ++m_obj_ct;
 
@@ -253,7 +270,7 @@ int UoutBuilderJson::add_object(const char *key) {
 void UoutBuilderJson::close_object() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);
-  precond(myBuf_idx > 0 && m_obj_ct > 1);
+  precond(myBuf_idx > 0 && m_obj_ct > ROOT_OBJS);
   if (not_enough_buffer())
     abort();
 
@@ -268,7 +285,8 @@ void UoutBuilderJson::close_object() {
 
 bool UoutBuilderJson::add_array(const char *key) {
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(myBuf_idx > 0 && m_obj_ct > 0);unused_write_out_buf();
+  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
+
   if (not_enough_buffer(key, 0))
     return false;
 
@@ -281,7 +299,7 @@ bool UoutBuilderJson::add_array(const char *key) {
 
 bool UoutBuilderJson::add_array() {
   D(db_printf("%s()\n", __func__));
-  precond(myBuf_idx > 0 && m_obj_ct > 0);unused_write_out_buf();
+  precond(myBuf_idx > 0 && m_obj_ct >= ROOT_OBJS);
 
   if (not_enough_buffer())
     return false;
@@ -296,7 +314,7 @@ bool UoutBuilderJson::add_array() {
 void UoutBuilderJson::close_array() {
   D(db_printf("%s()\n", __func__));
   precond(myBuf);
-  precond(myBuf_idx > 0 && m_obj_ct > 1);
+  precond(myBuf_idx > 0 && m_obj_ct > ROOT_OBJS );
   if (not_enough_buffer())
     abort();
 
@@ -321,12 +339,12 @@ void UoutBuilderJson::close_root_object() {
 
   myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "}");
   --m_obj_ct;
-  unused_write_out_buf();
+
 }
 
 bool UoutBuilderJson::add_value_s(const char *val) {
   D(db_printf("%s(%s)\n", __func__, val));
-  precond(myBuf_idx > 0);unused_write_out_buf();
+  precond(myBuf_idx > 0);
 
   if (not_enough_buffer("---", val))
     return false;
@@ -342,7 +360,25 @@ bool UoutBuilderJson::add_value_s(const char *val) {
 
 bool UoutBuilderJson::add_value_d(int val) {
   D(db_printf("%s(%d)\n", __func__, val));
-  precond(myBuf_idx > 0);unused_write_out_buf();
+  precond(myBuf_idx > 0);
+
+  char buf[20];
+  ltoa(val, buf, 10);
+
+  if (not_enough_buffer("", buf))
+    return false;
+
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, ",");
+
+  D(db_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+
+bool UoutBuilderJson::add_value(long int val) {
+  D(db_printf("%s(%d)\n", __func__, val));
+  precond(myBuf_idx > 0);
+
   char buf[20];
   ltoa(val, buf, 10);
 
@@ -358,8 +394,10 @@ bool UoutBuilderJson::add_value_d(int val) {
 
 bool UoutBuilderJson::add_key_value_pair_f(const char *key, float val, int prec) {
   D(db_printf("%s(%s, %f)\n", __func__, key, val));
-  precond(myBuf_idx > 0);;
-  precond(key);unused_write_out_buf();
+  precond(myBuf_idx > 0);
+  ;
+  precond(key);
+
   if (not_enough_buffer(key, 0))
     return false;
 
@@ -374,14 +412,15 @@ bool UoutBuilderJson::add_key_value_pair_f(const char *key, float val, int prec)
 bool UoutBuilderJson::add_key_value_pair_d(const char *key, int val) {
   D(db_printf("%s(%s, %d)\n", __func__, key, val));
   precond(myBuf_idx > 0);
-  precond(key);unused_write_out_buf();
+  precond(key);
+
   if (not_enough_buffer(key, 0))
     return false;
 
   char buf[20];
   ltoa(val, buf, 10);
   myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":", buf, ",");
-  D(db_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);
   return true;
 }
@@ -389,20 +428,124 @@ bool UoutBuilderJson::add_key_value_pair_d(const char *key, int val) {
 bool UoutBuilderJson::add_key_value_pair_s(const char *key, const char *val) {
   D(db_printf("%s(%s, %s)\n", __func__, key, val));
   precond(myBuf_idx > 0);
-  precond(key);unused_write_out_buf();
+  precond(key);
+
   if (not_enough_buffer(key, val))
     return false;
 
   myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":\"", val, "\",");
-  D(ets_printf("myBuf_idx: %u, buf: %s\n", myBuf_idx, myBuf));
+  D(ets_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
   postcond(myBuf_size > myBuf_idx);
   return true;
+}
+bool UoutBuilderJson::put_kv(const char *key, bool val) {
+  D(db_printf("%s(%s, %d)\n", __func__, key, val));
+  precond(myBuf_idx > 0);
+  precond(key);
+
+  if (not_enough_buffer(key, 0))
+    return false;
+
+  myBuf_idx += csu_copy_cat(myBuf_cursor, myBuf_freeSize, "\"", key, "\":", val ? "true" : "false", ",");
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+bool UoutBuilderJson::put_kv(const char *key, unsigned val) {
+  D(db_printf("%s(%s, %u)\n", __func__, key, val));
+  precond(myBuf_idx > 0);
+  precond(key);
+
+  if (not_enough_buffer(key, 0))
+    return false;
+
+  myBuf_idx += snprintf(myBuf_cursor, myBuf_freeSize, R"("%s":%u,)", key, val);
+
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+bool UoutBuilderJson::put_kv(const char *key, int val) {
+  D(db_printf("%s(%s, %d)\n", __func__, key, val));
+  precond(myBuf_idx > 0);
+  precond(key);
+
+  if (not_enough_buffer(key, 0))
+    return false;
+
+  myBuf_idx += snprintf(myBuf_cursor, myBuf_freeSize, R"("%s":%d,)", key, val);
+
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+bool UoutBuilderJson::put_kv(const char *key, long unsigned val) {
+  D(db_printf("%s(%s, %lu)\n", __func__, key, val));
+  precond(myBuf_idx > 0);
+  precond(key);
+
+  if (not_enough_buffer(key, 0))
+    return false;
+
+  myBuf_idx += snprintf(myBuf_cursor, myBuf_freeSize, R"("%s":%lu,)", key, val);
+
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+bool UoutBuilderJson::put_kv(const char *key, long int val) {
+  D(db_printf("%s(%s, %ld)\n", __func__, key, val));
+  precond(myBuf_idx > 0);
+  precond(key);
+
+  if (not_enough_buffer(key, 0))
+    return false;
+
+  myBuf_idx += snprintf(myBuf_cursor, myBuf_freeSize, R"("%s":%ld,)", key, val);
+
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+
+bool UoutBuilderJson::put_kv(const char *key, long long unsigned val) {
+  D(db_printf("%s(%s, %llu)\n", __func__, key, val));
+  precond(myBuf_idx > 0);
+  precond(key);
+
+  if (not_enough_buffer(key, 0))
+    return false;
+
+  myBuf_idx += snprintf(myBuf_cursor, myBuf_freeSize, R"("%s":%llu,)", key, val);
+
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+bool UoutBuilderJson::put_kv(const char *key, long long int val) {
+  D(db_printf("%s(%s, %lld)\n", __func__, key, val));
+  precond(myBuf_idx > 0);
+  precond(key);
+
+  if (not_enough_buffer(key, 0))
+    return false;
+
+  myBuf_idx += snprintf(myBuf_cursor, myBuf_freeSize, R"("%s":%lld,)", key, val);
+
+  D(db_printf("myBuf_idx: %d, buf: %s\n", myBuf_idx, myBuf));
+  postcond(myBuf_size > myBuf_idx);
+  return true;
+}
+
+bool UoutBuilderJson::put_kv(const char *key, const char *val) {
+  return add_key_value_pair_s(key, val);
 }
 
 bool UoutBuilderJson::add_key(const char *key) {
   D(db_printf("%s(%s)\n", __func__, key));
   precond(myBuf_idx > 0);
-  precond(key);unused_write_out_buf();
+  precond(key);
+
   if (not_enough_buffer(key))
     return false;
 
