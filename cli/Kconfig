@@ -1,0 +1,30 @@
+menu "zwiebert: CLI"
+
+    config UOUT_HAVE_COMPONENT
+      bool
+      default y
+
+    config CLI_JSON_ROOT_OBJECT
+        bool "create a JSON root object before dispatching to cli handlers"
+        default y
+        help
+            Disable this, if you need to send multiple root objects from a cli handler.
+            You may send each object terminated with newline to let the receiver get them
+            with a getline() function. A root object would prevent that.
+            You should disable the assert check for a mandatory root object in UOUT configuration 
+            also.
+
+    config CLI_CMDLINE_ALLOW_LF
+       bool "allow a line-feed character to terminate a command line"
+       default n
+
+    config CLI_INTERACTIVE_CONSOLE
+       bool "add human readable messages to the console output"
+       default y
+
+    config CLI_DEBUG
+        bool "Enable debug messages"
+        default n
+
+endmenu
+

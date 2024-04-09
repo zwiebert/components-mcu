@@ -17,6 +17,16 @@
 #include "debug/dbg.h"
 #include "utils_misc/int_types.h"
 #include <string.h>
+#include <debug/log.h>
+#ifdef CONFIG_CLI_DEBUG
+#define DEBUG
+#define D(x) x
+#define L(x) x
+#else
+#define D(x)
+#define L(x) x
+#endif
+#define logtag "cli"
 
 uint16_t cli_msgid;
 const struct parm_handlers *cli_parm_handlers;
@@ -37,11 +47,13 @@ int asc2bool(const char *s) {
 
 }
 
+#ifdef CONFIG_CLI_INTERACTIVE_CONSOLE
 void cli_loop(void) {
 
   char *cmdline;
   static bool ready;
-  if ((cmdline = get_commandline()) && *cmdline) {
+  if ((cmdline = get_commandline())) {
+  D(db_logi(logtag, "%s() got commandline: <%s>", __func__, cmdline));
     {
       LockGuard lock(cli_mutex);
       if (cmdline[0] == '{') {
@@ -60,6 +72,22 @@ void cli_loop(void) {
     ready = true;
   }
 }
+#else
+void cli_loop(void) {
 
+  char *cmdline;
+  if ((cmdline = get_commandline())) {
+    D(db_logi(logtag, "%s() got commandline: <%s>", __func__, cmdline));
+    {
+      LockGuard lock(cli_mutex);
+      if (cmdline[0] == '{') {
+        UoutWriterConsole td { SO_TGT_STM32 | SO_TGT_FLAG_JSON };
+        cli_process_json(cmdline, td);
+      } else {
+      }
+    }
+  }
+}
+#endif
 
 int ENR; // error number

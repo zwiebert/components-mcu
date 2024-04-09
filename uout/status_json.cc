@@ -54,6 +54,7 @@ bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
   }
 
   myBuf = static_cast<char*>(m);
+  myBuf[myBuf_idx] = '\0';
   myBuf_size = buf_size;
   return true;
 }
@@ -134,7 +135,7 @@ bool UoutBuilderJson::not_enough_buffer(const char *key, const char *val) {
   required_size += 10;
 
   if (myBuf_size < myBuf_idx + required_size)
-    return !buffer_grow();
+    return !buffer_grow(required_size);
 
   postcond(myBuf);
   return false;
@@ -558,8 +559,10 @@ bool UoutBuilderJson::add_key(const char *key) {
 int UoutBuilderJson::writeln_json(bool final) {
   if (myBuf_idx < 0)
     return -1; //EOF
+
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
     return -1;
+
   if (!myBuf_idx) {
     const char json[] = "{}\n";
     auto n = myTd->write(json, sizeof json, final);
@@ -568,16 +571,19 @@ int UoutBuilderJson::writeln_json(bool final) {
   }
 
   if (char *json = myBuf) {
-    if (myBuf_idx < myBuf_size) {
-      myBuf[myBuf_idx] = '\n';
-      return myTd->write(json, myBuf_idx + 1, final);
-    } else {
-      int n = myTd->write(json, myBuf_idx, false);
-      n += myTd->write("\n", 1, final);
+      bool insert_newline = myBuf_freeSize >= 1;
+      if (insert_newline)
+        myBuf[myBuf_idx++] = '\n';
+      int n = myTd->write(json, myBuf_idx, insert_newline ? final : false);
+
+      if (!insert_newline) {
+         n += myTd->write("\n", 1, final);
+      }
+
+      myBuf[0] = '\0';
       myBuf_idx = final ? -1 : 0;
       return n;
     }
-  }
   return -1;
 }
 

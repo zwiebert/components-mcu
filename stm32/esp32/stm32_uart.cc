@@ -15,7 +15,7 @@
 #ifdef CONFIG_STM32_DEBUG
 #define DEBUG
 #define D(x) x
-#define DD(x)
+#define DD(x) x
 #else
 #define D(x)
 #define DD(x)
@@ -53,8 +53,9 @@ int Stm32_Uart_ESP32::p_stm32_write(const char *data, unsigned data_len) {
   //LockGuard lock(stm32_mutex);
   if (stm32_mode != STM32_MODE_FIRMWARE)
     return -1;
-  D(ESP_LOGI(logtag,  "%s: dlen=%u, data=<%.*s>", __func__, data_len, data_len, data));
-  return uart_write_bytes(m_uart, (const char*) data, data_len);
+  int n = uart_write_bytes(m_uart, (const char*) data, data_len);
+  D(ESP_LOGI(logtag,  "%d = %s(dlen=%u, data=<%.*s>)", n,  __func__,  data_len, data_len, data));
+  return n;
 }
 
 int Stm32_Uart_ESP32::p_stm32_read(char *buf, unsigned buf_size) {
@@ -96,7 +97,7 @@ int Stm32_Uart_ESP32::p_stm32_read_line(char *buf, unsigned buf_size, unsigned w
        be full.*/
       case UART_DATA: {
         //LockGuard lock(stm32_mutex);
-
+break;
         DD(ESP_LOGI(TAG, "[UART DATA]: %d", event.size));
         uart_read_bytes(m_uart, dtmp, event.size, portMAX_DELAY);
         DD(ESP_LOGI(TAG, "[DATA EVT]:"));

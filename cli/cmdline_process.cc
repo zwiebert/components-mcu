@@ -81,7 +81,7 @@ static bool parse_and_process_jsmn(Jsmn_String::Iterator &it, class UoutWriter &
 }
 
 static bool parse_and_process_json(char *json, class UoutWriter &td, process_parm_cb proc_parm) {
-  L(db_logi(logtag, "process_json: %s", json));
+ // L(db_logi(logtag, "process_json: %s", json));
 
   auto jsmn = Jsmn_String(json, 128);//Jsmn<128, char *>(json);
   if (!jsmn)

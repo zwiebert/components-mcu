@@ -31,20 +31,23 @@ char* get_commandline() {
       return 0;
   for (;;) {
     switch (cli_get_commandline(&buf, io_getc_fun)) {
-    case CMDL_DONE:
-      return buf.buf;
-      break;
 
-    case CMDL_INCOMPLETE:
-      break;
+    case CMDL_DONE:
+      if (buf.buf[0] == '\0' || buf.buf[0] == '\r' || buf.buf[0] == '\n')
+        return nullptr;
+      return buf.buf;
+
 
     case CMDL_LINE_BUF_FULL:
       if (cliBuf_enlarge(&buf))
         continue;
-      break;
+      return nullptr;
+
+    case CMDL_INCOMPLETE:
+      return nullptr;
 
     case CMDL_ERROR:
-      break;
+      return nullptr;
     }
 
     return 0;
