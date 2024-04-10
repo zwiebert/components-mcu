@@ -32,7 +32,8 @@
 
 
 bool stm32Ota_firmwareUpdate(const char *file_name) {
-  WakeUpLockGuard lock(stm32_mutex);
+  WakeUpLockGuard lock_read(stm32_read_mutex);
+  WakeUpLockGuard lock_write(stm32_write_mutex);
   bool result = false;
 
   D(db_logi(logtag, "boot STM32 into bootloader..."));

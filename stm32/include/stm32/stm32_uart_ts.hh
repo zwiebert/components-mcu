@@ -7,12 +7,11 @@
 #pragma once
 
 #include "stm32_uart.hh"
+#include "stm32/mutex.hh"
+#include <stm32/lock_guard.hh>
 
 #include <stdint.h>
 
-#include "utils_misc/mutex.hh"
-extern RecMutex stm32_mutex;
-#include <stm32/lock_guard.hh>
 
 class Stm32_Uart_Ts: public Stm32_Uart_if {
   Stm32_Uart &m_stm32_uart;
@@ -23,12 +22,12 @@ public:
 public:
 /// write data to stm32
   int stm32_write(const char *src, unsigned src_len) override {
-    LockGuard lock(stm32_mutex);
+    LockGuard lock(stm32_write_mutex);
     return m_stm32_uart.stm32_write(src, src_len);
   }
 /// read data from stm32
   int stm32_read(char *dst, unsigned dst_size) override {
-    LockGuard lock(stm32_mutex);
+    LockGuard lock(stm32_read_mutex);
     return m_stm32_uart.stm32_read(dst, dst_size);
   }
 /// read line from stm32 with waiting for Queue outside of stm32_mutex
@@ -37,17 +36,17 @@ public:
   }
 /// get char from STM32 (with optional blocking)
   int stm32_getc(bool block) override {
-    LockGuard lock(stm32_mutex);
+    LockGuard lock(stm32_read_mutex);
     return m_stm32_uart.stm32_getc(block);
   }
 /// write data to STM32 bootloader
   int stm32_write_bl(const char *src, unsigned src_len) override {
-    LockGuard lock(stm32_mutex);
+    LockGuard lock(stm32_write_mutex);
     return m_stm32_uart.stm32_write_bl(src, src_len);
   }
 /// read src_len from STM32 bootloader
   int stm32_read_bl(char *dst, unsigned dst_size) override {
-    LockGuard lock(stm32_mutex);
+    LockGuard lock(stm32_read_mutex);
     return m_stm32_uart.stm32_read_bl(dst, dst_size);
   }
 

@@ -15,9 +15,7 @@
 #include <hal/uart_types.h>
 #include "driver/uart.h"
 
-#define USE_MUTEX
-#include "utils_misc/mutex.hh"
-extern RecMutex stm32_mutex;
+#include "stm32/mutex.hh"
 
 class Stm32_Uart_ESP32: public Stm32_Uart {
 

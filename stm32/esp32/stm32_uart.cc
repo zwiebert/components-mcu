@@ -80,7 +80,7 @@ int Stm32_Uart_ESP32::p_stm32_read_line(char *buf, unsigned buf_size, unsigned w
   while (uart0_queue) {
 
     {
-      LockGuard lock(stm32_mutex);
+      LockGuard lock(stm32_read_mutex);
       //Waiting for UART event.
       if (!xQueueReceive(uart0_queue, (void*) &event, (TickType_t) 1000 / portTICK_PERIOD_MS))
         continue;
@@ -197,7 +197,8 @@ int Stm32_Uart_ESP32::p_stm32_read_bl(char *buf, unsigned buf_size) {
 }
 
 void Stm32_Uart_ESP32::stm32_configSerial(stm32_mode_T mode) {
-  WakeUpLockGuard lock(stm32_mutex);
+  WakeUpLockGuard lockr(stm32_read_mutex);
+  WakeUpLockGuard lockw(stm32_write_mutex);
 
   esp_err_t err;
   if (mode == stm32_mode) {
@@ -263,21 +264,24 @@ void Stm32_Uart_ESP32::stm32_configSerial(stm32_mode_T mode) {
 }
 
 void Stm32_Uart_ESP32::stm32_runBootLoader() {
-  WakeUpLockGuard lock(stm32_mutex);
+  WakeUpLockGuard lockr(stm32_read_mutex);
+  WakeUpLockGuard lockw(stm32_write_mutex);
   STM32_SET_BOOT_PIN(1);
   stm32_reset();
   stm32_configSerial(STM32_MODE_BOOTLOADER);
 }
 
 void Stm32_Uart_ESP32::stm32_runFirmware() {
-  WakeUpLockGuard lock(stm32_mutex);
+  WakeUpLockGuard lockr(stm32_read_mutex);
+  WakeUpLockGuard lockw(stm32_write_mutex);
   STM32_SET_BOOT_PIN(0);
   stm32_reset();
   stm32_configSerial(STM32_MODE_FIRMWARE);
 }
 
 void Stm32_Uart_ESP32::stm32_setup(const cfg_stm32 *cfg) {
-  WakeUpLockGuard lock(stm32_mutex);
+  WakeUpLockGuard lockr(stm32_read_mutex);
+  WakeUpLockGuard lockw(stm32_write_mutex);
   stm32_config = *cfg;
 
   gpio_set_direction((gpio_num_t) cfg->reset_gpio, GPIO_MODE_OUTPUT_OD);

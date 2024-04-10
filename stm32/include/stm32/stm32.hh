@@ -6,14 +6,12 @@
 
 #pragma once
 
+
 #include "stm32.h"
+#include "stm32_uart.hh"
+#include "mutex.hh"
 #include <stdbool.h>
 #include <stdint.h>
 
 
-
-#include "./stm32_uart.hh"
-#include "utils_misc/mutex.hh"
-
-extern RecMutex stm32_mutex;
 extern Stm32_Uart_if *stm32_uart;

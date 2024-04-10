@@ -1,6 +1,5 @@
 #pragma once
-#include "utils_misc/mutex.hh"
-extern RecMutex stm32_mutex;
+#include "mutex.hh"
 
 void stm32_wake_up_queue();
 

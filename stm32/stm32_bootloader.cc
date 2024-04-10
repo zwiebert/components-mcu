@@ -19,7 +19,7 @@
 
 
 #include "stm32_impl.hh"
-#include "stm32/stm32.h"
+#include "stm32/stm32.hh"
 #include "stm32/stm32_bl.h"
 #include "utils_misc/int_macros.h"
 #include "debug/dbg.h"
@@ -55,7 +55,7 @@ void Stm32_Bootloader::stm32Bl_sendAddress(uint32_t addr) {
 }
 
 int Stm32_Bootloader::stm32Bl_recv(char *buf, int buf_size, int wait_ms) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock(stm32_read_mutex);
 #define WFR_TOTAL_MS wait_ms
 #define WFR_INTERVAL_MS 50
   if (!buf) {
@@ -100,7 +100,8 @@ bool Stm32_Bootloader::stm32Bl_expect_ack() {
 
 
 bool Stm32_Bootloader::stm32Bl_doStart(void) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   char buf[16];
 
   stm32Bl_sendStart();
@@ -111,7 +112,8 @@ bool Stm32_Bootloader::stm32Bl_doStart(void) {
 }
 
 void Stm32_Bootloader::stm32Bl_getId(void) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   char buf[16];
   stm32Bl_sendCommand(STM32_GID);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
@@ -125,7 +127,8 @@ void Stm32_Bootloader::stm32Bl_getId(void) {
 }
 
 void Stm32_Bootloader::stm32Bl_get(void) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   char buf[16];
   stm32Bl_sendCommand(STM32_GET);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
@@ -142,7 +145,8 @@ void Stm32_Bootloader::stm32Bl_get(void) {
 #define FLASH_START_ADDRESS 0x8000000
 
 bool Stm32_Bootloader::stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsigned data_len) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   char buf[16];
 
   stm32Bl_sendCommand(STM32_WR);
@@ -174,7 +178,8 @@ bool Stm32_Bootloader::stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsi
 }
 
 bool  Stm32_Bootloader::stm32Bl_doEraseFlash(int start_page, uint8_t page_count) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   char buf[16];
 
   stm32Bl_sendCommand(STM32_ERASE);
@@ -205,7 +210,8 @@ bool  Stm32_Bootloader::stm32Bl_doEraseFlash(int start_page, uint8_t page_count)
 }
 
 bool  Stm32_Bootloader::stm32Bl_doExtEraseFlash(uint16_t start_page, uint16_t page_count) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   char buf[16];
   stm32Bl_sendCommand(STM32_ERASEN);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
@@ -242,7 +248,8 @@ bool  Stm32_Bootloader::stm32Bl_doExtEraseFlash(uint16_t start_page, uint16_t pa
 
 
 bool  Stm32_Bootloader::stm32Bl_eraseFlashByFileSize(uint32_t startAddr, size_t size) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   uint32_t endAddr = startAddr + size;
 
   unsigned startPage = (startAddr - FLASH_START_ADDRESS) / FLASH_PAGE_SIZE;
@@ -256,7 +263,8 @@ bool  Stm32_Bootloader::stm32Bl_eraseFlashByFileSize(uint32_t startAddr, size_t 
 
 
 bool  Stm32_Bootloader::stm32Bl_writeMemoryFromBinFile(const char *srcFile, uint32_t addr) {
-  LockGuard lock(stm32_mutex);
+  LockGuard lock_read(stm32_read_mutex);
+  LockGuard lock_write(stm32_write_mutex);
   struct stat statBuf;
   char buf[256];
   size_t bytesWritten = 0;

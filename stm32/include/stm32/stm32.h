@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "mutex.h"
 #include <stdbool.h>
 #include <stdint.h>
 
