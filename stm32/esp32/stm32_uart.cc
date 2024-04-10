@@ -41,7 +41,8 @@ bool Stm32_Uart_ESP32::stm32_isFirmwareRunning(void) {
 
 void Stm32_Uart_ESP32::stm32_reset() {
 #ifdef CONFIG_STM32_ENABLE_RESET
-  LockGuard lock(stm32_mutex);
+  WakeUpLockGuard lockr(stm32_read_mutex);
+  LockGuard lockw(stm32_write_mutex);
   ESP_LOGI(TAG, "reboot stm32");
   gpio_set_level((gpio_num_t) stm32_cfg->reset_gpio, 0);
   vTaskDelay(RESET_PIN_MS / portTICK_PERIOD_MS);
@@ -198,7 +199,7 @@ int Stm32_Uart_ESP32::p_stm32_read_bl(char *buf, unsigned buf_size) {
 
 void Stm32_Uart_ESP32::stm32_configSerial(stm32_mode_T mode) {
   WakeUpLockGuard lockr(stm32_read_mutex);
-  WakeUpLockGuard lockw(stm32_write_mutex);
+  LockGuard lockw(stm32_write_mutex);
 
   esp_err_t err;
   if (mode == stm32_mode) {
@@ -265,7 +266,7 @@ void Stm32_Uart_ESP32::stm32_configSerial(stm32_mode_T mode) {
 
 void Stm32_Uart_ESP32::stm32_runBootLoader() {
   WakeUpLockGuard lockr(stm32_read_mutex);
-  WakeUpLockGuard lockw(stm32_write_mutex);
+  LockGuard lockw(stm32_write_mutex);
   STM32_SET_BOOT_PIN(1);
   stm32_reset();
   stm32_configSerial(STM32_MODE_BOOTLOADER);
@@ -273,7 +274,7 @@ void Stm32_Uart_ESP32::stm32_runBootLoader() {
 
 void Stm32_Uart_ESP32::stm32_runFirmware() {
   WakeUpLockGuard lockr(stm32_read_mutex);
-  WakeUpLockGuard lockw(stm32_write_mutex);
+  LockGuard lockw(stm32_write_mutex);
   STM32_SET_BOOT_PIN(0);
   stm32_reset();
   stm32_configSerial(STM32_MODE_FIRMWARE);
@@ -281,7 +282,7 @@ void Stm32_Uart_ESP32::stm32_runFirmware() {
 
 void Stm32_Uart_ESP32::stm32_setup(const cfg_stm32 *cfg) {
   WakeUpLockGuard lockr(stm32_read_mutex);
-  WakeUpLockGuard lockw(stm32_write_mutex);
+  LockGuard lockw(stm32_write_mutex);
   stm32_config = *cfg;
 
   gpio_set_direction((gpio_num_t) cfg->reset_gpio, GPIO_MODE_OUTPUT_OD);

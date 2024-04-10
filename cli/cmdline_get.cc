@@ -5,7 +5,7 @@
 #ifdef CONFIG_CLI_DEBUG
 #define DEBUG
 #define D(x) x
-#define DD(x) x
+#define DD(x)
 #else
 #define D(x)
 #define DD(x)
@@ -73,7 +73,7 @@ enum cli_get_commline_retT cli_get_commandline(struct cli_buf *buf, getc_funT ge
       )) {
         if ((buf->quote_count & 1) == 0) {
           buf->buf[buf->buf_idx] = '\0';
-          D(db_logw(logtag, "%s: got line: <%s>", __func__, buf->buf));
+          DD(db_logw(logtag, "%s: got line: <%s>", __func__, buf->buf));
           buf->buf_idx = 0;
           buf->quote_count = 0;
           return error ? CMDL_ERROR : CMDL_DONE;
