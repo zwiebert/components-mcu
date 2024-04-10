@@ -11,7 +11,7 @@ class UoutWriterTest final : public UoutWriter {
   typedef int (*writeReq_fnT)(void *req, const char *s, ssize_t len, bool final);
 
 public:
-  UoutWriterTest(so_target_bits tgt = (SO_TGT_FLAG_TXT | SO_TGT_FLAG_JSON | SO_TGT_ANY)) :
+  UoutWriterTest(so_target_bits tgt) :
       UoutWriter(tgt) {
   }
 
@@ -43,7 +43,7 @@ public:
 };
 
 void test_td() {
-  UoutWriterTest td;
+  UoutWriterTest td(SO_TGT_ANY);
   const char *str = &td.wbuf_[0];
 
   td.write('a');

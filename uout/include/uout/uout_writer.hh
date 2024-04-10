@@ -101,10 +101,12 @@ private:
 class UoutWriter: public UoutRawWriter {
 public:
   /**
-   * \param tgt    Flags describing the requested format(s) and/or the target.
+   * \param tgt    Flags describing the requested format(s) and/or target
+   *               only one of the formats ist possible at the same time
    */
   UoutWriter(so_target_bits tgt = SO_TGT_NONE) :
       myTgt(tgt) {
+    assert(!((tgt & SO_TGT_FLAG_TXT) && (tgt & SO_TGT_FLAG_JSON)));
   }
 
   UoutWriter(const UoutWriter&) = delete;
@@ -119,6 +121,7 @@ public:
   /// \brief Add a target bit flag
   void add_tgt_flag(so_target_bits flag) {
     myTgt = static_cast<so_target_bits>(myTgt | flag);
+    assert(!((myTgt & SO_TGT_FLAG_TXT) && (myTgt & SO_TGT_FLAG_JSON)));
   }
 
   /// \brief  Get the related UoutBuilderJson object
