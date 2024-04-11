@@ -137,12 +137,15 @@ int kvs_foreach(const char *name_space, kvs_type_t type, const char *key_match, 
 
 
 void kvs_setup(void) {
-  esp_err_t err = nvs_flash_init();
-  if (err == ESP_ERR_NVS_NO_FREE_PAGES || err == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-    // NVS partition was truncated and needs to be erased
-    // Retry nvs_flash_init
-    ESP_ERROR_CHECK(nvs_flash_erase());
-    err = nvs_flash_init();
+  if (auto ec = nvs_flash_init(); ec != ESP_OK) {
+    if (ec == ESP_ERR_NVS_NO_FREE_PAGES || ec == ESP_ERR_NVS_NEW_VERSION_FOUND) {
+      // NVS partition was truncated and needs to be erased
+      // Retry nvs_flash_init
+      ESP_ERROR_CHECK(nvs_flash_erase());
+      if (ec = nvs_flash_init(); ec != ESP_OK) {
+        ESP_LOGE(logtag, "abort because NVS init failed. %s", esp_err_to_name(ec));
+        abort();
+      }
+    }
   }
-  ESP_ERROR_CHECK( err );
 }

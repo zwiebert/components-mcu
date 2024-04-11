@@ -22,6 +22,6 @@ struct cfg_lan {
 /**
  * \brief Configure Ethernet hardware
  */
-void ethernet_setup(struct cfg_lan *config);
+bool ethernet_setup(struct cfg_lan *config);
 
-void ethernet_setdown();
+bool ethernet_setdown();

@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <string.h>
 #include "freertos/FreeRTOS.h"
@@ -30,8 +29,6 @@ extern esp_ip4_addr_t ip4_address, ip4_gateway_address, ip4_netmask;
 
 extern "C" esp_eth_phy_t* my_esp_eth_phy_new_lan8720(const eth_phy_config_t *config);
 static esp_eth_phy_t* (*ethernet_create_phy)(const eth_phy_config_t *config);
-
-
 
 #define DX(x) x
 
@@ -117,58 +114,115 @@ static void ethernet_configure(enum lanPhy lan_phy, int lan_pwr_gpio) {
 
 }
 
-void ethernet_setdown() {
-  if (!s_eth_handle)
-    return;
-  ESP_ERROR_CHECK(esp_eth_stop(s_eth_handle));
+bool ethernet_setdown() {
+  if (s_eth_handle) {
+    if (auto ec = esp_eth_stop(s_eth_handle); ec != ESP_OK) {
+      ESP_LOGE(TAG, "stopping ethernet driver failed: %s", esp_err_to_name(ec));
+    }
 
-  s_eth_handle = 0;
-  esp_netif_destroy(eth_netif);
-  eth_netif = 0;
+    if (auto ec = esp_eth_driver_uninstall(s_eth_handle); ec != ESP_OK) {
+      ESP_LOGE(TAG, "driver un-install failed: %s", esp_err_to_name(ec));
+      return false;
+    }
+    s_eth_handle = 0;
+  }
+
+  if (phy) {
+    phy = 0;
+  }
+
+  if (mac) {
+    mac = 0;
+  }
+
+  if (eth_netif) {
+    esp_netif_destroy(eth_netif);
+    eth_netif = 0;
+  }
+  ESP_LOGI(TAG, "Ethernet removal was successful");
+
+  return true;
 }
 
-void ethernet_setup(struct cfg_lan *cfg_lan) {
+bool ethernet_setup(struct cfg_lan *cfg_lan) {
   if (s_eth_handle)
     ethernet_setdown();
 
+  // set phy function and power gpio according to user
   ethernet_configure(cfg_lan->phy, cfg_lan->pwr_gpio);
 
-  esp_netif_config_t cfg = ESP_NETIF_DEFAULT_ETH();
-  eth_netif = esp_netif_new(&cfg);
+  {
+    // get netif
+    esp_netif_config_t cfg = ESP_NETIF_DEFAULT_ETH();
+    if (eth_netif = esp_netif_new(&cfg); !eth_netif) {
+      ESP_LOGE(TAG, "creating new netif failed");
+      goto error;
+    }
+  }
 
-  ESP_ERROR_CHECK(esp_event_handler_instance_register(ETH_EVENT, ESP_EVENT_ANY_ID, &eth_event_handler, NULL, NULL));
-  ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL, NULL));
+  // register handler
+  if (auto ec = esp_event_handler_instance_register(ETH_EVENT, ESP_EVENT_ANY_ID, &eth_event_handler, NULL, NULL); ec != ESP_OK) {
+    ESP_LOGE(TAG, "registering eth-event-handler failed: %s", esp_err_to_name(ec));
+    goto error;
+  }
+  if (auto ec = esp_event_handler_instance_register(IP_EVENT, IP_EVENT_ETH_GOT_IP, &got_ip_event_handler, NULL, NULL); ec != ESP_OK) {
+    ESP_LOGE(TAG, "registering got-ip-handler failed: %s", esp_err_to_name(ec));
+    goto error;
+  }
 
-  // power on phy here
+  // power-on phy here
   if (ethernet_phy_power_pin >= 0) {
     gpio_pad_select_gpio(ethernet_phy_power_pin);
     gpio_set_direction(static_cast<gpio_num_t>(ethernet_phy_power_pin), GPIO_MODE_OUTPUT);
     gpio_set_level(static_cast<gpio_num_t>(ethernet_phy_power_pin), 1);
     vTaskDelay(pdMS_TO_TICKS(300));
   }
-
-  // Setup MAC
-  eth_mac_config_t mac_config = ETH_MAC_DEFAULT_CONFIG();
-
-  eth_esp32_emac_config_t esp32_emac_config = ETH_ESP32_EMAC_DEFAULT_CONFIG();
-  mac = esp_eth_mac_new_esp32(&esp32_emac_config, &mac_config);
-
-  // Setup PHY
-  eth_phy_config_t phy_config = ETH_PHY_DEFAULT_CONFIG();
-
-  phy_config.phy_addr = 0;
-  phy_config.reset_gpio_num = -1;
-  phy = ethernet_create_phy(&phy_config);
-
-  // Ethernet Driver
-  esp_eth_config_t config = ETH_DEFAULT_CONFIG(mac, phy);
-  if (esp_eth_driver_install(&config, &s_eth_handle) == ESP_OK) {
-    /* attach Ethernet driver to TCP/IP stack */
-    ESP_ERROR_CHECK(esp_netif_attach(eth_netif, esp_eth_new_netif_glue(s_eth_handle)));
-    /* start Ethernet driver state machine */
-    ESP_ERROR_CHECK(esp_eth_start(s_eth_handle));
-  } else {
-    ESP_LOGI(TAG, "driver install failed");
+  {
+    // Setup MAC
+    eth_mac_config_t mac_config = ETH_MAC_DEFAULT_CONFIG();
+    eth_esp32_emac_config_t esp32_emac_config = ETH_ESP32_EMAC_DEFAULT_CONFIG();
+    if (mac = esp_eth_mac_new_esp32(&esp32_emac_config, &mac_config); !mac) {
+      ESP_LOGE(TAG, "setup MAC failed");
+      goto error;
+    }
   }
+  {
+    // Setup PHY
+    eth_phy_config_t phy_config = ETH_PHY_DEFAULT_CONFIG();
+    phy_config.phy_addr = 0;
+    phy_config.reset_gpio_num = -1;
+    if (phy = ethernet_create_phy(&phy_config); !phy) {
+      ESP_LOGE(TAG, "setup PHY failed");
+      goto error;
+    }
+  }
+  {
+    // Install Ethernet Driver
+    esp_eth_config_t config = ETH_DEFAULT_CONFIG(mac, phy);
+    if (auto ec = esp_eth_driver_install(&config, &s_eth_handle); ec != ESP_OK) {
+      ESP_LOGE(TAG, "driver install failed: %s", esp_err_to_name(ec));
+      goto error;
+    }
+  }
+  {
+    /* attach Ethernet driver to TCP/IP stack */
+    if (auto ec = esp_netif_attach(eth_netif, esp_eth_new_netif_glue(s_eth_handle)); ec != ESP_OK) {
+      ESP_LOGE(TAG, "attaching driver to tcp/ip-stack failed: %s", esp_err_to_name(ec));
+      goto error;
+    }
+  }
+  {
+    /* start Ethernet driver state machine */
+    if (auto ec = esp_eth_start(s_eth_handle); ec != ESP_OK) {
+      ESP_LOGE(TAG, "starting state machine failed: %s", esp_err_to_name(ec));
+      goto error;
+    }
+  }
+  ESP_LOGI(TAG, "Ethernet start was successful");
+  return true;
+
+  error: ethernet_setdown();
+  ESP_LOGE(TAG, "Ethernet setup or start did not succeed");
+  return false;
 }
 
