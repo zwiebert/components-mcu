@@ -229,7 +229,7 @@ void txtio_mcu_setup(struct cfg_txtio *cfg_txtio) {
 
   esp_log_level_set("*", static_cast<esp_log_level_t>(cfg_txtio->verbose));
 #ifndef DISTRIBUTION
-  esp_log_level_set("wifi", ESP_LOG_ERROR);
+  //esp_log_level_set("wifi", ESP_LOG_ERROR);
 #endif
 #if 0
   if (TXTIO_IS_VERBOSE(6)) {

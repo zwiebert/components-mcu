@@ -95,6 +95,9 @@ static void got_ip_event_handler(void *arg, esp_event_base_t event_base, int32_t
   mainLoop_callFun(ipnet_connected);
 }
 void wifistation_setup(struct cfg_wlan *config) {
+  if (our_wifi)
+    wifistation_setdown();
+
   our_wifi = esp_netif_create_default_wifi_sta();
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
   ESP_ERROR_CHECK(esp_wifi_init(&cfg));
@@ -109,6 +112,9 @@ void wifistation_setup(struct cfg_wlan *config) {
 }
 
 void wifistation_setdown() {
+  if (!our_wifi)
+    return;
+  esp_wifi_stop();
   esp_netif_destroy_default_wifi(our_wifi);
   our_wifi = 0;
 }

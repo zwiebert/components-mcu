@@ -27,7 +27,7 @@
 
 #define EXAMPLE_MAX_STA_CONN       4
 
-static const char *TAG = "wifi softAP";
+static const char *TAG = "wifi_ap";
 static int connections_since_start;
 static int current_connections;
 static esp_netif_t *our_wifi;
@@ -60,6 +60,10 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base, int32_t e
 }
 
 void wifiAp_setup(const char *ap_ssid, const char *ap_passwd) {
+  if (our_wifi)
+    wifiAp_setdown();
+
+  ESP_LOGI(TAG, "create wifi access point");
    connections_since_start = current_connections = 0;
   our_wifi = esp_netif_create_default_wifi_ap();
 
@@ -88,8 +92,14 @@ void wifiAp_setup(const char *ap_ssid, const char *ap_passwd) {
 }
 
 void wifiAp_setdown() {
+  if (!our_wifi) {
+    ESP_LOGW(TAG, "%s: wifi access point did not exist", __func__);
+    return;
+  }
+
+  ESP_LOGI(TAG, "destroy wifi access point");
+  esp_wifi_stop();
   esp_netif_destroy_default_wifi(our_wifi);
   current_connections = 0;
   our_wifi = 0;
 }
-

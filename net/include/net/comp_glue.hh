@@ -80,6 +80,14 @@ inline const char* config_read_wifi_passwd(char *d, unsigned d_size) {
 }
 #endif
 
+
+#ifdef CONFIG_APP_USE_WLAN_AP
+#include <net/wifi_ap_setup.h>
+inline void config_setup_wifiAp() {
+  wifiAp_setup(CONFIG_APP_WIFI_AP_SSID, CONFIG_APP_WIFI_AP_PASSWORD);
+}
+#endif
+
 #if defined CONFIG_APP_USE_TCPS_TASK || defined CONFIG_APP_USE_TCPS
 #include "net/tcp_cli_server.h"
 #include "net/tcp_cli_server_setup.hh"

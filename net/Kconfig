@@ -82,6 +82,9 @@ menu "zwiebert: Networking"
     config NET_TCP_CLI_CLIENT_DEBUG
         bool "Enable TCP-CLI-client debug messages"
         default n        
+    config NET_NETWORK_DEBUG
+        bool "Enable networ connection debug messages"
+        default n
         
 
 endmenu

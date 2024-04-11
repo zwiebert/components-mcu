@@ -24,3 +24,4 @@ struct cfg_lan {
  */
 void ethernet_setup(struct cfg_lan *config);
 
+void ethernet_setdown();
