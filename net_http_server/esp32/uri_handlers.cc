@@ -14,7 +14,7 @@
 
 #include <fcntl.h>
 
-static const char *TAG = "http_server";
+#define TAG "http_server"
 #ifdef CONFIG_NET_HTTP_SERVER_DEBUG
 #define DEBUG
 #define D(x) x
