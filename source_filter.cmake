@@ -1,0 +1,20 @@
+  
+if(NOT DEFINED ${TARGET_PLATFORM_FILTER})
+  if(COMMAND idf_component_register)
+    set(TARGET_PLATFORM_FILTER "esp32/.*")
+  elseif(DEFINED CMAKE_SYSTEM_PROCESSOR)
+    set(TARGET_PLATFORM_FILTER "")
+    message("please set TARGET_PLATFORM_FILTER for <${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR}>")
+    set(TARGET_PLATFORM_FILTER "NONE")
+  else()
+    set(TARGET_PLATFORM_FILTER "host/.*")
+  endif()
+endif()
+message("TARGET_PLATFORM_FILTER regex is: <${TARGET_PLATFORM_FILTER}>")
+
+set(port_srcs ${srcs})
+list(FILTER port_srcs INCLUDE REGEX "src/.*")
+set(pf_srcs ${srcs} ${platform_srcs})
+list(FILTER pf_srcs INCLUDE REGEX "${TARGET_PLATFORM_FILTER}")
+set(srcs ${port_srcs} ${pf_srcs})
+

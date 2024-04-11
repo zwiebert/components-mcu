@@ -3,10 +3,14 @@ esp32/ethernet.cc
 esp32/ipnet.c  esp32/ntp.cc
 # esp32/tcp_server.cc
   esp32/tcp_cli_server_task.cc esp32/wifi_ap.cc
-  esp32/wifistation.cc esp32/http_client.cc) 
+  esp32/http_client.cc) 
 
 if(TEST_HOST)
-set(srcs ${srcs} host/http_client.cc)
+  list(APPEND srcs host/http_client.cc)
+endif()
+
+if(CONFIG_APP_USE_WLAN)
+  list(APPEND srcs esp32/wifistation.cc)
 endif()
 
 idf_component_register(

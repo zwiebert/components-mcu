@@ -1,4 +1,4 @@
-#include "../http_server_impl.h"
+#include "http_server_impl.h"
 #include "net_http_server/http_server_setup.h"
 //#include "uout/uout_builder_json.hh"
 #include "net_http_server/esp32/http_server_esp32.h"
@@ -12,7 +12,7 @@
 #include <esp_http_server.h>
 #include <utils_misc/cstring_utils.hh>
 
-static const char *TAG="APP";
+static const char *TAG="http_server";
 
 
 
@@ -70,7 +70,8 @@ static void reqest_authorization(httpd_req_t *req) {
 bool check_access_allowed(httpd_req_t *req) {
   if (!is_access_allowed(req)) {
     reqest_authorization(req);
-   return false;
+    ESP_LOGW(TAG, "connection refused. user not authorized.");
+    return false;
   }
   return true;
 }
@@ -85,9 +86,9 @@ static httpd_handle_t start_webserver(struct cfg_http *c) {
   config.max_open_sockets = 6;
   config.uri_match_fn = httpd_uri_match_wildcard;
 
-  ESP_LOGI(TAG, "Starting server on port: '%d'", config.server_port);
+  ESP_LOGI(TAG, "start server. port=%d", config.server_port);
   if (httpd_start(&server, &config) != ESP_OK) {
-    ESP_LOGI(TAG, "Error starting server!");
+    ESP_LOGE(TAG, "server start failed");
     return NULL;
   }
   if (hts_register_uri_handlers_cb)
@@ -105,6 +106,7 @@ void hts_enable_http_server(struct cfg_http *c) {
       hts_server = start_webserver(c);
   } else {
     if (hts_server) {
+      ESP_LOGI(TAG, "stop server");
       httpd_stop(hts_server);
       hts_server = NULL;
     }

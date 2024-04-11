@@ -16,3 +16,5 @@ struct cfg_wlan {
  * \brief  Try to connect to an access-point
  */
 void wifistation_setup(struct cfg_wlan *config);
+void wifistation_setdown();
+bool wifistation_is_active();
