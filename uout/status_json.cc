@@ -42,7 +42,7 @@
 bool UoutBuilderJson::realloc_buffer(size_t buf_size) {
   precond(buf_size > myBuf_idx);
   if (buf_size > BUF_MAX_SIZE) {
-    db_loge(logtag, "%s: maximal buffer size is %d, but requested: %d", __func__, BUF_MAX_SIZE, buf_size);
+    db_loge(logtag, "%s: maximal buffer size is %u, but requested: %u", __func__, (unsigned)BUF_MAX_SIZE, (unsigned)buf_size);
     return false;
   }
 

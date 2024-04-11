@@ -36,9 +36,9 @@ extern "C" {
 /// get char from STM32 (with optional blocking)
   int stm32_getc(bool block);
 /// write data to STM32 bootloader
-  int stm32_write_bl(const char *src, unsigned src_len);
+  int stm32_write_bl(const unsigned char *src, unsigned src_len);
 /// read data from STM32 bootloader
-  int stm32_read_bl(char *dst, unsigned dst_size);
+  int stm32_read_bl(unsigned char *dst, unsigned dst_size);
 
 /// \brief  Restart STM32 into bootloader
   void stm32_runBootLoader(void);

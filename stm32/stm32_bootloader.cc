@@ -36,25 +36,24 @@
 
 
 void Stm32_Bootloader::stm32Bl_sendStart(void) {
-  const char c = STM32_INIT;
+  const unsigned char c = STM32_INIT;
   m_stm32_uart.stm32_write_bl(&c, 1);
 }
 
-void Stm32_Bootloader::stm32Bl_sendCommand(stm32_cmd_T ecmd) {
-  const uint8_t cmd = (uint8_t)ecmd;
+void Stm32_Bootloader::stm32Bl_sendCommand(stm32_cmd_T cmd) {
 
   D(db_logi(logtag, "%s(0x%x)", __func__, cmd));
-  const char buf[2] = { cmd, (uint8_t)~cmd };
+  const unsigned char buf[2] = { cmd, invCmd(cmd) };
   m_stm32_uart.stm32_write_bl(buf, sizeof buf);
 }
 
 void Stm32_Bootloader::stm32Bl_sendAddress(uint32_t addr) {
-  char buf[5] = { GET_BYTE_3(addr), GET_BYTE_2(addr), GET_BYTE_1(addr), GET_BYTE_0(addr)};
+  unsigned char buf[5] = { GET_BYTE_3(addr), GET_BYTE_2(addr), GET_BYTE_1(addr), GET_BYTE_0(addr)};
   buf[4] = buf[0] ^ buf[1] ^ buf[2] ^ buf[3];
   m_stm32_uart.stm32_write_bl(buf, sizeof buf);
 }
 
-int Stm32_Bootloader::stm32Bl_recv(char *buf, int buf_size, int wait_ms) {
+int Stm32_Bootloader::stm32Bl_recv(unsigned char *buf, int buf_size, int wait_ms) {
   LockGuard lock(stm32_read_mutex);
 #define WFR_TOTAL_MS wait_ms
 #define WFR_INTERVAL_MS 50
@@ -81,7 +80,7 @@ int Stm32_Bootloader::stm32Bl_recv(char *buf, int buf_size, int wait_ms) {
 
 
 bool  Stm32_Bootloader::stm32Bl_expect(stm32_cmd_T cmd, int wait_ms) {
-  char buf[16];
+  unsigned char buf[16];
   buf[0] = '\0';
   if (int n = stm32Bl_recv(buf, sizeof buf, wait_ms); n != 1) {
     db_loge(logtag, "%s failed. Timeout %d ms reached or too much data (%d)", __func__, wait_ms, n);
@@ -102,7 +101,6 @@ bool Stm32_Bootloader::stm32Bl_expect_ack() {
 bool Stm32_Bootloader::stm32Bl_doStart(void) {
   LockGuard lock_read(stm32_read_mutex);
   LockGuard lock_write(stm32_write_mutex);
-  char buf[16];
 
   stm32Bl_sendStart();
   if (!stm32Bl_expect_ack()) {
@@ -114,7 +112,7 @@ bool Stm32_Bootloader::stm32Bl_doStart(void) {
 void Stm32_Bootloader::stm32Bl_getId(void) {
   LockGuard lock_read(stm32_read_mutex);
   LockGuard lock_write(stm32_write_mutex);
-  char buf[16];
+  unsigned char buf[16];
   stm32Bl_sendCommand(STM32_GID);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
   if (n) {
@@ -129,7 +127,7 @@ void Stm32_Bootloader::stm32Bl_getId(void) {
 void Stm32_Bootloader::stm32Bl_get(void) {
   LockGuard lock_read(stm32_read_mutex);
   LockGuard lock_write(stm32_write_mutex);
-  char buf[16];
+  unsigned char buf[16];
   stm32Bl_sendCommand(STM32_GET);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
   if (n) {
@@ -144,10 +142,10 @@ void Stm32_Bootloader::stm32Bl_get(void) {
 #define FLASH_PAGE_SIZE 1024
 #define FLASH_START_ADDRESS 0x8000000
 
-bool Stm32_Bootloader::stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsigned data_len) {
+bool Stm32_Bootloader::stm32Bl_doWriteMemory(uint32_t dst_addr, unsigned char *data, unsigned data_len) {
   LockGuard lock_read(stm32_read_mutex);
   LockGuard lock_write(stm32_write_mutex);
-  char buf[16];
+  unsigned char buf[16];
 
   stm32Bl_sendCommand(STM32_WR);
   if (!stm32Bl_expect_ack()) {
@@ -168,7 +166,7 @@ bool Stm32_Bootloader::stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsi
     chksum ^= data[i];
   }
   m_stm32_uart.stm32_write_bl(data, data_len);
-  m_stm32_uart.stm32_write_bl((char*)&chksum, 1);
+  m_stm32_uart.stm32_write_bl(&chksum, 1);
 
   if (1 != stm32Bl_recv(buf, sizeof buf, 20000) || buf[0] != STM32_ACK) {
     db_loge(logtag, "%s failed. No STM32_ACK after data received", __func__);
@@ -180,7 +178,7 @@ bool Stm32_Bootloader::stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsi
 bool  Stm32_Bootloader::stm32Bl_doEraseFlash(int start_page, uint8_t page_count) {
   LockGuard lock_read(stm32_read_mutex);
   LockGuard lock_write(stm32_write_mutex);
-  char buf[16];
+  unsigned char buf[16];
 
   stm32Bl_sendCommand(STM32_ERASE);
   if (!stm32Bl_expect_ack()) {
@@ -195,9 +193,9 @@ bool  Stm32_Bootloader::stm32Bl_doEraseFlash(int start_page, uint8_t page_count)
   for (int i=0; i < page_count; ++i) {
     uint8_t c = start_page + i;
     chksum ^= c;
-    m_stm32_uart.stm32_write_bl((char*)&c, 1);
+    m_stm32_uart.stm32_write_bl(&c, 1);
   }
-  m_stm32_uart.stm32_write_bl((char*)&chksum, 1);
+  m_stm32_uart.stm32_write_bl(&chksum, 1);
 
   db_logi(logtag, "waiting for erase to complete\n");
   if (1 != stm32Bl_recv(buf, sizeof buf, 60000) || buf[0] != STM32_ACK) {
@@ -212,7 +210,7 @@ bool  Stm32_Bootloader::stm32Bl_doEraseFlash(int start_page, uint8_t page_count)
 bool  Stm32_Bootloader::stm32Bl_doExtEraseFlash(uint16_t start_page, uint16_t page_count) {
   LockGuard lock_read(stm32_read_mutex);
   LockGuard lock_write(stm32_write_mutex);
-  char buf[16];
+  unsigned char buf[16];
   stm32Bl_sendCommand(STM32_ERASEN);
   int n = stm32Bl_recv(buf, sizeof buf, 100);
   if (!stm32Bl_expect_ack()) {
@@ -234,7 +232,7 @@ bool  Stm32_Bootloader::stm32Bl_doExtEraseFlash(uint16_t start_page, uint16_t pa
     chksum ^= buf[0];
     chksum ^= buf[1];
   }
-  m_stm32_uart.stm32_write_bl((char*)&chksum, 1);
+  m_stm32_uart.stm32_write_bl(&chksum, 1);
 
   n = stm32Bl_recv(buf, 1, 60000);
   if (!(n == 1 && buf[0] == STM32_ACK)) {
@@ -266,9 +264,9 @@ bool  Stm32_Bootloader::stm32Bl_writeMemoryFromBinFile(const char *srcFile, uint
   LockGuard lock_read(stm32_read_mutex);
   LockGuard lock_write(stm32_write_mutex);
   struct stat statBuf;
-  char buf[256];
-  size_t bytesWritten = 0;
-  size_t file_size = 0;
+  unsigned char buf[256];
+  unsigned bytesWritten = 0;
+  unsigned file_size = 0;
   int fd;
 
   if (0 <= (fd = open(srcFile, O_RDONLY))) {
@@ -296,7 +294,7 @@ bool  Stm32_Bootloader::stm32Bl_writeMemoryFromBinFile(const char *srcFile, uint
     db_loge(logtag, "open(2) failed\n");
     perror(0);
   }
-  db_logi(logtag, "bytes-written:%d\n", bytesWritten);
+  db_logi(logtag, "bytes-written:%u\n", bytesWritten);
   return bytesWritten == file_size;
 }
 

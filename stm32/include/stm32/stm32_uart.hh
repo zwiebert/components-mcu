@@ -20,9 +20,9 @@ public:
 /// get char from STM32 (with optional blocking)
   virtual int stm32_getc(bool block) = 0;
 /// write data to STM32 bootloader
-  virtual int stm32_write_bl(const char *src, unsigned src_len) = 0;
+  virtual int stm32_write_bl(const unsigned char *src, unsigned src_len) = 0;
 /// read src_len from STM32 bootloader
-  virtual int stm32_read_bl(char *dst, unsigned dst_size) = 0;
+  virtual int stm32_read_bl(unsigned char *dst, unsigned dst_size) = 0;
 
 /// \brief  Restart STM32 into bootloader
   virtual void stm32_runBootLoader(void) = 0;
@@ -61,11 +61,11 @@ public:
         return p_stm32_getc(block);
   }
 /// write data to STM32 bootloader
-  int stm32_write_bl(const char *src, unsigned src_len) override{
+  int stm32_write_bl(const unsigned char *src, unsigned src_len) override{
         return p_stm32_write_bl(src, src_len);
   }
 /// read src_len from STM32 bootloader
-  int stm32_read_bl(char *dst, unsigned dst_size) override{
+  int stm32_read_bl(unsigned char *dst, unsigned dst_size) override{
         return p_stm32_read_bl(dst, dst_size);
   }
 
@@ -79,7 +79,7 @@ protected:
   /// get char from STM32 (with optional blocking)
     virtual int p_stm32_getc(bool block) = 0;
   /// write data to STM32 bootloader
-    virtual int p_stm32_write_bl(const char *src, unsigned src_len) = 0;
+    virtual int p_stm32_write_bl(const unsigned char *src, unsigned src_len) = 0;
   /// read data from STM32 bootloader
-    virtual int p_stm32_read_bl(char *dst, unsigned dst_size) = 0;
+    virtual int p_stm32_read_bl(unsigned char *dst, unsigned dst_size) = 0;
 };

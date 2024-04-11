@@ -22,7 +22,7 @@ void stm32Bl_sendAddress(uint32_t addr) { stm32_bootloader.stm32Bl_sendAddress(a
  * \wait_ms            timout
  * \return             number of bytes received
  */
-int stm32Bl_recv(char *buf, int buf_size, int wait_ms) { return stm32_bootloader.stm32Bl_recv(buf, buf_size, wait_ms); }
+int stm32Bl_recv(unsigned char *buf, int buf_size, int wait_ms) { return stm32_bootloader.stm32Bl_recv(buf, buf_size, wait_ms); }
 
 /// \brief send \link STM32_INIT \endlink and check for \link STM32_ACK \endlink
 /// \return true if ACK was received
@@ -42,7 +42,7 @@ bool stm32Bl_doEraseFlash(int start_page, uint8_t page_count) {return stm32_boot
  * \param start_page  start address for erasing as page number
  * \param page_count  size for erasing as page count
  */
-bool stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsigned data_len) { return stm32_bootloader.stm32Bl_doWriteMemory(dst_addr, data, data_len); }
+bool stm32Bl_doWriteMemory(uint32_t dst_addr, unsigned char *data, unsigned data_len) { return stm32_bootloader.stm32Bl_doWriteMemory(dst_addr, data, data_len); }
 
 /*
  * \brief copy file to memory on STM32

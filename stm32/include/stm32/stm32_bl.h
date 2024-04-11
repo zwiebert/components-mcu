@@ -14,7 +14,11 @@
 /**
  * \brief STM32 command opcodes
  */
-enum stm32_cmd_T  {
+enum stm32_cmd_T
+#ifdef __cplusplus
+: unsigned char
+#endif
+{
   STM32_ACK = 0x79,
   STM32_ERASE = 0x43,
   STM32_ERASEN = 0x44,
@@ -35,7 +39,7 @@ enum stm32_cmd_T  {
   STM32_WR = 0x31
 };
 #define STM32_INIT 0x7F
-
+#define invCmd(cmd) ((unsigned char)~(cmd))
 
 #ifdef __cplusplus
 extern "C" {

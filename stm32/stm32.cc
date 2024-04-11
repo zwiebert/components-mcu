@@ -24,11 +24,11 @@ extern "C" int stm32_getc(bool block) {
   return stm32_uart->stm32_getc(block);
 }
 /// write data to STM32 bootloader
-extern "C" int stm32_write_bl(const char *src, unsigned src_len) {
+extern "C" int stm32_write_bl(const unsigned char *src, unsigned src_len) {
   return stm32_uart->stm32_write_bl(src, src_len);
 }
 /// read data from STM32 bootloader
-extern "C" int stm32_read_bl(char *dst, unsigned dst_size) {
+extern "C" int stm32_read_bl(unsigned char *dst, unsigned dst_size) {
   return stm32_uart->stm32_read_bl(dst, dst_size);
 }
 

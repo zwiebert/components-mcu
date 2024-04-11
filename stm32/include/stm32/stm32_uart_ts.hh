@@ -40,12 +40,12 @@ public:
     return m_stm32_uart.stm32_getc(block);
   }
 /// write data to STM32 bootloader
-  int stm32_write_bl(const char *src, unsigned src_len) override {
+  int stm32_write_bl(const unsigned char *src, unsigned src_len) override {
     LockGuard lock(stm32_write_mutex);
     return m_stm32_uart.stm32_write_bl(src, src_len);
   }
 /// read src_len from STM32 bootloader
-  int stm32_read_bl(char *dst, unsigned dst_size) override {
+  int stm32_read_bl(unsigned char *dst, unsigned dst_size) override {
     LockGuard lock(stm32_read_mutex);
     return m_stm32_uart.stm32_read_bl(dst, dst_size);
   }

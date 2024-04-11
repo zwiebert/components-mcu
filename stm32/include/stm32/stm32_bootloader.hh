@@ -34,7 +34,7 @@ Stm32_Bootloader(Stm32_Uart_if &stm32_uart): m_stm32_uart(stm32_uart) {
    * \wait_ms            timout
    * \return             number of bytes received
    */
-  int stm32Bl_recv(char *buf, int buf_size, int wait_ms);
+  int stm32Bl_recv(unsigned char *buf, int buf_size, int wait_ms);
 
   /// \brief send \link STM32_INIT \endlink and check for \link STM32_ACK \endlink
   /// \return true if ACK was received
@@ -57,7 +57,7 @@ Stm32_Bootloader(Stm32_Uart_if &stm32_uart): m_stm32_uart(stm32_uart) {
    * \param start_page  start address for erasing as page number
    * \param page_count  size for erasing as page count
    */
-  bool stm32Bl_doWriteMemory(uint32_t dst_addr, char *data, unsigned data_len);
+  bool stm32Bl_doWriteMemory(uint32_t dst_addr, unsigned char *data, unsigned data_len);
 
   /*
    * \brief copy file to memory on STM32
