@@ -56,9 +56,10 @@ enum cli_get_commline_retT cli_get_commandline(struct cli_buf *buf, getc_funT ge
           || c == '\r'
           || c == '\n'
 #endif
-      ))
+      )) {
         D(db_logw(logtag, "%s: terminator while in error state", __func__));
-      error = false;
+        error = false;
+      }
       goto loop;
     }
 

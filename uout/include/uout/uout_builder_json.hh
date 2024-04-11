@@ -13,7 +13,7 @@
 class UoutBuilderJson {
 public:
   UoutBuilderJson(char *buf, size_t buf_size, class UoutWriter *td = 0) :
-      myBuf(buf), myBuf_size(buf_size), myBuf_isMine(false), myTd(td) {
+      myTd(td), myBuf(buf), myBuf_size(buf_size), myBuf_isMine(false){
   }
   UoutBuilderJson(UoutWriter *td = 0) :
       myTd(td) {
@@ -130,10 +130,12 @@ private:
   bool not_enough_buffer(const char *key = "", const char *val = nullptr);
   bool buffer_grow(size_t required_free_space = 0);
 
+  class UoutWriter *myTd = 0;
   char *myBuf = 0;
   size_t myBuf_size = 0;
-  int myBuf_idx = 0;
-  bool myBuf_isMine = true;
+  unsigned myBuf_idx = 0;
   int m_obj_ct = 0;
-  class UoutWriter *myTd = 0;
+
+  bool myBuf_isMine = true;
+  bool m_eof = false;
 };

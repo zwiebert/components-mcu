@@ -114,7 +114,7 @@ char* UoutBuilderJson::get_a_buffer(size_t required_size) {
 bool UoutBuilderJson::advance_position(int n) {
   precond(n <= myBuf_idx);
   unsigned pos = myBuf_idx + n;
-  if (!(0 <= pos && pos <= myBuf_size)) // allow position to be one behind buffer end
+  if (!(pos <= myBuf_size)) // allow position to be one behind buffer end
     return false;
   myBuf_idx = pos;
 
@@ -241,7 +241,7 @@ bool UoutBuilderJson::open_root_object(const char *id) {
 int UoutBuilderJson::add_object() {
   int result = myBuf_idx;
   D(db_printf("%s()\n", __func__));
-  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
+  precond(!m_eof && m_obj_ct >= ROOT_OBJS);
   if (not_enough_buffer("", 0))
     return -1;
 
@@ -256,7 +256,7 @@ int UoutBuilderJson::add_object() {
 int UoutBuilderJson::add_object(const char *key) {
   int result = myBuf_idx;
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
+  precond(!m_eof && m_obj_ct >= ROOT_OBJS);
   if (not_enough_buffer(key, 0))
     return -1;
 
@@ -286,7 +286,7 @@ void UoutBuilderJson::close_object() {
 
 bool UoutBuilderJson::add_array(const char *key) {
   D(db_printf("%s(%s)\n", __func__, key));
-  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
+  precond(!m_eof && m_obj_ct >= ROOT_OBJS);
 
   if (not_enough_buffer(key, 0))
     return false;
@@ -300,7 +300,7 @@ bool UoutBuilderJson::add_array(const char *key) {
 
 bool UoutBuilderJson::add_array() {
   D(db_printf("%s()\n", __func__));
-  precond(myBuf_idx >= 0 && m_obj_ct >= ROOT_OBJS);
+  precond(!m_eof && m_obj_ct >= ROOT_OBJS);
 
   if (not_enough_buffer())
     return false;
@@ -557,8 +557,8 @@ bool UoutBuilderJson::add_key(const char *key) {
 }
 
 int UoutBuilderJson::writeln_json(bool final) {
-  if (myBuf_idx < 0)
-    return -1; //EOF
+  if (m_eof)
+    return -1;
 
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
     return -1;
@@ -566,7 +566,8 @@ int UoutBuilderJson::writeln_json(bool final) {
   if (!myBuf_idx) {
     const char json[] = "{}\n";
     auto n = myTd->write(json, sizeof json, final);
-    myBuf_idx = final ? -1 : 0;
+    myBuf_idx = 0;
+    m_eof = final;
     return n;
   }
 
@@ -581,35 +582,38 @@ int UoutBuilderJson::writeln_json(bool final) {
       }
 
       myBuf[0] = '\0';
-      myBuf_idx = final ? -1 : 0;
+    myBuf_idx = 0;
+    m_eof = final;
       return n;
     }
   return -1;
 }
 
 int UoutBuilderJson::write_json(bool final) {
-  if (myBuf_idx < 0)
-    return -1; //EOF
+  if (m_eof)
+    return -1;
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
     return -1;
   if (!myBuf_idx) {
     const char json[] = "{}";
     auto n = myTd->write(json, -1, final);
-    myBuf_idx = final ? -1 : 0;
+    myBuf_idx = 0;
+    m_eof = final;
     return n;
   }
 
   if (const char *json = myBuf) {
     int n = myTd->write(json, myBuf_idx, final);
-    myBuf_idx = final ? -1 : 0;
+    myBuf_idx = 0;
+    m_eof = final;
     return n;
   }
   return -1;
 }
 
 int UoutBuilderJson::write_some_json() {
-  if (myBuf_idx < 0)
-    return -1; //EOF
+  if (m_eof)
+    return -1;
   if (!(myTd && (myTd->tgt() & SO_TGT_FLAG_JSON)))
     return -1;
   if (myBuf_idx <= 1) {  // keep one character for un-reading commas
