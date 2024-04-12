@@ -1,0 +1,11 @@
+menu "zwiebert: UOUT"
+
+    config NET_CONNECT_HAVE_COMPONENT
+      bool
+      default y
+
+    config NET_CONNECT_PAUSE_TIMES
+      bool "Experimental: Allow user to pause network at certain wall times"
+      default n
+endmenu
+

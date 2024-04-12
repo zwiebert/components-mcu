@@ -68,8 +68,7 @@ bool nwc_connect(nwConnection nw, bool force) {
     return false;
   if (!nwc_init())
     return false;
-  if (!nwc_disconnect())
-    return false;
+  nwc_disconnect();
 
   switch(nw) {
   case nwNone:
@@ -100,7 +99,7 @@ bool nwc_connect(nwConnection nw, bool force) {
   return true;
 }
 
-bool nwc_disconnect() {
+void nwc_disconnect() {
   switch(state.current_connection) {
   case nwNone:
     break;
@@ -119,5 +118,4 @@ bool nwc_disconnect() {
   }
 
   state.current_connection = nwNone;
-  return true;
 }

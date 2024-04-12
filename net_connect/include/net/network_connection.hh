@@ -15,4 +15,4 @@ inline void nwc_connect_default() {nwc_connect_default(network_default);}
 bool nwc_connect_fallback(nwConnection nw);
 inline void nwc_connect_fallback() {nwc_connect_fallback(network_fallback);}
 
-bool nwc_disconnect();
+void nwc_disconnect();
