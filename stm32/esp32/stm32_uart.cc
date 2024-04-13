@@ -183,14 +183,14 @@ int Stm32_Uart_ESP32::p_stm32_getc(bool block) {
 
   return -1;
 }
-int Stm32_Uart_ESP32::p_stm32_write_bl(const char *data, unsigned data_len) {
+int Stm32_Uart_ESP32::p_stm32_write_bl(const unsigned char *data, unsigned data_len) {
   //LockGuard lock(stm32_mutex);
   if (stm32_mode != STM32_MODE_BOOTLOADER)
     return -1;
   return uart_write_bytes(m_uart, (const char*) data, data_len);
 }
 
-int Stm32_Uart_ESP32::p_stm32_read_bl(char *buf, unsigned buf_size) {
+int Stm32_Uart_ESP32::p_stm32_read_bl(unsigned char *buf, unsigned buf_size) {
   //LockGuard lock(stm32_mutex);
   if (stm32_mode != STM32_MODE_BOOTLOADER)
     return -1;

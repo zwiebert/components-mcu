@@ -46,9 +46,9 @@ private:
   /// get char from STM32 (with optional blocking)
   int p_stm32_getc(bool block) override;
   /// write data to STM32 bootloader
-  int p_stm32_write_bl(const char *data, unsigned data_len) override;
+  int p_stm32_write_bl(const unsigned char *data, unsigned data_len) override;
   /// read data from STM32 bootloader
-  int p_stm32_read_bl(char *buf, unsigned buf_size) override;
+  int p_stm32_read_bl(unsigned char *buf, unsigned buf_size) override;
 
 public:
   typedef enum {
