@@ -67,8 +67,8 @@ static void test_points2() {
 
 static void test_weather_irrigation() {
   Weather_Irrigation wi;
-  wi.dev_fill_past_wd_randomly();
-  auto pts_avg = wi.get_simple_irrigation_factor(24*9);
+  full_auto->weather_irrigation().dev_fill_past_wd_randomly();
+  auto pts_avg = full_auto->weather_irrigation().get_simple_irrigation_factor(24*9);
   D(cout << "pts_avg: " << pts_avg << "\n");
 }
 

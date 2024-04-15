@@ -122,6 +122,7 @@ using uo_to_json_arr2_funT = std::function<int(char *dst, size_t dst_size, unsig
   int write_some_json(); ///< \brief write buffer to its Target (final=false), but leave the last character in the buffer at index 0.
   void free_buffer(); ///<  Destroy this objects JSON buffer (Optional. Destructor will take care of it)
 
+  bool alloc_bigger_buffer(size_t total_size); ///< Alloc a bigger buffer to avoid too many small chunks in writing. Size is the actual size of the buffer.
   char* get_a_buffer(size_t size); ///< get a buffer of at least size. returns a pointer inside the main buffer at current buf_idx
   bool advance_position(int n); ///< advance buf_idx after writing to buffer from get_a_buffer. n can be negative. returns false if n is out of range
 

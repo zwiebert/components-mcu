@@ -101,7 +101,7 @@ bool Weather::fetch_and_store_weather_data() {
 }
 
 bool Weather::to_json(class UoutBuilderJson &sj) {
-  sj.get_a_buffer(1024);
+  sj.alloc_bigger_buffer(1024);
   return sj.read_json_arr2_from_function(std::bind(&Weather::get_past_weather_data_json, this,  _1, _2, _3, _4), 7, 24);
 }
 

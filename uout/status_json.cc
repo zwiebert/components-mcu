@@ -104,9 +104,13 @@ UoutBuilderJson::~UoutBuilderJson() {
 char* UoutBuilderJson::get_json() const {
   return myBuf;
 }
-
+bool UoutBuilderJson::alloc_bigger_buffer(size_t total_size) {
+  if (total_size <= myBuf_size)
+    return true;
+  return realloc_buffer(total_size);
+}
 char* UoutBuilderJson::get_a_buffer(size_t required_size) {
-  if ((myBuf_size < myBuf_idx + required_size + 1) && !buffer_grow(required_size))
+  if ((myBuf_freeSize < required_size + 1) && !buffer_grow(required_size))
     return nullptr;
 
   return myBuf + myBuf_idx;
@@ -134,7 +138,7 @@ bool UoutBuilderJson::not_enough_buffer(const char *key, const char *val) {
   required_size += val ? strlen(val) : 10;
   required_size += 10;
 
-  if (myBuf_size < myBuf_idx + required_size)
+  if (myBuf_freeSize < required_size)
     return !buffer_grow(required_size);
 
   postcond(myBuf);
@@ -145,7 +149,7 @@ bool UoutBuilderJson::read_json_from_function(std::function<int(char *buf, size_
   // pass-0: try with as parameter provided buffer size
   // pass-1: try size size returned by failed JSON generator function to_json()
   for (unsigned pass = 0, n; pass < 2; ++pass, required_size = (n + 1) - (myBuf_size - myBuf_idx)) {
-    if (!buffer_grow(required_size)) {
+    if (myBuf_freeSize < required_size && !buffer_grow(required_size)) {
       return false;
     }
 
